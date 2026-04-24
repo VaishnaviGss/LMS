@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>LMS Portal — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f3f0;
+  --surface:#ffffff;
+  --sidebar-bg:#1a0533;
+  --sidebar-hover:rgba(255,255,255,0.07);
+  --sidebar-active:rgba(167,139,250,0.18);
+  --sidebar-active-border:#a78bfa;
+  --text:#1a1a2e;
+  --muted:#6b7280;
+  --faint:#ede9fe;
+  --border:rgba(0,0,0,0.07);
+  --accent:#7c3aed;
+  --accent2:#a78bfa;
+  --accent-light:#ede9fe;
+  --green:#059669;--green-bg:#ecfdf5;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --blue:#2563eb;--blue-bg:#eff6ff;
+  --radius:12px;--radius-sm:8px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow:hidden}
+.layout{display:flex;height:100vh}
+
+/* ─── SIDEBAR ─── */
+.sidebar{width:240px;flex-shrink:0;background:var(--sidebar-bg);display:flex;flex-direction:column;height:100vh;position:relative;overflow:hidden}
+.sidebar::before{content:'';position:absolute;top:-60px;left:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(124,58,237,0.35) 0%,transparent 70%);pointer-events:none}
+.sidebar::after{content:'';position:absolute;bottom:60px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(167,139,250,0.2) 0%,transparent 70%);pointer-events:none}
+.sidebar-logo{padding:22px 20px 18px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.logo-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(124,58,237,0.4)}
+.logo-icon svg{width:17px;height:17px;fill:#fff}
+.logo-name{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.logo-sub{font-size:9px;color:rgba(167,139,250,0.7);letter-spacing:0.08em;text-transform:uppercase;font-weight:500}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:12px 12px}
+.sidebar-scroll::-webkit-scrollbar{width:0}
+.nav-section{font-size:9.5px;font-weight:600;color:rgba(255,255,255,0.25);letter-spacing:0.1em;text-transform:uppercase;padding:12px 8px 5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;color:rgba(255,255,255,0.5);font-size:13px;font-weight:500;margin:1px 0;transition:all 0.15s;position:relative;border-left:2px solid transparent}
+.nav-item:hover{background:var(--sidebar-hover);color:rgba(255,255,255,0.85);border-left-color:rgba(167,139,250,0.3)}
+.nav-item.active{background:var(--sidebar-active);color:#fff;border-left-color:var(--sidebar-active-border)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:rgba(124,58,237,0.7);color:#e9d5ff;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px}
+.nav-badge.red{background:rgba(220,38,38,0.7);color:#fecaca}
+.sidebar-footer{padding:14px 12px;border-top:1px solid rgba(255,255,255,0.06)}
+.user-card{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background 0.15s}
+.user-card:hover{background:var(--sidebar-hover)}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;color:#fff}
+.user-role{font-size:10px;color:rgba(255,255,255,0.4)}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#10b981;margin-left:auto;box-shadow:0 0 0 2px rgba(16,185,129,0.3)}
+
+/* ─── MAIN ─── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:58px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 28px;flex-shrink:0}
+.topbar-left{display:flex;flex-direction:column}
+.topbar-title{font-size:15px;font-weight:700;letter-spacing:-0.02em;font-family:'Sora',sans-serif}
+.topbar-breadcrumb{font-size:11px;color:var(--muted);margin-top:0px}
+.search-wrap{flex:1;max-width:380px;position:relative;margin-left:20px}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search-input{width:100%;height:34px;border:1.5px solid var(--border);border-radius:20px;background:var(--bg);padding:0 14px 0 34px;font-size:13px;color:var(--text);outline:none;font-family:inherit;transition:all 0.15s}
+.search-input:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(124,58,237,0.08)}
+.search-input::placeholder{color:var(--muted)}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.icon-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all 0.15s;position:relative}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.notif-dot{position:absolute;top:3px;right:3px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff}
+.topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 10px;border-radius:20px;transition:background 0.15s}
+.topbar-user:hover{background:var(--bg)}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.topbar-uname{font-size:13px;font-weight:600}
+.topbar-urole{font-size:11px;color:var(--muted)}
+
+/* ─── CONTENT ─── */
+.content{flex:1;overflow-y:auto;padding:24px 28px}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-track{background:transparent}
+.content::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:2px}
+
+/* HERO BANNER */
+.hero{border-radius:16px;background:linear-gradient(120deg,#2d1065 0%,#4c1d95 40%,#5b21b6 70%,#7c3aed 100%);padding:28px 32px;margin-bottom:22px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between}
+.hero::before{content:'';position:absolute;top:-50px;right:100px;width:300px;height:300px;background:radial-gradient(circle,rgba(167,139,250,0.25) 0%,transparent 65%);pointer-events:none}
+.hero-lines{position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent,transparent 40px,rgba(255,255,255,0.015) 40px,rgba(255,255,255,0.015) 41px);pointer-events:none}
+.hero-title{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:#fff;letter-spacing:-0.02em;margin-bottom:5px}
+.hero-sub{font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:20px}
+.hero-stats{display:flex;gap:32px}
+.hero-stat-val{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:#fff}
+.hero-stat-label{font-size:11px;color:rgba(255,255,255,0.55);margin-top:1px}
+.hero-stat-divider{width:1px;background:rgba(255,255,255,0.15)}
+.hero-actions{display:flex;gap:10px;z-index:1}
+.hero-btn{display:flex;align-items:center;gap:7px;padding:9px 18px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s}
+.hero-btn-primary{background:rgba(255,255,255,0.15);color:#fff;border:1.5px solid rgba(255,255,255,0.25);backdrop-filter:blur(4px)}
+.hero-btn-primary:hover{background:rgba(255,255,255,0.25)}
+.hero-btn-white{background:#fff;color:var(--accent)}
+.hero-btn-white:hover{background:#f5f3ff}
+
+/* QUICK ACTIONS */
+.section-title{font-size:13px;font-weight:700;color:var(--text);letter-spacing:-0.01em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title span{font-size:11px;font-weight:500;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:22px}
+.qa-card{border-radius:var(--radius);padding:16px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.18s;position:relative;overflow:hidden}
+.qa-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.1)}
+.qa-card.purple{background:linear-gradient(135deg,#7c3aed,#9333ea)}
+.qa-card.teal{background:linear-gradient(135deg,#0891b2,#06b6d4)}
+.qa-card.green{background:linear-gradient(135deg,#059669,#10b981)}
+.qa-card.amber{background:linear-gradient(135deg,#d97706,#f59e0b)}
+.qa-icon{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.qa-icon svg{width:20px;height:20px;color:#fff}
+.qa-text{color:#fff}
+.qa-label{font-size:13px;font-weight:700}
+.qa-sub{font-size:11px;opacity:0.75;margin-top:1px}
+
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.kpi-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px 20px;position:relative;overflow:hidden;transition:box-shadow 0.15s}
+.kpi-card:hover{box-shadow:0 6px 20px rgba(0,0,0,0.07)}
+.kpi-top-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
+.kpi-card.v1 .kpi-top-bar{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+.kpi-card.v2 .kpi-top-bar{background:linear-gradient(90deg,#059669,#34d399)}
+.kpi-card.v3 .kpi-top-bar{background:linear-gradient(90deg,#2563eb,#60a5fa)}
+.kpi-card.v4 .kpi-top-bar{background:linear-gradient(90deg,#d97706,#fbbf24)}
+.kpi-card.v5 .kpi-top-bar{background:linear-gradient(90deg,#0891b2,#22d3ee)}
+.kpi-card.v6 .kpi-top-bar{background:linear-gradient(90deg,#dc2626,#f87171)}
+.kpi-icon-wrap{position:absolute;right:16px;top:16px;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.kpi-card.v1 .kpi-icon-wrap{background:var(--accent-light)}
+.kpi-card.v2 .kpi-icon-wrap{background:var(--green-bg)}
+.kpi-card.v3 .kpi-icon-wrap{background:var(--blue-bg)}
+.kpi-card.v4 .kpi-icon-wrap{background:var(--amber-bg)}
+.kpi-card.v5 .kpi-icon-wrap{background:#ecfeff}
+.kpi-card.v6 .kpi-icon-wrap{background:var(--red-bg)}
+.kpi-icon-wrap svg{width:17px;height:17px}
+.kpi-card.v1 .kpi-icon-wrap svg{color:var(--accent)}
+.kpi-card.v2 .kpi-icon-wrap svg{color:var(--green)}
+.kpi-card.v3 .kpi-icon-wrap svg{color:var(--blue)}
+.kpi-card.v4 .kpi-icon-wrap svg{color:var(--amber)}
+.kpi-card.v5 .kpi-icon-wrap svg{color:#0891b2}
+.kpi-card.v6 .kpi-icon-wrap svg{color:var(--red)}
+.kpi-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:7px}
+.kpi-value{font-family:'Sora',sans-serif;font-size:28px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.kpi-delta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;margin-top:6px}
+.kpi-delta.up{color:var(--green)}.kpi-delta.down{color:var(--red)}
+.kpi-delta-note{font-size:11px;color:var(--muted);margin-top:6px;display:block}
+
+/* TWO-COL LAYOUT */
+.grid-2{display:grid;grid-template-columns:1fr 380px;gap:16px;margin-bottom:22px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:22px}
+
+/* CARDS */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius)}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13px;font-weight:700;letter-spacing:-0.01em}
+.card-bd{padding:18px 20px}
+.chart-wrap{position:relative;height:220px}
+
+/* TAGS & BADGES */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.pill.active{background:var(--green-bg);color:#059669}
+.pill.inactive{background:var(--red-bg);color:#dc2626}
+.pill.trial{background:var(--amber-bg);color:#d97706}
+.pill.pending{background:#fef3c7;color:#92400e}
+.pill.completed{background:#dbeafe;color:#1d4ed8}
+.pill.paused{background:#f3f4f6;color:#6b7280}
+.pill.paid{background:var(--green-bg);color:#059669}
+.pill.prepaid{background:var(--accent-light);color:var(--accent)}
+.tag{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:500;color:var(--muted)}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;padding:9px 16px;text-align:left;border-bottom:1.5px solid var(--border);white-space:nowrap;background:var(--bg)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#faf9ff}
+.td-main{font-weight:600;color:var(--text)}
+.td-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.action-btn{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;border-radius:7px;border:1.5px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);transition:all 0.12s}
+.action-btn:hover{background:var(--accent-light);color:var(--accent);border-color:rgba(124,58,237,0.2)}
+.action-btn.danger:hover{background:var(--red-bg);color:var(--red);border-color:rgba(220,38,38,0.2)}
+.action-btn.success:hover{background:var(--green-bg);color:var(--green);border-color:rgba(5,150,105,0.2)}
+.act-group{display:flex;gap:4px}
+.tabs{display:flex;border-bottom:1.5px solid var(--border)}
+.tab{padding:10px 16px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;transition:all 0.15s}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.pagination{display:flex;align-items:center;gap:4px;padding:12px 16px;justify-content:flex-end;border-top:1px solid var(--border)}
+.pg-btn{width:28px;height:28px;border-radius:7px;border:1.5px solid var(--border);background:transparent;cursor:pointer;font-size:12px;font-family:inherit;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all 0.1s}
+.pg-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pg-btn:hover:not(.active){background:var(--accent-light)}
+
+/* ACTIVITY */
+.act-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.act-item:last-child{border-bottom:none}
+.act-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.act-dot.session{background:#ede9fe}.act-dot.session svg{color:#7c3aed}
+.act-dot.pay{background:var(--green-bg)}.act-dot.pay svg{color:#059669}
+.act-dot.user{background:#ecfeff}.act-dot.user svg{color:#0891b2}
+.act-dot.warn{background:var(--amber-bg)}.act-dot.warn svg{color:#d97706}
+.act-dot svg{width:14px;height:14px}
+.act-text{font-size:12px;line-height:1.45}.act-text strong{font-weight:600}
+.act-time{font-size:10.5px;color:var(--muted);margin-top:2px}
+
+/* WALLET / MINI STATS */
+.mini-stat{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.mini-stat:last-child{border-bottom:none}
+.mini-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mini-val{font-size:14px;font-weight:700;letter-spacing:-0.01em}
+.mini-label{font-size:11px;color:var(--muted)}
+
+/* PROGRESS BAR */
+.prog-bar{height:5px;border-radius:3px;background:var(--bg);overflow:hidden;margin-top:5px}
+.prog-fill{height:100%;border-radius:3px;transition:width 0.4s}
+
+/* MENTOR LIST ITEM */
+.mentor-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.mentor-row:last-child{border-bottom:none}
+.m-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.m-name{font-size:13px;font-weight:600}
+.m-course{font-size:11px;color:var(--muted)}
+.m-stats{margin-left:auto;text-align:right}
+.m-classes{font-size:13px;font-weight:700}
+.m-payout{font-size:10.5px;color:var(--green)}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h14V7L10 2zm0 2.5l5 3.5v8H5V8l5-3.5z"/><rect x="7.5" y="11" width="5" height="5" rx="0.5"/></svg>
+    </div>
+    <div>
+      <div class="logo-name">LMS Portal</div>
+      <div class="logo-sub">Org Admin</div>
+    </div>
+  </div>
+
+  <div class="sidebar-scroll">
+    <div class="nav-section">Main</div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12a1 1 0 011 1v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1zm1 3v7h10V5H3z"/><path d="M5 7h6v1.5H5z"/></svg>
+      Courses
+      <span class="nav-badge">12</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H3z"/></svg>
+      Students
+      <span class="nav-badge">247</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm2 3h6v1H5V5zm0 2.5h6v1H5v-1zm0 2.5h4v1H5V10z"/></svg>
+      Mentors
+      <span class="nav-badge">18</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V4zm0 5a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-1 1H2a1 1 0 01-1-1V9z"/></svg>
+      Class Sessions
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 3H2a1 1 0 00-1 1v8a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1zM5 9H3V7h2v2zm4 0H7V7h2v2zm4 0h-2V7h2v2z"/></svg>
+      Attendance
+    </div>
+
+    <div class="nav-section">Finance</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2-1v9h8V3H4zm1 2h6v1H5V5zm0 2h6v1H5V7zm0 2h4v1H5V9z"/></svg>
+      Invoices
+      <span class="nav-badge red">3</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v1a4 4 0 000 8V1zm2 9.93A4 4 0 008 11v3a7 7 0 002-.07z"/><path d="M13 4a5 5 0 00-3-4.58V10a5 5 0 003-6z"/></svg>
+      Payouts
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a6 6 0 100 12A6 6 0 008 2zM7 9V7h2v2H7zm0-3V5h2v1H7z"/></svg>
+      Wallets
+    </div>
+
+    <div class="nav-section">Content</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3a1 1 0 000 2h6a1 1 0 000-2H5zm-1 4a1 1 0 011-1h6a1 1 0 010 2H5a1 1 0 01-1-1zm1 3a1 1 0 000 2h3a1 1 0 000-2H5z"/></svg>
+      Topics & Assets
+    </div>
+
+    <div class="nav-section">System</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg>
+      Settings
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.75 4h1.5v4.5h-1.5V5zm0 5.5h1.5V12h-1.5v-1.5z"/></svg>
+      User Roles
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">AT</div>
+      <div>
+        <div class="user-name">Alex Thompson</div>
+        <div class="user-role">Org Admin</div>
+      </div>
+      <div class="status-dot"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">Dashboard</div>
+      <div class="topbar-breadcrumb">Brightpath Institute · April 2026</div>
+    </div>
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6.5" cy="6.5" r="5.5"/><path d="M11 11L15 15"/></svg>
+      <input class="search-input" placeholder="Search students, courses, sessions…">
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a6 6 0 00-6 6v3.5L1 12h14l-1-1.5V7a6 6 0 00-6-6zm0 14a2 2 0 002-2H6a2 2 0 002 2z"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="icon-btn">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2"/></svg>
+      </div>
+      <div class="topbar-user">
+        <div class="topbar-avatar">AT</div>
+        <div>
+          <div class="topbar-uname">Alex Thompson</div>
+          <div class="topbar-urole">Senior Admin</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- HERO BANNER -->
+    <div class="hero">
+      <div class="hero-lines"></div>
+      <div style="z-index:1">
+        <div class="hero-title">Welcome back, Alex! 👋</div>
+        <div class="hero-sub">Brightpath Institute · Shape the future of learning</div>
+        <div class="hero-stats">
+          <div><div class="hero-stat-val">12</div><div class="hero-stat-label">Active Courses</div></div>
+          <div class="hero-stat-divider"></div>
+          <div><div class="hero-stat-val">247</div><div class="hero-stat-label">Total Students</div></div>
+          <div class="hero-stat-divider"></div>
+          <div><div class="hero-stat-val">18</div><div class="hero-stat-label">Mentors</div></div>
+          <div class="hero-stat-divider"></div>
+          <div><div class="hero-stat-val">94%</div><div class="hero-stat-label">Attendance Rate</div></div>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <button class="hero-btn hero-btn-primary">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M6 1v5H1v2h5v5h2V8h5V6H8V1z"/></svg>
+          Enroll Student
+        </button>
+        <button class="hero-btn hero-btn-white">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="1" y="2" width="12" height="10" rx="1"/><path d="M4 6h6M4 8.5h4" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+          Generate Invoice
+        </button>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="section-title">Quick Actions <span>Common tasks</span></div>
+    <div class="qa-grid">
+      <div class="qa-card purple">
+        <div class="qa-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L3 7v11h14V7L10 2zm0 2.5l5 3.5v8H5V8l5-3.5z"/></svg></div>
+        <div class="qa-text"><div class="qa-label">New Course</div><div class="qa-sub">Add course + pricing</div></div>
+      </div>
+      <div class="qa-card teal">
+        <div class="qa-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 10a4 4 0 100-8 4 4 0 000 8zm-6 8a6 6 0 0112 0H4z"/></svg></div>
+        <div class="qa-text"><div class="qa-label">Add Student</div><div class="qa-sub">Register + assign course</div></div>
+      </div>
+      <div class="qa-card green">
+        <div class="qa-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7l-5-5H6zm5 1v4h4"/></svg></div>
+        <div class="qa-text"><div class="qa-label">Schedule Class</div><div class="qa-sub">Book mentor + slot</div></div>
+      </div>
+      <div class="qa-card amber">
+        <div class="qa-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 3h8v1.5H6V7zm0 3h8v1.5H6V10zm0 3h5v1.5H6V13z"/></svg></div>
+        <div class="qa-text"><div class="qa-label">Create Invoice</div><div class="qa-sub">Billing + payout</div></div>
+      </div>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="section-title">Analytics Overview <span>This month</span></div>
+    <div class="kpi-grid">
+      <div class="kpi-card v1">
+        <div class="kpi-top-bar"></div>
+        <div class="kpi-icon-wrap"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0"/></svg></div>
+        <div class="kpi-label">Total Students</div>
+        <div class="kpi-value">247</div>
+        <div class="kpi-delta up">↑ +12 <span style="font-weight:400;color:var(--muted)">this week</span></div>
+      </div>
+      <div class="kpi-card v2">
+        <div class="kpi-top-bar"></div>
+        <div class="kpi-icon-wrap"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M4 8h8M4 11h5"/></svg></div>
+        <div class="kpi-label">Active Courses</div>
+        <div class="kpi-value">12</div>
+        <div class="kpi-delta up">↑ +2 <span style="font-weight:400;color:var(--muted)">this month</span></div>
+      </div>
+      <div class="kpi-card v3">
+        <div class="kpi-top-bar"></div>
+        <div class="kpi-icon-wrap"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12l3-3 3 3 4-5 4 2"/></svg></div>
+        <div class="kpi-label">Classes This Month</div>
+        <div class="kpi-value">386</div>
+        <div class="kpi-delta up">↑ +34 <span style="font-weight:400;color:var(--muted)">vs last month</span></div>
+      </div>
+      <div class="kpi-card v4">
+        <div class="kpi-top-bar"></div>
+        <div class="kpi-icon-wrap"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="9" rx="1"/><path d="M1 7h14"/></svg></div>
+        <div class="kpi-label">Revenue (Apr)</div>
+        <div class="kpi-value">₹2.4L</div>
+        <div class="kpi-delta up">↑ +8.2% <span style="font-weight:400;color:var(--muted)">growth</span></div>
+      </div>
+      <div class="kpi-card v5">
+        <div class="kpi-top-bar"></div>
+        <div class="kpi-icon-wrap"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 4v4l3 1.5"/></svg></div>
+        <div class="kpi-label">Attendance Rate</div>
+        <div class="kpi-value">94%</div>
+        <div class="kpi-delta up">↑ +5% <span style="font-weight:400;color:var(--muted)">this month</span></div>
+      </div>
+      <div class="kpi-card v6">
+        <div class="kpi-top-bar"></div>
+        <div class="kpi-icon-wrap"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm3 3h6M5 9h4"/></svg></div>
+        <div class="kpi-label">Pending Invoices</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-delta down">↑ ₹18,400 <span style="font-weight:400;color:var(--muted)">outstanding</span></div>
+      </div>
+    </div>
+
+    <!-- CHART + ACTIVITY -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Monthly Revenue & Classes</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><span style="width:10px;height:10px;border-radius:2px;background:#7c3aed;display:inline-block"></span>Revenue</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><span style="width:10px;height:10px;border-radius:2px;background:#e0d7ff;display:inline-block"></span>Classes</div>
+            <span class="tag">FY 2025–26</span>
+          </div>
+        </div>
+        <div class="card-bd" style="padding-top:12px">
+          <div class="chart-wrap">
+            <canvas id="revenueChart" role="img" aria-label="Monthly revenue and class sessions bar chart">Monthly revenue and classes from May 2025 to April 2026</canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-title">Recent Activity</div><span class="tag" style="color:#059669;border-color:#d1fae5;background:#ecfdf5">● Live</span></div>
+        <div class="card-bd" style="padding-top:8px;padding-bottom:8px">
+          <div class="act-item">
+            <div class="act-dot session"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M4 8h8"/></svg></div>
+            <div><div class="act-text"><strong>Priya Sharma</strong> attended Mathematics — Class #24</div><div class="act-time">8 minutes ago</div></div>
+          </div>
+          <div class="act-item">
+            <div class="act-dot pay"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="9" rx="1"/><path d="M1 7h14"/></svg></div>
+            <div><div class="act-text"><strong>Invoice #INV-0241</strong> paid — ₹6,400 by Arjun Mehta</div><div class="act-time">22 minutes ago</div></div>
+          </div>
+          <div class="act-item">
+            <div class="act-dot user"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0"/></svg></div>
+            <div><div class="act-text"><strong>Rahul Verma</strong> enrolled in Physics Fundamentals</div><div class="act-time">1 hour ago</div></div>
+          </div>
+          <div class="act-item">
+            <div class="act-dot warn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l6 11H2L8 2z"/><path d="M8 7v3M8 11.5v.5"/></svg></div>
+            <div><div class="act-text"><strong>Kavya Nair</strong> subscription paused — medical leave</div><div class="act-time">3 hours ago</div></div>
+          </div>
+          <div class="act-item">
+            <div class="act-dot session"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M4 8h8"/></svg></div>
+            <div><div class="act-text"><strong>Mentor Anand Kumar</strong> assigned to 3 new students</div><div class="act-time">5 hours ago</div></div>
+          </div>
+          <div class="act-item">
+            <div class="act-dot pay"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="9" rx="1"/><path d="M1 7h14"/></svg></div>
+            <div><div class="act-text"><strong>Mentor payout ₹12,800</strong> processed for March</div><div class="act-time">Yesterday</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STUDENT SUBSCRIPTIONS TABLE -->
+    <div class="section-title">Student Course Subscriptions <span>Active enrollments</span></div>
+    <div class="card" style="margin-bottom:22px">
+      <div class="card-hd">
+        <div style="display:flex;gap:6px;align-items:center">
+          <input style="height:30px;border:1.5px solid var(--border);border-radius:20px;padding:0 12px 0 12px;font-size:12px;font-family:inherit;outline:none;width:220px;background:var(--bg)" placeholder="Search student or course…">
+          <select style="height:30px;border:1.5px solid var(--border);border-radius:7px;padding:0 8px;font-size:12px;font-family:inherit;background:var(--bg);outline:none">
+            <option>All Status</option><option>active</option><option>paused</option><option>completed</option><option>cancelled</option>
+          </select>
+          <select style="height:30px;border:1.5px solid var(--border);border-radius:7px;padding:0 8px;font-size:12px;font-family:inherit;background:var(--bg);outline:none">
+            <option>All Courses</option><option>Mathematics</option><option>Physics</option><option>Chemistry</option>
+          </select>
+        </div>
+        <span style="font-size:12px;color:var(--muted)">247 students · 312 subscriptions</span>
+      </div>
+      <div class="tabs">
+        <div class="tab active">All</div>
+        <div class="tab">Active</div>
+        <div class="tab">Paused</div>
+        <div class="tab">Pending Mentor</div>
+        <div class="tab">Completed</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Course</th>
+              <th>Mentor</th>
+              <th>Pricing Model</th>
+              <th>Billing</th>
+              <th>Status</th>
+              <th>Enrolled</th>
+              <th>Classes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="td-main">Priya Sharma</div><div class="td-sub">priya@example.com</div></td>
+              <td><span class="tag">Mathematics</span></td>
+              <td><div class="td-main">Anand Kumar</div></td>
+              <td><span class="tag">Per Month</span></td>
+              <td><span class="pill prepaid">Prepaid</span></td>
+              <td><span class="pill active">Active</span></td>
+              <td style="color:var(--muted);font-size:12px">Jan 10, 2026</td>
+              <td style="font-weight:700">24</td>
+              <td><div class="act-group">
+                <button class="action-btn" title="View"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg></button>
+                <button class="action-btn" title="Schedule"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="10" height="9" rx="1"/><path d="M1 5h10M4 1v2M8 1v2"/></svg></button>
+                <button class="action-btn danger" title="Pause"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="2" y="2" width="3" height="8" rx="1"/><rect x="7" y="2" width="3" height="8" rx="1"/></svg></button>
+              </div></td>
+            </tr>
+            <tr>
+              <td><div class="td-main">Arjun Mehta</div><div class="td-sub">arjun@example.com</div></td>
+              <td><span class="tag">Physics</span></td>
+              <td><div class="td-main">Sneha Rao</div></td>
+              <td><span class="tag">Per 10 Classes</span></td>
+              <td><span class="pill prepaid">Prepaid</span></td>
+              <td><span class="pill active">Active</span></td>
+              <td style="color:var(--muted);font-size:12px">Feb 3, 2026</td>
+              <td style="font-weight:700">17</td>
+              <td><div class="act-group">
+                <button class="action-btn" title="View"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg></button>
+                <button class="action-btn" title="Schedule"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="10" height="9" rx="1"/><path d="M1 5h10M4 1v2M8 1v2"/></svg></button>
+                <button class="action-btn danger" title="Pause"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="2" y="2" width="3" height="8" rx="1"/><rect x="7" y="2" width="3" height="8" rx="1"/></svg></button>
+              </div></td>
+            </tr>
+            <tr>
+              <td><div class="td-main">Kavya Nair</div><div class="td-sub">kavya@example.com</div></td>
+              <td><span class="tag">Chemistry</span></td>
+              <td><div class="td-main">Ravi Pillai</div></td>
+              <td><span class="tag">Per Class</span></td>
+              <td><span class="pill" style="background:#f0f9ff;color:#0369a1">Postpaid</span></td>
+              <td><span class="pill paused">Paused</span></td>
+              <td style="color:var(--muted);font-size:12px">Dec 20, 2025</td>
+              <td style="font-weight:700">31</td>
+              <td><div class="act-group">
+                <button class="action-btn" title="View"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg></button>
+                <button class="action-btn success" title="Resume"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M3 2l7 4-7 4V2z"/></svg></button>
+                <button class="action-btn" title="Edit"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button>
+              </div></td>
+            </tr>
+            <tr>
+              <td><div class="td-main">Rohan Das</div><div class="td-sub">rohan@example.com</div></td>
+              <td><span class="tag">Mathematics</span></td>
+              <td><div class="td-main" style="color:var(--amber)">Pending</div></td>
+              <td><span class="tag">Per Month</span></td>
+              <td><span class="pill prepaid">Prepaid</span></td>
+              <td><span class="pill pending">Pending</span></td>
+              <td style="color:var(--muted);font-size:12px">Apr 20, 2026</td>
+              <td style="font-weight:700">0</td>
+              <td><div class="act-group">
+                <button class="action-btn" title="Assign Mentor"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6a2.5 2.5 0 100-5 2.5 2.5 0 000 5zm-4 5a4 4 0 018 0"/><path d="M10 3v4M8 5h4"/></svg></button>
+                <button class="action-btn" title="View"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg></button>
+              </div></td>
+            </tr>
+            <tr>
+              <td><div class="td-main">Sneha Kapoor</div><div class="td-sub">sneha.k@example.com</div></td>
+              <td><span class="tag">Biology</span></td>
+              <td><div class="td-main">Pradeep Joshi</div></td>
+              <td><span class="tag">Per Month</span></td>
+              <td><span class="pill" style="background:#f0f9ff;color:#0369a1">Postpaid</span></td>
+              <td><span class="pill completed">Completed</span></td>
+              <td style="color:var(--muted);font-size:12px">Aug 1, 2025</td>
+              <td style="font-weight:700">48</td>
+              <td><div class="act-group">
+                <button class="action-btn" title="View"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg></button>
+                <button class="action-btn" title="Invoice"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="10" height="10" rx="1"/><path d="M3 4h6M3 6.5h6M3 9h4"/></svg></button>
+              </div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button class="pg-btn active">1</button>
+        <button class="pg-btn">2</button>
+        <button class="pg-btn">3</button>
+        <span style="font-size:12px;color:var(--muted);margin:0 4px">...</span>
+        <button class="pg-btn">12</button>
+        <button class="pg-btn" style="width:auto;padding:0 10px">Next →</button>
+      </div>
+    </div>
+
+    <!-- MENTORS + INVOICES + WALLET -->
+    <div class="grid-3">
+      <!-- TOP MENTORS -->
+      <div class="card">
+        <div class="card-hd"><div class="card-title">Top Mentors</div><span class="tag">This month</span></div>
+        <div class="card-bd" style="padding-top:10px;padding-bottom:10px">
+          <div class="mentor-row">
+            <div class="m-avatar" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">AK</div>
+            <div><div class="m-name">Anand Kumar</div><div class="m-course">Mathematics · Physics</div></div>
+            <div class="m-stats"><div class="m-classes">68 classes</div><div class="m-payout">₹8,160 due</div></div>
+          </div>
+          <div class="mentor-row">
+            <div class="m-avatar" style="background:linear-gradient(135deg,#0891b2,#22d3ee)">SR</div>
+            <div><div class="m-name">Sneha Rao</div><div class="m-course">Physics · Chemistry</div></div>
+            <div class="m-stats"><div class="m-classes">54 classes</div><div class="m-payout">₹6,480 due</div></div>
+          </div>
+          <div class="mentor-row">
+            <div class="m-avatar" style="background:linear-gradient(135deg,#059669,#34d399)">RP</div>
+            <div><div class="m-name">Ravi Pillai</div><div class="m-course">Chemistry</div></div>
+            <div class="m-stats"><div class="m-classes">47 classes</div><div class="m-payout">₹5,640 due</div></div>
+          </div>
+          <div class="mentor-row">
+            <div class="m-avatar" style="background:linear-gradient(135deg,#d97706,#fbbf24)">PJ</div>
+            <div><div class="m-name">Pradeep Joshi</div><div class="m-course">Biology · Science</div></div>
+            <div class="m-stats"><div class="m-classes">41 classes</div><div class="m-payout">₹4,920 due</div></div>
+          </div>
+          <div class="mentor-row">
+            <div class="m-avatar" style="background:linear-gradient(135deg,#dc2626,#f87171)">NK</div>
+            <div><div class="m-name">Nisha Kothari</div><div class="m-course">English · SST</div></div>
+            <div class="m-stats"><div class="m-classes">38 classes</div><div class="m-payout">₹4,560 due</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INVOICES -->
+      <div class="card">
+        <div class="card-hd"><div class="card-title">Recent Invoices</div><span class="tag" style="color:#dc2626;border-color:#fecaca;background:#fef2f2">3 Pending</span></div>
+        <div class="card-bd" style="padding-top:10px;padding-bottom:10px">
+          <div class="mini-stat">
+            <div class="mini-icon" style="background:#ecfdf5"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#059669" stroke-width="1.5"><rect x="1" y="3" width="14" height="9" rx="1"/><path d="M1 7h14"/></svg></div>
+            <div><div class="mini-val">INV-0241</div><div class="mini-label">Arjun Mehta · ₹6,400</div></div>
+            <span class="pill paid" style="margin-left:auto">Paid</span>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-icon" style="background:#fffbeb"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#d97706" stroke-width="1.5"><rect x="1" y="3" width="14" height="9" rx="1"/><path d="M1 7h14"/></svg></div>
+            <div><div class="mini-val">INV-0240</div><div class="mini-label">Priya Sharma · ₹5,200</div></div>
+            <span class="pill pending" style="margin-left:auto">Pending</span>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-icon" style="background:#fef2f2"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#dc2626" stroke-width="1.5"><rect x="1" y="3" width="14" height="9" rx="1"/><path d="M1 7h14"/></svg></div>
+            <div><div class="mini-val">INV-0239</div><div class="mini-label">Rohan Das · ₹3,600</div></div>
+            <span class="pill inactive" style="margin-left:auto">Overdue</span>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-icon" style="background:#ecfdf5"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#059669" stroke-width="1.5"><rect x="1" y="3" width="14" height="9" rx="1"/><path d="M1 7h14"/></svg></div>
+            <div><div class="mini-val">INV-0238</div><div class="mini-label">Kavya Nair · ₹4,800</div></div>
+            <span class="pill paid" style="margin-left:auto">Paid</span>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-icon" style="background:#fffbeb"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#d97706" stroke-width="1.5"><rect x="1" y="3" width="14" height="9" rx="1"/><path d="M1 7h14"/></svg></div>
+            <div><div class="mini-val">INV-0237</div><div class="mini-label">Sneha Kapoor · ₹7,200</div></div>
+            <span class="pill pending" style="margin-left:auto">Pending</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- COURSE PERFORMANCE -->
+      <div class="card">
+        <div class="card-hd"><div class="card-title">Course Performance</div><span class="tag">Subscriptions</span></div>
+        <div class="card-bd" style="padding-top:14px;padding-bottom:14px">
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">Mathematics</span><span style="color:var(--muted)">68 students</span></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:82%;background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div></div>
+          </div>
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">Physics</span><span style="color:var(--muted)">54 students</span></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:65%;background:linear-gradient(90deg,#0891b2,#22d3ee)"></div></div>
+          </div>
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">Chemistry</span><span style="color:var(--muted)">47 students</span></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:57%;background:linear-gradient(90deg,#059669,#34d399)"></div></div>
+          </div>
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">Biology</span><span style="color:var(--muted)">38 students</span></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:46%;background:linear-gradient(90deg,#d97706,#fbbf24)"></div></div>
+          </div>
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">English</span><span style="color:var(--muted)">32 students</span></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:38%;background:linear-gradient(90deg,#dc2626,#f87171)"></div></div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="background:var(--bg);border-radius:8px;padding:10px">
+              <div style="font-size:18px;font-weight:700;color:var(--accent)">312</div>
+              <div style="font-size:11px;color:var(--muted)">Total Subs</div>
+            </div>
+            <div style="background:var(--bg);border-radius:8px;padding:10px">
+              <div style="font-size:18px;font-weight:700;color:var(--green)">94%</div>
+              <div style="font-size:11px;color:var(--muted)">Active Rate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TODAY'S SESSIONS TABLE -->
+    <div class="section-title">Today's Class Sessions <span>April 24, 2026</span></div>
+    <div class="card" style="margin-bottom:32px">
+      <div class="card-hd">
+        <div style="display:flex;gap:6px">
+          <span class="pill active" style="font-size:11px">● 8 Scheduled</span>
+          <span class="pill completed" style="font-size:11px">5 Completed</span>
+          <span class="pill paused" style="font-size:11px">2 Cancelled</span>
+        </div>
+        <button style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text)">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>
+          Schedule Class
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Time</th><th>Student</th><th>Course</th><th>Mentor</th><th>Status</th><th>Attendance</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:700;color:var(--accent);font-size:12px">09:00 – 10:00</td>
+              <td><div class="td-main">Priya Sharma</div></td>
+              <td><span class="tag">Mathematics</span></td>
+              <td>Anand Kumar</td>
+              <td><span class="pill completed">Completed</span></td>
+              <td><span class="pill active">Present</span></td>
+              <td><div class="act-group"><button class="action-btn" title="View"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg></button></div></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;color:var(--accent);font-size:12px">10:30 – 11:30</td>
+              <td><div class="td-main">Arjun Mehta</div></td>
+              <td><span class="tag">Physics</span></td>
+              <td>Sneha Rao</td>
+              <td><span class="pill completed">Completed</span></td>
+              <td><span class="pill active">Present</span></td>
+              <td><div class="act-group"><button class="action-btn" title="View"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg></button></div></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;color:var(--blue);font-size:12px">02:00 – 03:00</td>
+              <td><div class="td-main">Rohan Das</div></td>
+              <td><span class="tag">Mathematics</span></td>
+              <td>Anand Kumar</td>
+              <td><span class="pill active">Scheduled</span></td>
+              <td><span style="color:var(--muted);font-size:12px">—</span></td>
+              <td><div class="act-group">
+                <button class="action-btn success" title="Mark Present"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 6l3 3 5-5"/></svg></button>
+                <button class="action-btn danger" title="Cancel"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/><path d="M4 4l4 4M8 4l-4 4"/></svg></button>
+              </div></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;color:var(--blue);font-size:12px">04:00 – 05:00</td>
+              <td><div class="td-main">Sneha Kapoor</div></td>
+              <td><span class="tag">Biology</span></td>
+              <td>Pradeep Joshi</td>
+              <td><span class="pill active">Scheduled</span></td>
+              <td><span style="color:var(--muted);font-size:12px">—</span></td>
+              <td><div class="act-group">
+                <button class="action-btn success" title="Mark Present"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 6l3 3 5-5"/></svg></button>
+                <button class="action-btn danger" title="Cancel"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/><path d="M4 4l4 4M8 4l-4 4"/></svg></button>
+              </div></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;color:var(--red);font-size:12px">06:00 – 07:00</td>
+              <td><div class="td-main">Kavya Nair</div></td>
+              <td><span class="tag">Chemistry</span></td>
+              <td>Ravi Pillai</td>
+              <td><span class="pill inactive">Cancelled</span></td>
+              <td><span class="pill inactive">Absent</span></td>
+              <td><div class="act-group"><button class="action-btn" title="Reschedule"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="10" height="9" rx="1"/><path d="M1 5h10M4 1v2M8 1v2"/></svg></button></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+</div><!-- end main -->
+</div><!-- end layout -->
+
+<script>
+const ctx = document.getElementById('revenueChart').getContext('2d');
+new Chart(ctx, {
+  data: {
+    labels: ['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr'],
+    datasets: [
+      {
+        type: 'bar',
+        label: 'Revenue (₹K)',
+        data: [142,168,155,190,178,210,224,240,218,250,262,240],
+        backgroundColor: 'rgba(124,58,237,0.85)',
+        borderRadius: 5,
+        borderSkipped: false,
+        yAxisID: 'y',
+      },
+      {
+        type: 'bar',
+        label: 'Classes',
+        data: [210,248,231,289,264,318,340,362,328,378,390,386],
+        backgroundColor: '#ede9fe',
+        borderRadius: 5,
+        borderSkipped: false,
+        yAxisID: 'y1',
+      },
+      {
+        type: 'line',
+        label: 'Revenue Trend',
+        data: [142,168,155,190,178,210,224,240,218,250,262,240],
+        borderColor: '#a78bfa',
+        borderWidth: 2,
+        pointRadius: 3,
+        pointBackgroundColor: '#7c3aed',
+        tension: 0.4,
+        fill: false,
+        yAxisID: 'y',
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => {
+            if (ctx.datasetIndex === 0) return '₹' + ctx.parsed.y + 'K revenue';
+            if (ctx.datasetIndex === 1) return ctx.parsed.y + ' classes';
+            return null;
+          }
+        },
+        filter: (item) => item.datasetIndex !== 2
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#9ca3af', autoSkip: false } },
+      y: {
+        position: 'left',
+        grid: { color: 'rgba(0,0,0,0.04)' },
+        ticks: { font: { size: 11 }, color: '#9ca3af', callback: v => '₹' + v + 'K' }
+      },
+      y1: {
+        position: 'right',
+        grid: { display: false },
+        ticks: { font: { size: 11 }, color: '#c4b5fd', callback: v => v + ' cls' }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

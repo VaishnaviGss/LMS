@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>LMS Portal — Students</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f3f0;--surface:#ffffff;
+  --sidebar-bg:#1a0533;
+  --sidebar-hover:rgba(255,255,255,0.07);
+  --sidebar-active:rgba(167,139,250,0.18);
+  --sidebar-active-border:#a78bfa;
+  --text:#1a1a2e;--muted:#6b7280;--faint:#ede9fe;
+  --border:rgba(0,0,0,0.07);
+  --accent:#7c3aed;--accent2:#a78bfa;--accent-light:#ede9fe;
+  --green:#059669;--green-bg:#ecfdf5;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --blue:#2563eb;--blue-bg:#eff6ff;
+  --teal:#0891b2;--teal-bg:#ecfeff;
+  --radius:12px;--radius-sm:8px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow:hidden}
+.layout{display:flex;height:100vh}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{width:240px;flex-shrink:0;background:var(--sidebar-bg);display:flex;flex-direction:column;height:100vh;position:relative;overflow:hidden}
+.sidebar::before{content:'';position:absolute;top:-60px;left:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(124,58,237,0.35) 0%,transparent 70%);pointer-events:none}
+.sidebar::after{content:'';position:absolute;bottom:60px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(167,139,250,0.2) 0%,transparent 70%);pointer-events:none}
+.sidebar-logo{padding:22px 20px 18px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.logo-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(124,58,237,0.4)}
+.logo-icon svg{width:17px;height:17px;fill:#fff}
+.logo-name{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.logo-sub{font-size:9px;color:rgba(167,139,250,0.7);letter-spacing:0.08em;text-transform:uppercase;font-weight:500}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:12px 12px}
+.sidebar-scroll::-webkit-scrollbar{width:0}
+.nav-section{font-size:9.5px;font-weight:600;color:rgba(255,255,255,0.25);letter-spacing:0.1em;text-transform:uppercase;padding:12px 8px 5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;color:rgba(255,255,255,0.5);font-size:13px;font-weight:500;margin:1px 0;transition:all 0.15s;position:relative;border-left:2px solid transparent}
+.nav-item:hover{background:var(--sidebar-hover);color:rgba(255,255,255,0.85);border-left-color:rgba(167,139,250,0.3)}
+.nav-item.active{background:var(--sidebar-active);color:#fff;border-left-color:var(--sidebar-active-border)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:rgba(124,58,237,0.7);color:#e9d5ff;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px}
+.nav-badge.red{background:rgba(220,38,38,0.7);color:#fecaca}
+.sidebar-footer{padding:14px 12px;border-top:1px solid rgba(255,255,255,0.06)}
+.user-card{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background 0.15s}
+.user-card:hover{background:var(--sidebar-hover)}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;color:#fff}
+.user-role{font-size:10px;color:rgba(255,255,255,0.4)}
+
+/* ═══ MAIN ═══ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:58px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 28px;flex-shrink:0}
+.topbar-left{display:flex;flex-direction:column}
+.topbar-title{font-size:15px;font-weight:700;letter-spacing:-0.02em;font-family:'Sora',sans-serif}
+.topbar-breadcrumb{font-size:11px;color:var(--muted)}
+.search-wrap{flex:1;max-width:380px;position:relative;margin-left:20px}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search-input{width:100%;height:34px;border:1.5px solid var(--border);border-radius:20px;background:var(--bg);padding:0 14px 0 34px;font-size:13px;color:var(--text);outline:none;font-family:inherit;transition:all 0.15s}
+.search-input:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(124,58,237,0.08)}
+.search-input::placeholder{color:var(--muted)}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.icon-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all 0.15s;position:relative}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.notif-dot{position:absolute;top:3px;right:3px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff}
+.topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 10px;border-radius:20px;transition:background 0.15s}
+.topbar-user:hover{background:var(--bg)}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.topbar-uname{font-size:13px;font-weight:600}
+.topbar-urole{font-size:11px;color:var(--muted)}
+
+/* ═══ SHARED ═══ */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius)}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13px;font-weight:700;letter-spacing:-0.01em}
+.card-bd{padding:18px 20px}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.pill.active{background:var(--green-bg);color:#059669}
+.pill.inactive{background:var(--red-bg);color:#dc2626}
+.pill.pending{background:var(--amber-bg);color:#92400e}
+.pill.paid{background:var(--green-bg);color:#059669}
+.pill.completed{background:var(--blue-bg);color:#1d4ed8}
+.pill.paused{background:#f3f4f6;color:#6b7280}
+.pill.cancelled{background:var(--red-bg);color:#dc2626}
+.pill.overdue{background:var(--red-bg);color:#dc2626}
+.tag{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:500;color:var(--muted)}
+table{width:100%;border-collapse:collapse}
+th{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;padding:9px 16px;text-align:left;border-bottom:1.5px solid var(--border);white-space:nowrap;background:var(--bg)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#faf9ff}
+.td-main{font-weight:600;color:var(--text)}
+.td-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.action-btn{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;border-radius:7px;border:1.5px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);transition:all 0.12s}
+.action-btn:hover{background:var(--accent-light);color:var(--accent);border-color:rgba(124,58,237,0.2)}
+.action-btn.danger:hover{background:var(--red-bg);color:var(--red);border-color:rgba(220,38,38,0.2)}
+.act-group{display:flex;gap:4px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:0 16px;height:34px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(124,58,237,0.25)}
+.btn-primary:hover{background:#6d28d9}
+.btn-sm{height:30px;padding:0 13px;font-size:12px}
+
+/* ═══ SCREENS ═══ */
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+.screen.visible{display:flex}
+
+/* LIST */
+.list-toolbar{padding:14px 28px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.filter-select{height:32px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 10px;font-size:12px;font-family:inherit;background:var(--bg);color:var(--text);outline:none;cursor:pointer;transition:border 0.14s}
+.filter-select:focus{border-color:var(--accent)}
+.count-tag{background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11.5px;font-weight:500;color:var(--muted);margin-left:auto}
+.table-container{flex:1;overflow-y:auto}
+.table-container::-webkit-scrollbar{width:4px}
+.table-container::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:2px}
+.std-name-cell{display:flex;align-items:center;gap:11px}
+.s-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:#fff;flex-shrink:0}
+
+/* DETAIL */
+.detail-scroll{flex:1;overflow-y:auto;padding:24px 28px}
+.detail-scroll::-webkit-scrollbar{width:4px}
+.detail-scroll::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:2px}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;margin-bottom:18px;padding:5px 0;border:none;background:none;font-family:inherit;font-weight:500;transition:color 0.13s}
+.back-btn:hover{color:var(--text)}
+.back-btn svg{width:14px;height:14px}
+
+/* STUDENT HEADER */
+.std-header{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:22px 26px;display:flex;align-items:center;gap:18px;margin-bottom:18px}
+.sh-av{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700;color:#fff;flex-shrink:0}
+.sh-name{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.02em;margin-bottom:5px}
+.sh-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sh-meta-item{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.sh-meta-item svg{width:12px;height:12px}
+.sh-stats{margin-left:auto;display:flex;gap:22px;flex-shrink:0}
+.sh-stat{text-align:center}
+.sh-val{font-family:'Sora',sans-serif;font-size:19px;font-weight:700;color:var(--text)}
+.sh-lbl{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* TABS */
+.tab-nav{display:flex;border:1.5px solid var(--border);border-radius:12px;background:var(--surface);padding:4px;margin-bottom:14px;overflow-x:auto;gap:2px}
+.tab-nav::-webkit-scrollbar{height:0}
+.tab-btn{padding:8px 15px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;border:none;background:none;font-family:inherit;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{background:var(--accent);color:#fff}
+.tab-panel{display:none}
+.tab-panel.visible{display:block}
+
+/* STAT CARDS */
+.stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
+.sc-label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px}
+.sc-val{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.sc-note{font-size:11px;color:var(--muted);margin-top:5px}
+
+/* COURSE ROW */
+.course-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.course-row:last-child{border-bottom:none}
+.course-dot{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.cr-info{flex:1;min-width:0}
+.cr-name{font-size:13px;font-weight:600;color:var(--text)}
+.cr-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.cr-right{text-align:right;flex-shrink:0}
+.cr-val{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--text);display:block}
+.cr-lbl{font-size:10px;color:var(--muted)}
+
+/* ATTENDANCE */
+.att-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border)}
+.att-row:last-child{border-bottom:none}
+.att-date{font-size:11.5px;color:var(--muted);width:76px;flex-shrink:0}
+.att-course{flex:1;font-size:13px;font-weight:500}
+.att-badge{padding:2px 9px;border-radius:5px;font-size:11px;font-weight:600}
+.att-badge.present{background:var(--green-bg);color:#059669}
+.att-badge.absent{background:var(--red-bg);color:#dc2626}
+.att-badge.late{background:var(--amber-bg);color:#d97706}
+.prog-bar{height:5px;border-radius:3px;background:var(--bg);overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;border-radius:3px;background:var(--accent)}
+
+/* WALLET */
+.wallet-hero{background:linear-gradient(135deg,#1a0533,#4c1d95);border-radius:12px;padding:20px 22px;color:#fff;margin-bottom:14px;display:flex;justify-content:space-between;align-items:flex-end}
+.wh-label{font-size:11px;opacity:0.65;margin-bottom:4px}
+.wh-amount{font-family:'Sora',sans-serif;font-size:28px;font-weight:700;letter-spacing:-0.02em}
+.wh-right{text-align:right}
+.wh-right-label{font-size:10px;opacity:0.6}
+.wh-right-val{font-size:13px;font-weight:600;margin-top:3px}
+.txn-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.txn-row:last-child{border-bottom:none}
+.txn-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.txn-icon.credit{background:var(--green-bg)}
+.txn-icon.debit{background:var(--red-bg)}
+.txn-icon svg{width:13px;height:13px}
+.txn-icon.credit svg{color:var(--green)}
+.txn-icon.debit svg{color:var(--red)}
+.txn-info{flex:1}
+.txn-title{font-size:12.5px;font-weight:500}
+.txn-date{font-size:10.5px;color:var(--muted);margin-top:1px}
+.txn-amount{font-family:'Sora',sans-serif;font-size:13.5px;font-weight:700}
+.txn-amount.credit{color:var(--green)}
+.txn-amount.debit{color:var(--red)}
+
+/* MENTOR CARD */
+.mentor-card{display:flex;align-items:center;gap:14px;padding:13px;background:var(--bg);border-radius:10px;border:1.5px solid var(--border);margin-bottom:10px}
+.mc-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.mc-name{font-size:13px;font-weight:600}
+.mc-course{font-size:11.5px;color:var(--muted);margin-top:2px}
+.mc-badge{margin-left:auto;background:var(--green-bg);color:var(--green);border:1px solid #bbf7d0;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:600;flex-shrink:0}
+
+/* INVOICE ROW */
+.inv-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.inv-row:last-child{border-bottom:none}
+.inv-num{font-family:'Sora',sans-serif;font-size:11.5px;color:var(--muted);width:96px;flex-shrink:0}
+.inv-info{flex:1;min-width:0}
+.inv-desc{font-size:12.5px;font-weight:500}
+.inv-date{font-size:10.5px;color:var(--muted);margin-top:1px}
+.inv-amount{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-right:10px;flex-shrink:0}
+
+/* PARENT CARD */
+.parent-card{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg);border-radius:10px;border:1.5px solid var(--border);margin-bottom:10px}
+.pc-av{width:40px;height:40px;border-radius:50%;background:#e0e7ff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#4338ca;flex-shrink:0}
+.pc-name{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px}
+.pc-meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:3px}
+.pc-meta-item{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.pc-meta-item svg{width:11px;height:11px}
+.primary-badge{background:var(--accent-light);color:var(--accent);border-radius:4px;padding:1px 7px;font-size:10px;font-weight:700;border:1px solid rgba(124,58,237,0.2)}
+
+/* TWO/THREE COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h14V7L10 2zm0 2.5l5 3.5v8H5V8l5-3.5z"/><rect x="7.5" y="11" width="5" height="5" rx="0.5"/></svg>
+    </div>
+    <div>
+      <div class="logo-name">LMS Portal</div>
+      <div class="logo-sub">Sudarshini Inst.</div>
+    </div>
+  </div>
+  <div class="sidebar-scroll">
+    <div class="nav-section">Main</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12a1 1 0 011 1v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1zm1 3v7h10V5H3z"/><path d="M5 7h6v1.5H5z"/></svg>
+      Courses
+      <span class="nav-badge">12</span>
+    </div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H3z"/></svg>
+      Students
+      <span class="nav-badge">247</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm2 3h6v1H5V5zm0 2.5h6v1H5v-1zm0 2.5h4v1H5V10z"/></svg>
+      Mentors
+      <span class="nav-badge">18</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V4zm0 5a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-1 1H2a1 1 0 01-1-1V9z"/></svg>
+      Class Sessions
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 3H2a1 1 0 00-1 1v8a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1zM5 9H3V7h2v2zm4 0H7V7h2v2zm4 0h-2V7h2v2z"/></svg>
+      Attendance
+    </div>
+
+    <div class="nav-section">Files</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2-1v9h8V3H4zm1 2h6v1H5V5zm0 2h6v1H5V7zm0 2h4v1H5V9z"/></svg>
+      Invoices
+      <span class="nav-badge red">3</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v1a4 4 0 000 8V1zm2 9.93A4 4 0 008 11v3a7 7 0 002-.07z"/><path d="M13 4a5 5 0 00-3-4.58V10a5 5 0 003-6z"/></svg>
+      Payouts
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.9 5.8H16l-5 3.6 1.9 5.8L8 12.6l-4.9 3.6 1.9-5.8-5-3.6h6.1L8 1z"/></svg>
+      Levels
+    </div>
+
+    <div class="nav-section">System</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg>
+      Settings
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">AT</div>
+      <div>
+        <div class="user-name">Alex Thompson</div>
+        <div class="user-role">Org Admin</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title" id="topbar-title">Students</div>
+      <div class="topbar-breadcrumb" id="topbar-crumb">Sudarshini Institute · 8 students</div>
+    </div>
+    <div class="search-wrap" id="search-area">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6.5" cy="6.5" r="5.5"/><path d="M11 11L15 15"/></svg>
+      <input class="search-input" id="searchInput" placeholder="Search students by name or phone…" oninput="filterStudents()">
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a6 6 0 00-6 6v3.5L1 12h14l-1-1.5V7a6 6 0 00-6-6zm0 14a2 2 0 002-2H6a2 2 0 002 2z"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="topbar-user">
+        <div class="topbar-avatar">AT</div>
+        <div>
+          <div class="topbar-uname">Alex Thompson</div>
+          <div class="topbar-urole">Org Admin</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LIST SCREEN ═══ -->
+  <div class="screen visible" id="screen-list">
+    <div class="list-toolbar">
+      <select class="filter-select" id="statusFilter" onchange="filterStudents()">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+      <select class="filter-select" id="courseFilter" onchange="filterStudents()">
+        <option value="">All Courses</option>
+        <option>Mathematics</option>
+        <option>Physics</option>
+        <option>Chemistry</option>
+        <option>Biology</option>
+        <option>English</option>
+        <option>Social Science</option>
+      </select>
+      <button class="btn btn-primary btn-sm" style="margin-left:auto">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>
+        Add Student
+      </button>
+      <span class="count-tag" id="countTag">8 students</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:220px">Student</th>
+            <th style="width:140px">Phone</th>
+            <th style="width:150px">Courses Enrolled</th>
+            <th style="width:140px">Active Subscriptions</th>
+            <th style="width:130px">Wallet Balance</th>
+            <th style="width:110px">Status</th>
+            <th style="width:80px">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="studentTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ DETAIL SCREEN ═══ -->
+  <div class="screen" id="screen-detail">
+    <div class="detail-scroll" id="detailContent"></div>
+  </div>
+</div>
+</div>
+
+<script>
+const COLORS=['#7c3aed','#0369a1','#059669','#b45309','#be123c','#0891b2','#4d7c0f','#9333ea'];
+function ini(n){return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)}
+function col(i){return COLORS[i%COLORS.length]}
+
+const students=[
+  {
+    id:'STD001',name:'Priya Sharma',phone:'98765 43210',status:'active',joined:'Jan 10, 2026',wallet:4200,
+    courses:[
+      {name:'Mathematics',mentor:'Anand Kumar',mentorColor:'#7c3aed',subStatus:'active',classes:24,color:'#7c3aed'},
+      {name:'Physics',mentor:'Sneha Rao',mentorColor:'#0369a1',subStatus:'active',classes:17,color:'#0369a1'}
+    ],
+    attendance:{present:42,absent:4,late:2,recent:[
+      {date:'Apr 24',course:'Mathematics',status:'present'},
+      {date:'Apr 23',course:'Physics',status:'present'},
+      {date:'Apr 22',course:'Mathematics',status:'late'},
+      {date:'Apr 21',course:'Physics',status:'present'},
+      {date:'Apr 19',course:'Mathematics',status:'absent'},
+    ]},
+    mentors:[
+      {name:'Anand Kumar',av:'AK',color:'#7c3aed',course:'Mathematics'},
+      {name:'Sneha Rao',av:'SR',color:'#0369a1',course:'Physics'}
+    ],
+    transactions:[
+      {type:'debit',desc:'Invoice #INV-0241 Payment',date:'Apr 22, 2026',amount:5200},
+      {type:'credit',desc:'Admin credit added',date:'Apr 15, 2026',amount:10000},
+      {type:'debit',desc:'Invoice #INV-0235 Payment',date:'Mar 28, 2026',amount:5200},
+      {type:'credit',desc:'Admin credit added',date:'Mar 10, 2026',amount:8000},
+    ],
+    invoices:[
+      {num:'INV-0241',desc:'Mathematics · April 2026',date:'Apr 1, 2026',amount:5200,status:'paid'},
+      {num:'INV-0238',desc:'Physics · April 2026',date:'Apr 1, 2026',amount:3800,status:'pending'},
+      {num:'INV-0235',desc:'Mathematics · March 2026',date:'Mar 1, 2026',amount:5200,status:'paid'},
+      {num:'INV-0228',desc:'Physics · March 2026',date:'Mar 1, 2026',amount:3800,status:'paid'},
+    ],
+    parents:[
+      {name:'Ramesh Sharma',relation:'Father',phone:'98100 11222',primary:true},
+      {name:'Sunita Sharma',relation:'Mother',phone:'99800 33441',primary:false}
+    ]
+  },
+  {
+    id:'STD002',name:'Arjun Mehta',phone:'87654 32109',status:'active',joined:'Feb 3, 2026',wallet:1800,
+    courses:[
+      {name:'Physics',mentor:'Sneha Rao',mentorColor:'#0369a1',subStatus:'active',classes:17,color:'#0369a1'},
+      {name:'Chemistry',mentor:'Ravi Pillai',mentorColor:'#059669',subStatus:'active',classes:12,color:'#059669'}
+    ],
+    attendance:{present:28,absent:6,late:3,recent:[
+      {date:'Apr 24',course:'Physics',status:'present'},
+      {date:'Apr 23',course:'Chemistry',status:'absent'},
+      {date:'Apr 22',course:'Physics',status:'present'},
+      {date:'Apr 20',course:'Chemistry',status:'present'},
+      {date:'Apr 19',course:'Physics',status:'late'},
+    ]},
+    mentors:[
+      {name:'Sneha Rao',av:'SR',color:'#0369a1',course:'Physics'},
+      {name:'Ravi Pillai',av:'RP',color:'#059669',course:'Chemistry'}
+    ],
+    transactions:[
+      {type:'debit',desc:'Invoice #INV-0242 Payment',date:'Apr 22, 2026',amount:4500},
+      {type:'credit',desc:'Admin credit added',date:'Apr 5, 2026',amount:8000},
+      {type:'debit',desc:'Invoice #INV-0236 Payment',date:'Mar 25, 2026',amount:4500},
+    ],
+    invoices:[
+      {num:'INV-0242',desc:'Physics · April 2026',date:'Apr 1, 2026',amount:3800,status:'paid'},
+      {num:'INV-0240',desc:'Chemistry · April 2026',date:'Apr 1, 2026',amount:4200,status:'pending'},
+      {num:'INV-0236',desc:'Physics · March 2026',date:'Mar 1, 2026',amount:3800,status:'paid'},
+    ],
+    parents:[{name:'Vikram Mehta',relation:'Father',phone:'97200 55443',primary:true}]
+  },
+  {
+    id:'STD003',name:'Kavya Nair',phone:'76543 21098',status:'active',joined:'Dec 20, 2025',wallet:600,
+    courses:[
+      {name:'Chemistry',mentor:'Ravi Pillai',mentorColor:'#059669',subStatus:'paused',classes:31,color:'#059669'}
+    ],
+    attendance:{present:18,absent:8,late:5,recent:[
+      {date:'Apr 18',course:'Chemistry',status:'late'},
+      {date:'Apr 17',course:'Chemistry',status:'present'},
+      {date:'Apr 15',course:'Chemistry',status:'absent'},
+      {date:'Apr 14',course:'Chemistry',status:'present'},
+    ]},
+    mentors:[{name:'Ravi Pillai',av:'RP',color:'#059669',course:'Chemistry'}],
+    transactions:[
+      {type:'credit',desc:'Admin credit added',date:'Apr 10, 2026',amount:5000},
+      {type:'debit',desc:'Invoice #INV-0239 Payment',date:'Apr 1, 2026',amount:4200},
+    ],
+    invoices:[
+      {num:'INV-0239',desc:'Chemistry · March 2026',date:'Mar 1, 2026',amount:4200,status:'paid'},
+      {num:'INV-0233',desc:'Chemistry · Feb 2026',date:'Feb 1, 2026',amount:4200,status:'paid'},
+    ],
+    parents:[
+      {name:'Lakshmi Nair',relation:'Mother',phone:'88100 66554',primary:true},
+      {name:'Suresh Nair',relation:'Father',phone:'77200 44332',primary:false}
+    ]
+  },
+  {
+    id:'STD004',name:'Rohan Das',phone:'65432 10987',status:'active',joined:'Apr 20, 2026',wallet:9000,
+    courses:[
+      {name:'Mathematics',mentor:'Pending Assignment',mentorColor:'#b45309',subStatus:'active',classes:2,color:'#b45309'}
+    ],
+    attendance:{present:2,absent:0,late:1,recent:[
+      {date:'Apr 22',course:'Mathematics',status:'present'},
+      {date:'Apr 21',course:'Mathematics',status:'late'},
+    ]},
+    mentors:[],
+    transactions:[{type:'credit',desc:'Initial wallet credit',date:'Apr 20, 2026',amount:9000}],
+    invoices:[],
+    parents:[{name:'Anil Das',relation:'Father',phone:'91234 56789',primary:true}]
+  },
+  {
+    id:'STD005',name:'Sneha Kapoor',phone:'54321 09876',status:'inactive',joined:'Aug 1, 2025',wallet:0,
+    courses:[
+      {name:'Biology',mentor:'Pradeep Joshi',mentorColor:'#b45309',subStatus:'completed',classes:48,color:'#b45309'},
+      {name:'English',mentor:'Nisha Kothari',mentorColor:'#be123c',subStatus:'completed',classes:36,color:'#be123c'}
+    ],
+    attendance:{present:48,absent:10,late:6,recent:[
+      {date:'Feb 20',course:'Biology',status:'present'},
+      {date:'Feb 18',course:'English',status:'absent'},
+      {date:'Feb 17',course:'Biology',status:'present'},
+    ]},
+    mentors:[
+      {name:'Pradeep Joshi',av:'PJ',color:'#b45309',course:'Biology'},
+      {name:'Nisha Kothari',av:'NK',color:'#be123c',course:'English'}
+    ],
+    transactions:[
+      {type:'debit',desc:'Invoice #INV-0210 Payment',date:'Feb 28, 2026',amount:6200},
+      {type:'credit',desc:'Refund - Course completion',date:'Feb 25, 2026',amount:500},
+    ],
+    invoices:[
+      {num:'INV-0210',desc:'Biology · Feb 2026',date:'Feb 1, 2026',amount:3200,status:'paid'},
+      {num:'INV-0209',desc:'English · Feb 2026',date:'Feb 1, 2026',amount:2800,status:'paid'},
+      {num:'INV-0195',desc:'Biology · Jan 2026',date:'Jan 1, 2026',amount:3200,status:'paid'},
+    ],
+    parents:[{name:'Ramesh Kapoor',relation:'Father',phone:'99900 12345',primary:true}]
+  },
+  {
+    id:'STD006',name:'Aarav Joshi',phone:'43210 98765',status:'active',joined:'Mar 5, 2026',wallet:3100,
+    courses:[
+      {name:'Mathematics',mentor:'Anand Kumar',mentorColor:'#7c3aed',subStatus:'active',classes:14,color:'#7c3aed'},
+      {name:'Biology',mentor:'Pradeep Joshi',mentorColor:'#b45309',subStatus:'active',classes:11,color:'#b45309'}
+    ],
+    attendance:{present:22,absent:3,late:2,recent:[
+      {date:'Apr 24',course:'Biology',status:'present'},
+      {date:'Apr 23',course:'Mathematics',status:'present'},
+      {date:'Apr 21',course:'Biology',status:'late'},
+      {date:'Apr 20',course:'Mathematics',status:'present'},
+    ]},
+    mentors:[
+      {name:'Anand Kumar',av:'AK',color:'#7c3aed',course:'Mathematics'},
+      {name:'Pradeep Joshi',av:'PJ',color:'#b45309',course:'Biology'}
+    ],
+    transactions:[
+      {type:'credit',desc:'Admin credit added',date:'Apr 1, 2026',amount:6000},
+      {type:'debit',desc:'Invoice #INV-0244 Payment',date:'Apr 5, 2026',amount:3500},
+    ],
+    invoices:[
+      {num:'INV-0244',desc:'Mathematics · April 2026',date:'Apr 1, 2026',amount:3500,status:'paid'},
+      {num:'INV-0245',desc:'Biology · April 2026',date:'Apr 1, 2026',amount:3200,status:'pending'},
+    ],
+    parents:[
+      {name:'Sunil Joshi',relation:'Father',phone:'88800 23456',primary:true},
+      {name:'Kavita Joshi',relation:'Mother',phone:'77700 34567',primary:false}
+    ]
+  },
+  {
+    id:'STD007',name:'Diya Patel',phone:'32109 87654',status:'active',joined:'Nov 12, 2025',wallet:7500,
+    courses:[
+      {name:'English',mentor:'Nisha Kothari',mentorColor:'#be123c',subStatus:'active',classes:28,color:'#be123c'},
+      {name:'Chemistry',mentor:'Ravi Pillai',mentorColor:'#059669',subStatus:'active',classes:19,color:'#059669'}
+    ],
+    attendance:{present:38,absent:5,late:4,recent:[
+      {date:'Apr 24',course:'English',status:'present'},
+      {date:'Apr 23',course:'Chemistry',status:'present'},
+      {date:'Apr 22',course:'English',status:'absent'},
+      {date:'Apr 20',course:'Chemistry',status:'present'},
+    ]},
+    mentors:[
+      {name:'Nisha Kothari',av:'NK',color:'#be123c',course:'English'},
+      {name:'Ravi Pillai',av:'RP',color:'#059669',course:'Chemistry'}
+    ],
+    transactions:[
+      {type:'credit',desc:'Admin credit added',date:'Apr 2, 2026',amount:8000},
+      {type:'debit',desc:'Invoice #INV-0243 Payment',date:'Apr 3, 2026',amount:5600},
+      {type:'credit',desc:'Admin credit added',date:'Mar 2, 2026',amount:5000},
+    ],
+    invoices:[
+      {num:'INV-0243',desc:'English · April 2026',date:'Apr 1, 2026',amount:2800,status:'paid'},
+      {num:'INV-0246',desc:'Chemistry · April 2026',date:'Apr 1, 2026',amount:4200,status:'pending'},
+    ],
+    parents:[{name:'Kiran Patel',relation:'Guardian',phone:'66600 45678',primary:true}]
+  },
+  {
+    id:'STD008',name:'Kiran Verma',phone:'21098 76543',status:'inactive',joined:'Sep 8, 2025',wallet:200,
+    courses:[
+      {name:'Physics',mentor:'Sneha Rao',mentorColor:'#0369a1',subStatus:'cancelled',classes:15,color:'#0369a1'}
+    ],
+    attendance:{present:15,absent:12,late:3,recent:[
+      {date:'Dec 20',course:'Physics',status:'absent'},
+      {date:'Dec 18',course:'Physics',status:'present'},
+    ]},
+    mentors:[{name:'Sneha Rao',av:'SR',color:'#0369a1',course:'Physics'}],
+    transactions:[{type:'credit',desc:'Partial refund',date:'Jan 5, 2026',amount:200}],
+    invoices:[
+      {num:'INV-0180',desc:'Physics · Dec 2025',date:'Dec 1, 2025',amount:3800,status:'overdue'},
+    ],
+    parents:[{name:'Meena Verma',relation:'Mother',phone:'55500 56789',primary:true}]
+  },
+];
+
+let filtered=[...students];
+
+function filterStudents(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  const sf=document.getElementById('statusFilter').value;
+  const cf=document.getElementById('courseFilter').value;
+  filtered=students.filter(s=>{
+    const mq=!q||s.name.toLowerCase().includes(q)||s.phone.includes(q);
+    const ms=!sf||s.status===sf;
+    const mc=!cf||s.courses.some(c=>c.name===cf);
+    return mq&&ms&&mc;
+  });
+  renderTable();
+}
+
+function renderTable(){
+  const tbody=document.getElementById('studentTableBody');
+  document.getElementById('countTag').textContent=filtered.length+' student'+(filtered.length!==1?'s':'');
+  if(!filtered.length){
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--muted)">No students found.</td></tr>';
+    return;
+  }
+  tbody.innerHTML=filtered.map(s=>{
+    const si=students.indexOf(s);
+    const activeSubs=s.courses.filter(c=>c.subStatus==='active').length;
+    const tags=s.courses.slice(0,2).map(c=>`<span class="tag" style="font-size:10.5px">${c.name}</span>`).join(' ')+(s.courses.length>2?` <span class="tag">+${s.courses.length-2}</span>`:'');
+    return `<tr style="cursor:pointer" onclick="openDetail('${s.id}')" onmouseenter="this.querySelectorAll('td').forEach(t=>t.style.background='#faf9ff')" onmouseleave="this.querySelectorAll('td').forEach(t=>t.style.background='')">
+      <td>
+        <div class="std-name-cell">
+          <div class="s-av" style="background:${col(si)}">${ini(s.name)}</div>
+          <div>
+            <div class="td-main">${s.name}</div>
+            <div class="td-sub">${s.id}</div>
+          </div>
+        </div>
+      </td>
+      <td style="font-family:'Sora',sans-serif;font-size:12px;color:var(--muted)">${s.phone}</td>
+      <td><div style="display:flex;gap:4px;flex-wrap:wrap">${tags}</div></td>
+      <td style="font-weight:700;font-size:14px">${activeSubs}</td>
+      <td style="font-weight:700;font-family:'Sora',sans-serif;font-size:13px;color:${s.wallet>0?'var(--text)':'var(--muted)'}">₹${s.wallet.toLocaleString('en-IN')}</td>
+      <td><span class="pill ${s.status}">${s.status.charAt(0).toUpperCase()+s.status.slice(1)}</span></td>
+      <td>
+        <div class="act-group">
+          <button class="action-btn" onclick="event.stopPropagation();openDetail('${s.id}')" title="View">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg>
+          </button>
+          <button class="action-btn" onclick="event.stopPropagation()" title="Edit">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openDetail(id){
+  const s=students.find(x=>x.id===id);
+  if(!s)return;
+  const si=students.indexOf(s);
+  const total=s.attendance.present+s.attendance.absent+s.attendance.late;
+  const pct=total?Math.round(s.attendance.present/total*100):0;
+  const activeSubs=s.courses.filter(c=>c.subStatus==='active').length;
+
+  const spill=(st)=>{
+    const map={active:'active',inactive:'inactive',paused:'paused',completed:'completed',cancelled:'cancelled',pending:'pending',paid:'paid',overdue:'overdue'};
+    return `<span class="pill ${map[st]||'ended'}">${st.charAt(0).toUpperCase()+st.slice(1)}</span>`;
+  };
+
+  const txnIcon=(t)=>t==='credit'
+    ?`<svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 1v10M2 7l4 4 4-4"/></svg>`
+    :`<svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 11V1M2 5l4-4 4 4"/></svg>`;
+
+  document.getElementById('detailContent').innerHTML=`
+    <button class="back-btn" onclick="goBack()">
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 1L3 6l5 5"/></svg>
+      Back to Students
+    </button>
+
+    <div class="std-header">
+      <div class="sh-av" style="background:${col(si)}">${ini(s.name)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="sh-name">${s.name}</div>
+        <div class="sh-meta">
+          ${spill(s.status)}
+          <span class="sh-meta-item">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="10" height="9" rx="1"/><path d="M1 5h10M4 1v2M8 1v2"/></svg>
+            Joined ${s.joined}
+          </span>
+          <span class="sh-meta-item" style="font-family:'Sora',sans-serif;font-size:11.5px">${s.phone}</span>
+          <span class="sh-meta-item">${s.id}</span>
+        </div>
+      </div>
+      <div class="sh-stats">
+        <div class="sh-stat"><div class="sh-val">${s.courses.length}</div><div class="sh-lbl">Courses</div></div>
+        <div class="sh-stat"><div class="sh-val">${activeSubs}</div><div class="sh-lbl">Active Subs</div></div>
+        <div class="sh-stat"><div class="sh-val">${pct}%</div><div class="sh-lbl">Attendance</div></div>
+        <div class="sh-stat"><div class="sh-val" style="color:var(--green)">₹${s.wallet.toLocaleString('en-IN')}</div><div class="sh-lbl">Wallet</div></div>
+      </div>
+    </div>
+
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="swTab(this,'tp-courses')">Courses</button>
+      <button class="tab-btn" onclick="swTab(this,'tp-attendance')">Attendance</button>
+      <button class="tab-btn" onclick="swTab(this,'tp-mentors')">Mentors</button>
+      <button class="tab-btn" onclick="swTab(this,'tp-wallet')">Wallet</button>
+      <button class="tab-btn" onclick="swTab(this,'tp-invoices')">Invoices</button>
+      <button class="tab-btn" onclick="swTab(this,'tp-parents')">Parent Info</button>
+    </div>
+
+    <!-- COURSES -->
+    <div class="tab-panel visible" id="tp-courses">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Enrolled Courses</div>
+          <span class="tag">${s.courses.length} course${s.courses.length!==1?'s':''}</span>
+        </div>
+        <div class="card-bd">
+          ${s.courses.length?s.courses.map((c,ci)=>`
+            <div class="course-row">
+              <div class="course-dot" style="background:${c.color}">${c.name.slice(0,2).toUpperCase()}</div>
+              <div class="cr-info">
+                <div class="cr-name">${c.name}</div>
+                <div class="cr-meta">Mentor: ${c.mentor}</div>
+              </div>
+              ${spill(c.subStatus)}
+              <div class="cr-right" style="margin-left:14px">
+                <span class="cr-val">${c.classes}</span>
+                <span class="cr-lbl">classes taken</span>
+              </div>
+            </div>
+          `).join(''):'<p style="color:var(--muted);text-align:center;padding:20px">No courses enrolled.</p>'}
+        </div>
+      </div>
+    </div>
+
+    <!-- ATTENDANCE -->
+    <div class="tab-panel" id="tp-attendance">
+      <div class="two-col" style="margin-bottom:14px">
+        <div>
+          <div class="three-col">
+            <div class="stat-card">
+              <div class="sc-bar" style="background:linear-gradient(90deg,#059669,#34d399)"></div>
+              <div class="sc-label">Present</div>
+              <div class="sc-val" style="color:var(--green)">${s.attendance.present}</div>
+            </div>
+            <div class="stat-card">
+              <div class="sc-bar" style="background:linear-gradient(90deg,#dc2626,#f87171)"></div>
+              <div class="sc-label">Absent</div>
+              <div class="sc-val" style="color:var(--red)">${s.attendance.absent}</div>
+            </div>
+            <div class="stat-card">
+              <div class="sc-bar" style="background:linear-gradient(90deg,#d97706,#fbbf24)"></div>
+              <div class="sc-label">Late</div>
+              <div class="sc-val" style="color:var(--amber)">${s.attendance.late}</div>
+            </div>
+          </div>
+          <div style="margin-top:14px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 18px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+              <span style="color:var(--muted);font-weight:500">Attendance rate</span>
+              <span style="font-weight:700;color:var(--text)">${pct}%</span>
+            </div>
+            <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:7px">
+              <span>${s.attendance.present} present out of ${total} classes</span>
+              <span>${total-s.attendance.present} missed</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Recent Classes</div></div>
+          <div class="card-bd">
+            ${s.attendance.recent.map(r=>`
+              <div class="att-row">
+                <span class="att-date">${r.date}</span>
+                <span class="att-course">${r.course}</span>
+                <span class="att-badge ${r.status}">${r.status.charAt(0).toUpperCase()+r.status.slice(1)}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENTORS -->
+    <div class="tab-panel" id="tp-mentors">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Assigned Mentors</div>
+          <span class="tag">${s.mentors.length} mentor${s.mentors.length!==1?'s':''}</span>
+        </div>
+        <div class="card-bd">
+          ${s.mentors.length?s.mentors.map(m=>`
+            <div class="mentor-card">
+              <div class="mc-av" style="background:${m.color}">${m.av}</div>
+              <div>
+                <div class="mc-name">${m.name}</div>
+                <div class="mc-course">${m.course}</div>
+              </div>
+              <span class="mc-badge">Active</span>
+            </div>
+          `).join(''):`
+            <div style="text-align:center;padding:28px;color:var(--muted)">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 10px;display:block;opacity:0.35"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              <p style="font-size:13px">No mentors assigned yet.</p>
+            </div>
+          `}
+        </div>
+      </div>
+    </div>
+
+    <!-- WALLET -->
+    <div class="tab-panel" id="tp-wallet">
+      <div class="wallet-hero">
+        <div>
+          <div class="wh-label">Current Balance</div>
+          <div class="wh-amount">₹${s.wallet.toLocaleString('en-IN')}</div>
+        </div>
+        <div class="wh-right">
+          <div class="wh-right-label">Student ID</div>
+          <div class="wh-right-val">${s.id}</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Recent Transactions</div>
+          <span class="tag">${s.transactions.length} records</span>
+        </div>
+        <div class="card-bd">
+          ${s.transactions.length?s.transactions.map(t=>`
+            <div class="txn-row">
+              <div class="txn-icon ${t.type}">${txnIcon(t.type)}</div>
+              <div class="txn-info">
+                <div class="txn-title">${t.desc}</div>
+                <div class="txn-date">${t.date}</div>
+              </div>
+              <div class="txn-amount ${t.type}">${t.type==='credit'?'+':'-'}₹${t.amount.toLocaleString('en-IN')}</div>
+            </div>
+          `).join(''):'<p style="color:var(--muted);text-align:center;padding:20px">No transactions yet.</p>'}
+        </div>
+      </div>
+    </div>
+
+    <!-- INVOICES -->
+    <div class="tab-panel" id="tp-invoices">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Invoice History</div>
+          <span class="tag">${s.invoices.length} invoice${s.invoices.length!==1?'s':''}</span>
+        </div>
+        <div class="card-bd">
+          ${s.invoices.length?s.invoices.map(inv=>`
+            <div class="inv-row">
+              <span class="inv-num">${inv.num}</span>
+              <div class="inv-info">
+                <div class="inv-desc">${inv.desc}</div>
+                <div class="inv-date">${inv.date}</div>
+              </div>
+              <span class="inv-amount">₹${inv.amount.toLocaleString('en-IN')}</span>
+              ${spill(inv.status)}
+            </div>
+          `).join(''):'<p style="color:var(--muted);text-align:center;padding:20px">No invoices yet.</p>'}
+        </div>
+      </div>
+    </div>
+
+    <!-- PARENTS -->
+    <div class="tab-panel" id="tp-parents">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Parent / Guardian Contacts</div>
+          <span class="tag">${s.parents.length} contact${s.parents.length!==1?'s':''}</span>
+        </div>
+        <div class="card-bd">
+          ${s.parents.map(p=>`
+            <div class="parent-card">
+              <div class="pc-av">${ini(p.name)}</div>
+              <div style="flex:1">
+                <div class="pc-name">
+                  ${p.name}
+                  ${p.primary?'<span class="primary-badge">Primary</span>':''}
+                </div>
+                <div class="pc-meta">
+                  <span class="pc-meta-item">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10.5 8.5c-.5 1-1.8 1.5-2.8 1-1.4-.7-3-2.3-3.7-3.7-.5-1 0-2.3 1-2.8l.7-.3L7 5.2 6 6l-.2.2c.4.8 1.2 1.6 2 2l.2-.2.8-1 2.5 1.2-.3.3z"/></svg>
+                    ${p.phone}
+                  </span>
+                  <span class="pc-meta-item">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 6a2.5 2.5 0 100-5 2.5 2.5 0 000 5zm-3.5 5a3.5 3.5 0 017 0"/></svg>
+                    ${p.relation}
+                  </span>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('screen-list').classList.remove('visible');
+  document.getElementById('screen-detail').classList.add('visible');
+  document.getElementById('topbar-title').textContent=s.name;
+  document.getElementById('topbar-crumb').textContent='Student Detail · '+s.id;
+  document.getElementById('search-area').style.display='none';
+  document.getElementById('detailContent').scrollTop=0;
+}
+
+function goBack(){
+  document.getElementById('screen-detail').classList.remove('visible');
+  document.getElementById('screen-list').classList.add('visible');
+  document.getElementById('topbar-title').textContent='Students';
+  document.getElementById('topbar-crumb').textContent='Sudarshini Institute · '+students.length+' students';
+  document.getElementById('search-area').style.display='';
+}
+
+function swTab(btn,panelId){
+  btn.closest('.detail-scroll').querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  btn.closest('.detail-scroll').querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('visible'));
+  document.getElementById(panelId).classList.add('visible');
+}
+
+renderTable();
+</script>
+</body>
+</html>

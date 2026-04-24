@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>LMS Portal — Mentors</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f3f0;
+  --surface:#ffffff;
+  --sidebar-bg:#1a0533;
+  --sidebar-hover:rgba(255,255,255,0.07);
+  --sidebar-active:rgba(167,139,250,0.18);
+  --sidebar-active-border:#a78bfa;
+  --text:#1a1a2e;
+  --muted:#6b7280;
+  --faint:#ede9fe;
+  --border:rgba(0,0,0,0.07);
+  --accent:#7c3aed;
+  --accent2:#a78bfa;
+  --accent-light:#ede9fe;
+  --green:#059669;--green-bg:#ecfdf5;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --blue:#2563eb;--blue-bg:#eff6ff;
+  --teal:#0891b2;--teal-bg:#ecfeff;
+  --radius:12px;--radius-sm:8px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow:hidden}
+.layout{display:flex;height:100vh}
+
+/* ─── SIDEBAR (exact match) ─── */
+.sidebar{width:240px;flex-shrink:0;background:var(--sidebar-bg);display:flex;flex-direction:column;height:100vh;position:relative;overflow:hidden}
+.sidebar::before{content:'';position:absolute;top:-60px;left:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(124,58,237,0.35) 0%,transparent 70%);pointer-events:none}
+.sidebar::after{content:'';position:absolute;bottom:60px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(167,139,250,0.2) 0%,transparent 70%);pointer-events:none}
+.sidebar-logo{padding:22px 20px 18px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.logo-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(124,58,237,0.4)}
+.logo-icon svg{width:17px;height:17px;fill:#fff}
+.logo-name{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.logo-sub{font-size:9px;color:rgba(167,139,250,0.7);letter-spacing:0.08em;text-transform:uppercase;font-weight:500}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:12px 12px}
+.sidebar-scroll::-webkit-scrollbar{width:0}
+.nav-section{font-size:9.5px;font-weight:600;color:rgba(255,255,255,0.25);letter-spacing:0.1em;text-transform:uppercase;padding:12px 8px 5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;color:rgba(255,255,255,0.5);font-size:13px;font-weight:500;margin:1px 0;transition:all 0.15s;position:relative;border-left:2px solid transparent}
+.nav-item:hover{background:var(--sidebar-hover);color:rgba(255,255,255,0.85);border-left-color:rgba(167,139,250,0.3)}
+.nav-item.active{background:var(--sidebar-active);color:#fff;border-left-color:var(--sidebar-active-border)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:rgba(124,58,237,0.7);color:#e9d5ff;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px}
+.nav-badge.red{background:rgba(220,38,38,0.7);color:#fecaca}
+.sidebar-footer{padding:14px 12px;border-top:1px solid rgba(255,255,255,0.06)}
+.user-card{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background 0.15s}
+.user-card:hover{background:var(--sidebar-hover)}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;color:#fff}
+.user-role{font-size:10px;color:rgba(255,255,255,0.4)}
+
+/* ─── MAIN ─── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:58px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 28px;flex-shrink:0}
+.topbar-left{display:flex;flex-direction:column}
+.topbar-title{font-size:15px;font-weight:700;letter-spacing:-0.02em;font-family:'Sora',sans-serif}
+.topbar-breadcrumb{font-size:11px;color:var(--muted)}
+.search-wrap{flex:1;max-width:380px;position:relative;margin-left:20px}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search-input{width:100%;height:34px;border:1.5px solid var(--border);border-radius:20px;background:var(--bg);padding:0 14px 0 34px;font-size:13px;color:var(--text);outline:none;font-family:inherit;transition:all 0.15s}
+.search-input:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(124,58,237,0.08)}
+.search-input::placeholder{color:var(--muted)}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.icon-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all 0.15s;position:relative}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.notif-dot{position:absolute;top:3px;right:3px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff}
+.topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 10px;border-radius:20px;transition:background 0.15s}
+.topbar-user:hover{background:var(--bg)}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.topbar-uname{font-size:13px;font-weight:600}
+.topbar-urole{font-size:11px;color:var(--muted)}
+
+/* ─── SHARED CARD SYSTEM ─── */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius)}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13px;font-weight:700;letter-spacing:-0.01em}
+.card-bd{padding:18px 20px}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.pill.active{background:var(--green-bg);color:#059669}
+.pill.inactive{background:var(--red-bg);color:#dc2626}
+.pill.pending{background:var(--amber-bg);color:#92400e}
+.pill.paid{background:var(--green-bg);color:#059669}
+.pill.completed{background:var(--blue-bg);color:#1d4ed8}
+.pill.paused{background:#f3f4f6;color:#6b7280}
+.pill.cancelled{background:var(--red-bg);color:#dc2626}
+.pill.ended{background:#f3f4f6;color:#6b7280}
+.tag{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:500;color:var(--muted)}
+.tag.violet{background:var(--accent-light);color:var(--accent);border-color:rgba(124,58,237,0.2)}
+table{width:100%;border-collapse:collapse}
+th{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;padding:9px 16px;text-align:left;border-bottom:1.5px solid var(--border);white-space:nowrap;background:var(--bg)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#faf9ff}
+.td-main{font-weight:600;color:var(--text)}
+.td-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.action-btn{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;border-radius:7px;border:1.5px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);transition:all 0.12s}
+.action-btn:hover{background:var(--accent-light);color:var(--accent);border-color:rgba(124,58,237,0.2)}
+.action-btn.danger:hover{background:var(--red-bg);color:var(--red);border-color:rgba(220,38,38,0.2)}
+.act-group{display:flex;gap:4px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:0 16px;height:34px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(124,58,237,0.25)}
+.btn-primary:hover{background:#6d28d9}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--bg)}
+.btn-sm{height:30px;padding:0 13px;font-size:12px}
+
+/* ─── SCREENS ─── */
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+.screen.visible{display:flex}
+
+/* ─── LIST SCREEN ─── */
+.list-toolbar{padding:14px 28px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.filter-select{height:32px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 10px;font-size:12px;font-family:inherit;background:var(--bg);color:var(--text);outline:none;cursor:pointer;transition:border 0.14s}
+.filter-select:focus{border-color:var(--accent)}
+.count-tag{background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11.5px;font-weight:500;color:var(--muted);margin-left:auto}
+.table-container{flex:1;overflow-y:auto}
+.table-container::-webkit-scrollbar{width:4px}
+.table-container::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:2px}
+.mentor-name-cell{display:flex;align-items:center;gap:11px}
+.m-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:#fff;flex-shrink:0}
+
+/* ─── DETAIL SCREEN ─── */
+.detail-scroll{flex:1;overflow-y:auto;padding:24px 28px}
+.detail-scroll::-webkit-scrollbar{width:4px}
+.detail-scroll::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:2px}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;margin-bottom:18px;padding:5px 0;border:none;background:none;font-family:inherit;font-weight:500;transition:color 0.13s}
+.back-btn:hover{color:var(--text)}
+.back-btn svg{width:14px;height:14px}
+
+/* MENTOR HEADER CARD */
+.mentor-header{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:22px 26px;display:flex;align-items:center;gap:18px;margin-bottom:18px}
+.mh-av{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700;color:#fff;flex-shrink:0}
+.mh-name{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.02em;margin-bottom:5px}
+.mh-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.mh-meta-item{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.mh-meta-item svg{width:12px;height:12px}
+.mh-stats{margin-left:auto;display:flex;gap:22px;flex-shrink:0}
+.mh-stat{text-align:center}
+.mh-val{font-family:'Sora',sans-serif;font-size:19px;font-weight:700;color:var(--text)}
+.mh-lbl{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* TABS */
+.tab-nav{display:flex;border-bottom:1.5px solid var(--border);background:var(--surface);border-radius:12px 12px 0 0;margin-bottom:0;overflow:hidden;margin-bottom:14px;border:1.5px solid var(--border)}
+.tab-btn{padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;transition:all 0.15s;border:none;background:none;font-family:inherit;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom:2.5px solid var(--accent)}
+.tab-panel{display:none}
+.tab-panel.visible{display:block}
+
+/* STAT ROW */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat-row.three{grid-template-columns:repeat(3,1fr)}
+.stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
+.sc-icon{position:absolute;right:14px;top:14px;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.sc-icon svg{width:16px;height:16px}
+.sc-label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px}
+.sc-val{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.sc-note{font-size:11px;color:var(--muted);margin-top:5px}
+
+/* COURSE ROW */
+.course-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.course-row:last-child{border-bottom:none}
+.course-dot{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.cr-info{flex:1;min-width:0}
+.cr-name{font-size:13px;font-weight:600;color:var(--text)}
+.cr-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.cr-right{text-align:right;flex-shrink:0}
+.cr-val{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--text);display:block}
+.cr-lbl{font-size:10px;color:var(--muted)}
+.commission-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600}
+.commission-tag.custom{background:var(--accent-light);color:var(--accent);border:1px solid rgba(124,58,237,0.2)}
+.commission-tag.default{background:var(--bg);color:var(--muted);border:1px solid var(--border)}
+
+/* SCHEDULE ROW */
+.sched-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.sched-row:last-child{border-bottom:none}
+.sched-date{font-size:11.5px;color:var(--muted);width:72px;flex-shrink:0;font-family:'Sora',sans-serif}
+.sched-time{font-size:12px;font-weight:700;width:92px;flex-shrink:0;color:var(--accent)}
+.sched-course{flex:1;font-size:13px;font-weight:500}
+.sched-student{font-size:11.5px;color:var(--muted);width:120px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ATTENDANCE */
+.att-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border)}
+.att-row:last-child{border-bottom:none}
+.att-date{font-size:11.5px;color:var(--muted);width:72px;flex-shrink:0}
+.att-course{flex:1;font-size:13px;font-weight:500}
+.att-student{font-size:11.5px;color:var(--muted);width:115px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.att-badge{padding:2px 9px;border-radius:5px;font-size:11px;font-weight:600}
+.att-badge.present{background:var(--green-bg);color:#059669}
+.att-badge.absent{background:var(--red-bg);color:#dc2626}
+.att-badge.late{background:var(--amber-bg);color:#d97706}
+.prog-bar{height:5px;border-radius:3px;background:var(--bg);overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;border-radius:3px;background:var(--accent)}
+
+/* PAYOUT */
+.payout-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.payout-row:last-child{border-bottom:none}
+.payout-period{font-size:13px;font-weight:600;flex:1}
+.payout-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.payout-amt{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-right:10px}
+
+/* AVAILABILITY SLOTS */
+.avail-day{display:flex;align-items:flex-start;gap:0;padding:11px 0;border-bottom:1px solid var(--border)}
+.avail-day:last-child{border-bottom:none}
+.avail-day-name{width:88px;font-size:13px;font-weight:600;flex-shrink:0;padding-top:1px}
+.avail-slots{display:flex;flex-wrap:wrap;gap:6px}
+.avail-slot{background:var(--accent-light);color:var(--accent);border:1px solid rgba(124,58,237,0.2);border-radius:6px;padding:4px 11px;font-size:12px;font-weight:600}
+.no-slot{font-size:12px;color:var(--muted)}
+
+/* HISTORY TABLE */
+.hist-table td{font-size:12.5px}
+.hist-table .reason{font-size:11.5px;color:var(--muted);max-width:200px}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h14V7L10 2zm0 2.5l5 3.5v8H5V8l5-3.5z"/><rect x="7.5" y="11" width="5" height="5" rx="0.5"/></svg>
+    </div>
+    <div>
+      <div class="logo-name">LMS Portal</div>
+      <div class="logo-sub">Sudarshini Inst.</div>
+    </div>
+  </div>
+
+  <div class="sidebar-scroll">
+    <div class="nav-section">Main</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12a1 1 0 011 1v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1zm1 3v7h10V5H3z"/><path d="M5 7h6v1.5H5z"/></svg>
+      Courses
+      <span class="nav-badge">12</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H3z"/></svg>
+      Students
+      <span class="nav-badge">247</span>
+    </div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm2 3h6v1H5V5zm0 2.5h6v1H5v-1zm0 2.5h4v1H5V10z"/></svg>
+      Mentors
+      <span class="nav-badge">6</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V4zm0 5a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-1 1H2a1 1 0 01-1-1V9z"/></svg>
+      Class Sessions
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 3H2a1 1 0 00-1 1v8a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1zM5 9H3V7h2v2zm4 0H7V7h2v2zm4 0h-2V7h2v2z"/></svg>
+      Attendance
+    </div>
+
+    <div class="nav-section">Finance</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2-1v9h8V3H4zm1 2h6v1H5V5zm0 2h6v1H5V7zm0 2h4v1H5V9z"/></svg>
+      Invoices
+      <span class="nav-badge red">3</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v1a4 4 0 000 8V1zm2 9.93A4 4 0 008 11v3a7 7 0 002-.07z"/><path d="M13 4a5 5 0 00-3-4.58V10a5 5 0 003-6z"/></svg>
+      Payouts
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a6 6 0 100 12A6 6 0 008 2zM7 9V7h2v2H7zm0-3V5h2v1H7z"/></svg>
+      Wallets
+    </div>
+
+    <div class="nav-section">Content</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h5v4H2V2zm0 6h5v6H2V8zm7-6h5v6H9V2zm0 8h5v4H9v-4z"/></svg>
+      File Management
+    </div>
+
+    <div class="nav-section">System</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg>
+      Settings
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm-.75 4h1.5v4.5h-1.5V5zm0 5.5h1.5V12h-1.5v-1.5z"/></svg>
+      User Roles
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">AT</div>
+      <div>
+        <div class="user-name">Alex Thompson</div>
+        <div class="user-role">Org Admin</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title" id="topbar-title">Mentors</div>
+      <div class="topbar-breadcrumb" id="topbar-crumb">Sudarshini Institute · 6 mentors</div>
+    </div>
+    <div class="search-wrap" id="search-area">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6.5" cy="6.5" r="5.5"/><path d="M11 11L15 15"/></svg>
+      <input class="search-input" id="searchInput" placeholder="Search mentors by name or phone…" oninput="filterMentors()">
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a6 6 0 00-6 6v3.5L1 12h14l-1-1.5V7a6 6 0 00-6-6zm0 14a2 2 0 002-2H6a2 2 0 002 2z"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="topbar-user">
+        <div class="topbar-avatar">AT</div>
+        <div>
+          <div class="topbar-uname">Alex Thompson</div>
+          <div class="topbar-urole">Org Admin</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LIST SCREEN ═══ -->
+  <div class="screen visible" id="screen-list">
+    <div class="list-toolbar">
+      <select class="filter-select" id="statusFilter" onchange="filterMentors()">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+      <select class="filter-select" id="courseFilter" onchange="filterMentors()">
+        <option value="">All Courses</option>
+        <option>Mathematics</option>
+        <option>Physics</option>
+        <option>Chemistry</option>
+        <option>Biology</option>
+        <option>English</option>
+        <option>Social Science</option>
+      </select>
+      <button class="btn btn-primary btn-sm" style="margin-left:auto">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>
+        Add Mentor
+      </button>
+      <span class="count-tag" id="countTag">6 mentors</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:220px">Mentor</th>
+            <th style="width:140px">Phone</th>
+            <th style="width:130px">Courses</th>
+            <th style="width:130px">Active Students</th>
+            <th style="width:120px">Commission</th>
+            <th style="width:110px">Status</th>
+            <th style="width:80px">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="mentorTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ DETAIL SCREEN ═══ -->
+  <div class="screen" id="screen-detail">
+    <div class="detail-scroll" id="detailContent"></div>
+  </div>
+</div>
+</div>
+
+<script>
+const COLORS = ['#7c3aed','#0369a1','#059669','#b45309','#be123c','#0891b2','#4d7c0f'];
+function ini(n){return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)}
+function col(i){return COLORS[i % COLORS.length]}
+
+const mentors = [
+  {
+    id:'MNT001', name:'Anand Kumar', phone:'98100 11001', status:'active', joined:'Sep 5, 2022',
+    courses:[
+      {name:'Mathematics',commission:28,type:'custom',assigned:'01 Jan 2024',end:null,status:'active',students:34},
+      {name:'Physics',commission:30,type:'default',assigned:'15 Mar 2024',end:null,status:'active',students:18}
+    ],
+    students:[
+      {name:'Priya Sharma',course:'Mathematics',subStatus:'active',classes:24},
+      {name:'Aarav Joshi',course:'Mathematics',subStatus:'active',classes:14},
+      {name:'Rohan Das',course:'Mathematics',subStatus:'active',classes:2},
+      {name:'Arjun Mehta',course:'Physics',subStatus:'active',classes:17},
+      {name:'Kiran Verma',course:'Physics',subStatus:'cancelled',classes:15},
+    ],
+    schedule:[
+      {date:'Apr 25',time:'09:00–10:00',course:'Mathematics',student:'Priya Sharma'},
+      {date:'Apr 25',time:'10:30–11:30',course:'Physics',student:'Arjun Mehta'},
+      {date:'Apr 26',time:'09:00–10:00',course:'Mathematics',student:'Aarav Joshi'},
+      {date:'Apr 26',time:'11:00–12:00',course:'Physics',student:'Arjun Mehta'},
+      {date:'Apr 27',time:'09:00–10:00',course:'Mathematics',student:'Rohan Das'},
+    ],
+    totalClasses: 248,
+    attendance:{total:248,marked:240,recent:[
+      {date:'Apr 24',course:'Mathematics',student:'Priya Sharma',status:'present'},
+      {date:'Apr 24',course:'Physics',student:'Arjun Mehta',status:'present'},
+      {date:'Apr 23',course:'Mathematics',student:'Aarav Joshi',status:'present'},
+      {date:'Apr 22',course:'Mathematics',student:'Priya Sharma',status:'late'},
+      {date:'Apr 21',course:'Physics',student:'Arjun Mehta',status:'absent'},
+    ]},
+    earnings:{thisMonth:18400, total:284000, status:'pending', payouts:[
+      {period:'Apr 2026',amount:18400,status:'pending',date:'—'},
+      {period:'Mar 2026',amount:16800,status:'paid',date:'Apr 5, 2026'},
+      {period:'Feb 2026',amount:15200,status:'paid',date:'Mar 5, 2026'},
+      {period:'Jan 2026',amount:17600,status:'paid',date:'Feb 5, 2026'},
+    ]},
+    slots:[
+      {day:'Monday',times:['09:00–10:00','10:30–11:30']},
+      {day:'Tuesday',times:['09:00–10:00','10:30–11:30']},
+      {day:'Wednesday',times:['09:00–10:00']},
+      {day:'Thursday',times:['09:00–10:00','10:30–11:30']},
+      {day:'Friday',times:['09:00–10:00']},
+      {day:'Saturday',times:['10:00–11:00','11:00–12:00','12:00–13:00']},
+    ],
+    history:[
+      {course:'Mathematics',student:'Kavya Nair',assigned:'01 Jan 2024',end:'15 Apr 2024',reason:'Student requested change'},
+      {course:'Physics',student:'Kiran Verma',assigned:'01 Mar 2024',end:'20 Dec 2024',reason:'Mentor schedule conflict'},
+    ]
+  },
+  {
+    id:'MNT002', name:'Sneha Rao', phone:'97200 22002', status:'active', joined:'Feb 15, 2024',
+    courses:[
+      {name:'Physics',commission:30,type:'default',assigned:'15 Feb 2024',end:null,status:'active',students:27},
+      {name:'Chemistry',commission:32,type:'custom',assigned:'01 Jun 2024',end:null,status:'active',students:12}
+    ],
+    students:[
+      {name:'Arjun Mehta',course:'Physics',subStatus:'active',classes:17},
+      {name:'Diya Patel',course:'Chemistry',subStatus:'active',classes:19},
+      {name:'Kiran Verma',course:'Physics',subStatus:'cancelled',classes:15},
+    ],
+    schedule:[
+      {date:'Apr 25',time:'10:30–11:30',course:'Physics',student:'Arjun Mehta'},
+      {date:'Apr 25',time:'02:00–03:00',course:'Chemistry',student:'Diya Patel'},
+      {date:'Apr 26',time:'10:30–11:30',course:'Chemistry',student:'Diya Patel'},
+    ],
+    totalClasses:196,
+    attendance:{total:196,marked:190,recent:[
+      {date:'Apr 24',course:'Physics',student:'Arjun Mehta',status:'present'},
+      {date:'Apr 23',course:'Chemistry',student:'Diya Patel',status:'present'},
+      {date:'Apr 22',course:'Physics',student:'Arjun Mehta',status:'present'},
+    ]},
+    earnings:{thisMonth:14600,total:168000,status:'pending',payouts:[
+      {period:'Apr 2026',amount:14600,status:'pending',date:'—'},
+      {period:'Mar 2026',amount:13200,status:'paid',date:'Apr 5, 2026'},
+      {period:'Feb 2026',amount:12800,status:'paid',date:'Mar 5, 2026'},
+    ]},
+    slots:[
+      {day:'Monday',times:['10:30–11:30','02:00–03:00']},
+      {day:'Wednesday',times:['10:30–11:30','02:00–03:00']},
+      {day:'Friday',times:['10:30–11:30','02:00–03:00']},
+      {day:'Saturday',times:['09:00–10:00','10:00–11:00']},
+    ],
+    history:[
+      {course:'Physics',student:'Neel Shah',assigned:'15 Feb 2024',end:'30 Sep 2024',reason:'Course completed'},
+    ]
+  },
+  {
+    id:'MNT003', name:'Ravi Pillai', phone:'88300 33003', status:'active', joined:'Jan 1, 2024',
+    courses:[
+      {name:'Chemistry',commission:32,type:'custom',assigned:'01 Jan 2024',end:null,status:'active',students:22},
+    ],
+    students:[
+      {name:'Kavya Nair',course:'Chemistry',subStatus:'paused',classes:31},
+      {name:'Arjun Mehta',course:'Chemistry',subStatus:'active',classes:12},
+      {name:'Diya Patel',course:'Chemistry',subStatus:'active',classes:8},
+    ],
+    schedule:[
+      {date:'Apr 25',time:'04:00–05:00',course:'Chemistry',student:'Arjun Mehta'},
+      {date:'Apr 26',time:'04:00–05:00',course:'Chemistry',student:'Diya Patel'},
+    ],
+    totalClasses:172,
+    attendance:{total:172,marked:165,recent:[
+      {date:'Apr 23',course:'Chemistry',student:'Arjun Mehta',status:'present'},
+      {date:'Apr 22',course:'Chemistry',student:'Diya Patel',status:'present'},
+      {date:'Apr 21',course:'Chemistry',student:'Kavya Nair',status:'absent'},
+    ]},
+    earnings:{thisMonth:12800,total:142000,status:'paid',payouts:[
+      {period:'Apr 2026',amount:12800,status:'paid',date:'Apr 5, 2026'},
+      {period:'Mar 2026',amount:11600,status:'paid',date:'Mar 5, 2026'},
+      {period:'Feb 2026',amount:10400,status:'paid',date:'Feb 5, 2026'},
+    ]},
+    slots:[
+      {day:'Tuesday',times:['04:00–05:00']},
+      {day:'Thursday',times:['04:00–05:00']},
+      {day:'Saturday',times:['09:00–10:00','10:00–11:00']},
+    ],
+    history:[
+      {course:'Chemistry',student:'Rohan Das',assigned:'01 Jan 2024',end:'28 Feb 2024',reason:'Student withdrawal'},
+    ]
+  },
+  {
+    id:'MNT004', name:'Pradeep Joshi', phone:'77400 44004', status:'active', joined:'Mar 1, 2025',
+    courses:[
+      {name:'Biology',commission:30,type:'default',assigned:'01 Mar 2025',end:null,status:'active',students:19},
+    ],
+    students:[
+      {name:'Sneha Kapoor',course:'Biology',subStatus:'completed',classes:48},
+      {name:'Aarav Joshi',course:'Biology',subStatus:'active',classes:11},
+    ],
+    schedule:[
+      {date:'Apr 25',time:'04:00–05:00',course:'Biology',student:'Aarav Joshi'},
+      {date:'Apr 27',time:'04:00–05:00',course:'Biology',student:'Aarav Joshi'},
+    ],
+    totalClasses:148,
+    attendance:{total:148,marked:142,recent:[
+      {date:'Apr 24',course:'Biology',student:'Aarav Joshi',status:'present'},
+      {date:'Apr 22',course:'Biology',student:'Aarav Joshi',status:'late'},
+    ]},
+    earnings:{thisMonth:9200,total:96000,status:'pending',payouts:[
+      {period:'Apr 2026',amount:9200,status:'pending',date:'—'},
+      {period:'Mar 2026',amount:8800,status:'paid',date:'Apr 5, 2026'},
+    ]},
+    slots:[
+      {day:'Monday',times:['04:00–05:00']},
+      {day:'Wednesday',times:['04:00–05:00']},
+      {day:'Friday',times:['04:00–05:00']},
+    ],
+    history:[
+      {course:'Biology',student:'Meera Singh',assigned:'01 Mar 2025',end:'31 Jul 2025',reason:'Course completed'},
+    ]
+  },
+  {
+    id:'MNT005', name:'Nisha Kothari', phone:'66500 55005', status:'active', joined:'Aug 10, 2025',
+    courses:[
+      {name:'English',commission:30,type:'default',assigned:'10 Aug 2025',end:null,status:'active',students:32},
+      {name:'Social Science',commission:30,type:'default',assigned:'10 Aug 2025',end:null,status:'active',students:28}
+    ],
+    students:[
+      {name:'Sneha Kapoor',course:'English',subStatus:'completed',classes:36},
+      {name:'Diya Patel',course:'English',subStatus:'active',classes:28},
+    ],
+    schedule:[
+      {date:'Apr 25',time:'06:00–07:00',course:'English',student:'Diya Patel'},
+      {date:'Apr 26',time:'06:00–07:00',course:'Social Science',student:'Diya Patel'},
+    ],
+    totalClasses:120,
+    attendance:{total:120,marked:115,recent:[
+      {date:'Apr 24',course:'English',student:'Diya Patel',status:'present'},
+      {date:'Apr 23',course:'Social Science',student:'Diya Patel',status:'present'},
+    ]},
+    earnings:{thisMonth:11600,total:124000,status:'pending',payouts:[
+      {period:'Apr 2026',amount:11600,status:'pending',date:'—'},
+      {period:'Mar 2026',amount:10800,status:'paid',date:'Apr 5, 2026'},
+    ]},
+    slots:[
+      {day:'Monday',times:['06:00–07:00']},
+      {day:'Tuesday',times:['06:00–07:00']},
+      {day:'Thursday',times:['06:00–07:00']},
+      {day:'Friday',times:['06:00–07:00']},
+    ],
+    history:[]
+  },
+  {
+    id:'MNT006', name:'Kiran Bose', phone:'55600 66006', status:'inactive', joined:'Jun 1, 2024',
+    courses:[
+      {name:'Mathematics',commission:30,type:'default',assigned:'01 Jun 2024',end:'31 Dec 2024',status:'ended',students:0},
+    ],
+    students:[],
+    schedule:[],
+    totalClasses:88,
+    attendance:{total:88,marked:80,recent:[
+      {date:'Dec 20',course:'Mathematics',student:'Rohan Das',status:'present'},
+    ]},
+    earnings:{thisMonth:0,total:48000,status:'paid',payouts:[
+      {period:'Dec 2024',amount:6400,status:'paid',date:'Jan 5, 2025'},
+      {period:'Nov 2024',amount:5800,status:'paid',date:'Dec 5, 2024'},
+    ]},
+    slots:[],
+    history:[
+      {course:'Mathematics',student:'Multiple Students',assigned:'01 Jun 2024',end:'31 Dec 2024',reason:'Contract ended'},
+    ]
+  },
+];
+
+let filtered = [...mentors];
+
+function filterMentors() {
+  const q = (document.getElementById('searchInput').value || '').toLowerCase();
+  const sf = document.getElementById('statusFilter').value;
+  const cf = document.getElementById('courseFilter').value;
+  filtered = mentors.filter(m => {
+    const mq = !q || m.name.toLowerCase().includes(q) || m.phone.includes(q);
+    const ms = !sf || m.status === sf;
+    const mc = !cf || m.courses.some(c => c.name === cf);
+    return mq && ms && mc;
+  });
+  renderTable();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('mentorTableBody');
+  document.getElementById('countTag').textContent = filtered.length + ' mentor' + (filtered.length !== 1 ? 's' : '');
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--muted)">No mentors found.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map(m => {
+    const mi = mentors.indexOf(m);
+    const activeStudents = m.students.filter(s => s.subStatus === 'active').length;
+    const commDisplay = m.courses.length ? m.courses[0].commission + '%' : '—';
+    const courseCount = m.courses.length;
+    const tags = m.courses.slice(0, 2).map(c => `<span class="tag" style="font-size:10.5px">${c.name}</span>`).join(' ') +
+      (m.courses.length > 2 ? ` <span class="tag">+${m.courses.length - 2}</span>` : '');
+    return `<tr style="cursor:pointer" onclick="openDetail('${m.id}')" onmouseenter="this.querySelectorAll('td').forEach(t=>t.style.background='#faf9ff')" onmouseleave="this.querySelectorAll('td').forEach(t=>t.style.background='')">
+      <td>
+        <div class="mentor-name-cell">
+          <div class="m-av" style="background:${col(mi)}">${ini(m.name)}</div>
+          <div>
+            <div class="td-main">${m.name}</div>
+            <div class="td-sub">${m.id}</div>
+          </div>
+        </div>
+      </td>
+      <td style="font-family:'Sora',sans-serif;font-size:12px;color:var(--muted)">${m.phone}</td>
+      <td><div style="display:flex;gap:4px;flex-wrap:wrap">${tags}</div></td>
+      <td style="font-weight:700;font-size:14px">${activeStudents}</td>
+      <td style="font-weight:700;font-size:13px">${commDisplay}</td>
+      <td><span class="pill ${m.status}">${m.status.charAt(0).toUpperCase() + m.status.slice(1)}</span></td>
+      <td>
+        <div class="act-group">
+          <button class="action-btn" onclick="event.stopPropagation();openDetail('${m.id}')" title="View">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg>
+          </button>
+          <button class="action-btn" onclick="event.stopPropagation()" title="Edit">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openDetail(id) {
+  const m = mentors.find(x => x.id === id);
+  if (!m) return;
+  const mi = mentors.indexOf(m);
+  const attPct = m.attendance.total ? Math.round(m.attendance.marked / m.attendance.total * 100) : 0;
+  const activeStudents = m.students.filter(s => s.subStatus === 'active').length;
+
+  const spill = (st) => {
+    const map = { active:'active', inactive:'inactive', paused:'paused', completed:'completed', cancelled:'cancelled', ended:'ended', pending:'pending', paid:'paid' };
+    return `<span class="pill ${map[st] || 'ended'}">${st.charAt(0).toUpperCase() + st.slice(1)}</span>`;
+  };
+
+  document.getElementById('detailContent').innerHTML = `
+    <button class="back-btn" onclick="goBack()">
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 1L3 6l5 5"/></svg>
+      Back to Mentors
+    </button>
+
+    <div class="mentor-header">
+      <div class="mh-av" style="background:${col(mi)}">${ini(m.name)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="mh-name">${m.name}</div>
+        <div class="mh-meta">
+          ${spill(m.status)}
+          <span class="mh-meta-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="10" height="9" rx="1"/><path d="M1 5h10M4 1v2M8 1v2"/></svg>Joined ${m.joined}</span>
+          <span class="mh-meta-item" style="font-family:'Sora',sans-serif;font-size:11.5px">${m.phone}</span>
+          <span class="mh-meta-item">${m.id}</span>
+        </div>
+      </div>
+      <div class="mh-stats">
+        <div class="mh-stat"><div class="mh-val">${m.courses.length}</div><div class="mh-lbl">Courses</div></div>
+        <div class="mh-stat"><div class="mh-val">${activeStudents}</div><div class="mh-lbl">Active Students</div></div>
+        <div class="mh-stat"><div class="mh-val">${m.totalClasses}</div><div class="mh-lbl">Total Classes</div></div>
+        <div class="mh-stat"><div class="mh-val" style="color:var(--green)">₹${Math.round(m.earnings.thisMonth / 1000)}K</div><div class="mh-lbl">This Month</div></div>
+      </div>
+    </div>
+
+    <div class="tab-nav" id="tabNav-${m.id}">
+      <button class="tab-btn active" onclick="switchTab(this, 'tab-courses')">Courses</button>
+      <button class="tab-btn" onclick="switchTab(this, 'tab-students')">Students</button>
+      <button class="tab-btn" onclick="switchTab(this, 'tab-schedule')">Schedule</button>
+      <button class="tab-btn" onclick="switchTab(this, 'tab-attendance')">Attendance</button>
+      <button class="tab-btn" onclick="switchTab(this, 'tab-earnings')">Earnings</button>
+      <button class="tab-btn" onclick="switchTab(this, 'tab-availability')">Availability</button>
+      <button class="tab-btn" onclick="switchTab(this, 'tab-history')">Assignment History</button>
+    </div>
+
+    <!-- ── COURSES TAB ── -->
+    <div class="tab-panel visible" id="tab-courses">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Assigned Courses</div>
+          <span class="tag">${m.courses.length} course${m.courses.length !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="card-bd">
+          ${m.courses.length ? m.courses.map((c, ci) => `
+            <div class="course-row">
+              <div class="course-dot" style="background:${col(ci)}">${c.name.slice(0, 2).toUpperCase()}</div>
+              <div class="cr-info">
+                <div class="cr-name">${c.name}</div>
+                <div class="cr-meta">Assigned ${c.assigned}${c.end ? ' · Ended ' + c.end : ''}</div>
+              </div>
+              <span class="commission-tag ${c.type}" style="margin-right:10px">${c.commission}% ${c.type === 'custom' ? 'custom' : 'default'}</span>
+              ${spill(c.status)}
+              <div class="cr-right" style="margin-left:14px">
+                <span class="cr-val">${c.students}</span>
+                <span class="cr-lbl">students</span>
+              </div>
+            </div>
+          `).join('') : '<p style="color:var(--muted);text-align:center;padding:20px">No courses assigned.</p>'}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STUDENTS TAB ── -->
+    <div class="tab-panel" id="tab-students">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Students Handled</div>
+          <span class="tag">${m.students.length} student${m.students.length !== 1 ? 's' : ''}</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Student</th><th>Course</th><th>Subscription Status</th><th>Classes Taken</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${m.students.length ? m.students.map((s, si) => `
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:9px">
+                      <div class="m-av" style="width:28px;height:28px;font-size:10px;background:${col(si + 2)}">${ini(s.name)}</div>
+                      <div class="td-main">${s.name}</div>
+                    </div>
+                  </td>
+                  <td><span class="tag">${s.course}</span></td>
+                  <td>${spill(s.subStatus)}</td>
+                  <td style="font-weight:700;font-family:'Sora',sans-serif;font-size:14px">${s.classes}</td>
+                  <td>
+                    <button class="action-btn" title="View Student">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg>
+                    </button>
+                  </td>
+                </tr>
+              `).join('') : '<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--muted)">No students assigned.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SCHEDULE TAB ── -->
+    <div class="tab-panel" id="tab-schedule">
+      <div class="stat-row two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div>
+          <div class="sc-label">Total Classes Conducted</div>
+          <div class="sc-val">${m.totalClasses}</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#2563eb,#60a5fa)"></div>
+          <div class="sc-label">Upcoming (next 7 days)</div>
+          <div class="sc-val">${m.schedule.length}</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Upcoming Classes</div>
+          <span class="tag" style="background:var(--green-bg);color:var(--green);border-color:#bbf7d0">${m.schedule.length} scheduled</span>
+        </div>
+        <div class="card-bd">
+          ${m.schedule.length ? m.schedule.map(s => `
+            <div class="sched-row">
+              <span class="sched-date">${s.date}</span>
+              <span class="sched-time">${s.time}</span>
+              <span class="sched-course">${s.course}</span>
+              <span class="sched-student">${s.student}</span>
+              <span class="pill active">Scheduled</span>
+            </div>
+          `).join('') : '<p style="color:var(--muted);text-align:center;padding:20px">No upcoming classes.</p>'}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ATTENDANCE TAB ── -->
+    <div class="tab-panel" id="tab-attendance">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div>
+          <div class="sc-label">Total Classes</div>
+          <div class="sc-val">${m.attendance.total}</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#059669,#34d399)"></div>
+          <div class="sc-label">Attendance Marked</div>
+          <div class="sc-val">${m.attendance.marked}</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,${attPct >= 90 ? '#059669,#34d399' : '#d97706,#fbbf24'})"></div>
+          <div class="sc-label">Coverage Rate</div>
+          <div class="sc-val" style="color:${attPct >= 90 ? 'var(--green)' : 'var(--amber)'}">${attPct}%</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Attendance Coverage</div>
+          <span style="font-size:11.5px;font-weight:600;color:var(--muted)">${m.attendance.marked} / ${m.attendance.total} marked</span>
+        </div>
+        <div class="card-bd">
+          <div style="margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:5px;color:var(--muted)"><span>Attendance marked</span><span style="font-weight:600;color:var(--text)">${attPct}%</span></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:${attPct}%"></div></div>
+          </div>
+          <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:10px">Recent Records</div>
+          ${m.attendance.recent.map(a => `
+            <div class="att-row">
+              <span class="att-date">${a.date}</span>
+              <span class="att-course">${a.course}</span>
+              <span class="att-student">${a.student}</span>
+              <span class="att-badge ${a.status}">${a.status.charAt(0).toUpperCase() + a.status.slice(1)}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EARNINGS TAB ── -->
+    <div class="tab-panel" id="tab-earnings">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#059669,#34d399)"></div>
+          <div class="sc-label">This Month Earnings</div>
+          <div class="sc-val" style="color:var(--green)">₹${m.earnings.thisMonth.toLocaleString('en-IN')}</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div>
+          <div class="sc-label">Total Earnings</div>
+          <div class="sc-val">₹${(m.earnings.total / 100000).toFixed(1)}L</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,${m.earnings.status === 'paid' ? '#059669,#34d399' : '#d97706,#fbbf24'})"></div>
+          <div class="sc-label">Current Payout</div>
+          <div style="margin-top:8px">${spill(m.earnings.status)}</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Payout History</div>
+          <span class="tag">${m.earnings.payouts.length} payouts</span>
+        </div>
+        <div class="card-bd">
+          ${m.earnings.payouts.map(p => `
+            <div class="payout-row">
+              <div style="flex:1">
+                <div class="payout-period">${p.period}</div>
+                <div style="font-size:10.5px;color:var(--muted);margin-top:1px">${p.status === 'paid' ? 'Paid on ' + p.date : 'Payment pending'}</div>
+              </div>
+              <span class="payout-amt">₹${p.amount.toLocaleString('en-IN')}</span>
+              ${spill(p.status)}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── AVAILABILITY TAB ── -->
+    <div class="tab-panel" id="tab-availability">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Weekly Availability Slots</div>
+          <span class="tag">${m.slots.reduce((a, s) => a + s.times.length, 0)} total slots</span>
+        </div>
+        <div class="card-bd">
+          ${m.slots.length ? m.slots.map(s => `
+            <div class="avail-day">
+              <span class="avail-day-name">${s.day}</span>
+              <div class="avail-slots">
+                ${s.times.map(t => `<span class="avail-slot">${t}</span>`).join('')}
+              </div>
+            </div>
+          `).join('') : '<p style="color:var(--muted);text-align:center;padding:20px">No availability slots set.</p>'}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ASSIGNMENT HISTORY TAB ── -->
+    <div class="tab-panel" id="tab-history">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Assignment History</div>
+          <span class="tag">${m.history.length} record${m.history.length !== 1 ? 's' : ''}</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="hist-table">
+            <thead>
+              <tr>
+                <th>Course</th>
+                <th>Student</th>
+                <th>Assigned Date</th>
+                <th>End Date</th>
+                <th>Reason for Change</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${m.history.length ? m.history.map(h => `
+                <tr>
+                  <td><span class="tag">${h.course}</span></td>
+                  <td class="td-main">${h.student}</td>
+                  <td style="color:var(--muted);font-size:12px">${h.assigned}</td>
+                  <td style="color:var(--muted);font-size:12px">${h.end || '—'}</td>
+                  <td class="reason">${h.reason}</td>
+                </tr>
+              `).join('') : '<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--muted)">No assignment history.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('screen-list').classList.remove('visible');
+  document.getElementById('screen-detail').classList.add('visible');
+  document.getElementById('topbar-title').textContent = m.name;
+  document.getElementById('topbar-crumb').textContent = 'Mentor Detail · ' + m.id;
+  document.getElementById('search-area').style.display = 'none';
+  document.getElementById('detailContent').scrollTop = 0;
+}
+
+function goBack() {
+  document.getElementById('screen-detail').classList.remove('visible');
+  document.getElementById('screen-list').classList.add('visible');
+  document.getElementById('topbar-title').textContent = 'Mentors';
+  document.getElementById('topbar-crumb').textContent = 'Sudarshini Institute · 6 mentors';
+  document.getElementById('search-area').style.display = '';
+}
+
+function switchTab(btn, panelId) {
+  btn.closest('.detail-scroll').querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  btn.closest('.detail-scroll').querySelectorAll('.tab-panel').forEach(p => p.classList.remove('visible'));
+  document.getElementById(panelId).classList.add('visible');
+}
+
+renderTable();
+</script>
+</body>
+</html>
