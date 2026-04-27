@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>LMS Portal — Assets & Topics</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f2f8;--surface:#ffffff;
+  --sidebar-bg:#16012e;
+  --sidebar-hover:rgba(255,255,255,0.06);
+  --text:#0f172a;--muted:#64748b;
+  --border:#e8eaf0;
+  --accent:#6d28d9;--accent-light:#ede9fe;
+  --green:#059669;--green-bg:#ecfdf5;
+  --red:#dc2626;--red-bg:#fff1f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --blue:#2563eb;--blue-bg:#eff6ff;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow:0 4px 12px rgba(0,0,0,0.06),0 1px 3px rgba(0,0,0,0.04);
+  --shadow-lg:0 20px 48px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.08);
+  --radius:14px;--radius-sm:9px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow:hidden}
+.layout{display:flex;height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:248px;flex-shrink:0;background:var(--sidebar-bg);display:flex;flex-direction:column;height:100vh;position:relative;overflow:hidden}
+.sidebar::before{content:'';position:absolute;top:-80px;left:-60px;width:260px;height:260px;background:radial-gradient(circle,rgba(109,40,217,0.4) 0%,transparent 65%);pointer-events:none}
+.sidebar::after{content:'';position:absolute;bottom:40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(167,139,250,0.15) 0%,transparent 70%);pointer-events:none}
+.sidebar-logo{padding:24px 20px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.logo-icon{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 16px rgba(109,40,217,0.45)}
+.logo-icon svg{width:18px;height:18px;fill:#fff}
+.logo-name{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.logo-sub{font-size:9px;color:rgba(167,139,250,0.6);letter-spacing:0.1em;text-transform:uppercase;font-weight:500;margin-top:1px}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:10px 12px}
+.sidebar-scroll::-webkit-scrollbar{width:0}
+.nav-section{font-size:9px;font-weight:700;color:rgba(255,255,255,0.2);letter-spacing:0.12em;text-transform:uppercase;padding:14px 10px 5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;cursor:pointer;color:rgba(255,255,255,0.45);font-size:13px;font-weight:500;margin:1px 0;transition:all 0.14s;border:1px solid transparent;text-decoration:none}
+.nav-item:hover{background:var(--sidebar-hover);color:rgba(255,255,255,0.8)}
+.nav-item.active{background:rgba(109,40,217,0.22);color:#fff;border-color:rgba(167,139,250,0.2);box-shadow:0 2px 8px rgba(109,40,217,0.15)}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:0.8}
+.nav-item.active svg{opacity:1}
+.nav-badge{margin-left:auto;background:rgba(109,40,217,0.6);color:#ddd6fe;font-size:10px;font-weight:700;padding:1px 8px;border-radius:20px}
+.nav-badge.red{background:rgba(220,38,38,0.55);color:#fecaca}
+.sidebar-footer{padding:14px 12px 16px;border-top:1px solid rgba(255,255,255,0.05)}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:10px;cursor:pointer;transition:background 0.14s}
+.user-card:hover{background:var(--sidebar-hover)}
+.user-avatar{width:33px;height:33px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;color:#fff}
+.user-role{font-size:10px;color:rgba(255,255,255,0.35);margin-top:1px}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:62px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 28px;flex-shrink:0;box-shadow:var(--shadow-sm)}
+.topbar-left{display:flex;flex-direction:column}
+.topbar-title{font-size:16px;font-weight:700;letter-spacing:-0.025em;font-family:'Sora',sans-serif;color:var(--text)}
+.topbar-breadcrumb{font-size:11px;color:var(--muted);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.icon-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all 0.14s;position:relative}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.notif-dot{position:absolute;top:2px;right:2px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff}
+.topbar-user{display:flex;align-items:center;gap:9px;cursor:pointer;padding:6px 12px;border-radius:22px;transition:background 0.14s;border:1.5px solid transparent}
+.topbar-user:hover{background:var(--bg);border-color:var(--border)}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.topbar-uname{font-size:13px;font-weight:600;color:var(--text)}
+.topbar-urole{font-size:10.5px;color:var(--muted)}
+
+/* TABS TOOLBAR */
+.tabs-toolbar{padding:0 28px;display:flex;align-items:center;gap:0;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.tab-btn{display:flex;align-items:center;gap:8px;padding:14px 18px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border:none;background:transparent;font-family:inherit;border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:all 0.14s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-btn svg{width:14px;height:14px}
+.tab-actions{margin-left:auto;display:flex;align-items:center;gap:10px;padding:10px 0}
+.filter-select{height:33px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 11px;font-size:12px;font-family:inherit;background:var(--bg);color:var(--text);outline:none;cursor:pointer;transition:border 0.13s}
+.filter-select:focus{border-color:var(--accent)}
+.count-tag{background:var(--accent-light);border:1.5px solid rgba(109,40,217,0.15);border-radius:20px;padding:3px 12px;font-size:11.5px;font-weight:600;color:var(--accent)}
+.search-box{display:flex;align-items:center;gap:8px;height:33px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 12px;background:var(--bg)}
+.search-box:focus-within{border-color:var(--accent)}
+.search-box input{border:none;background:transparent;outline:none;font-size:12px;font-family:inherit;color:var(--text);width:140px}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:24px 28px}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* STAT CARDS */
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:20px 22px;position:relative;overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0}
+.sc-icon{position:absolute;right:16px;top:16px;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.sc-icon svg{width:17px;height:17px}
+.sc-label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
+.sc-val{font-family:'Sora',sans-serif;font-size:28px;font-weight:700;letter-spacing:-0.04em;line-height:1}
+.sc-note{font-size:11px;color:var(--muted);margin-top:6px}
+.four-col{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+
+/* CARD */
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13.5px;font-weight:700;letter-spacing:-0.015em;color:var(--text)}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+th{font-size:10.5px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.07em;padding:10px 18px;text-align:left;border-bottom:1.5px solid var(--border);white-space:nowrap;background:#f8f9fc}
+td{padding:13px 18px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:middle;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#faf8ff}
+.td-main{font-weight:600;font-size:13px}
+
+/* FILE ICON */
+.file-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;letter-spacing:0.04em;flex-shrink:0;color:#fff}
+
+/* TYPE TAG */
+.type-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:7px;font-size:11px;font-weight:600}
+
+/* STATUS PILL */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.pill.done{background:#dcfce7;color:#16a34a}
+.pill.wip{background:#fef3c7;color:#b45309}
+.pill.todo{background:#f1f5f9;color:#64748b}
+
+/* LEVEL BADGE */
+.level-badge{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+
+/* TAG */
+.tag{background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:2px 9px;font-size:11px;font-weight:600;color:var(--muted)}
+
+/* ACTION BUTTONS */
+.act-group{display:flex;gap:5px}
+.action-btn{display:inline-flex;align-items:center;justify-content:center;padding:0 10px;height:28px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;color:var(--muted);font-size:11.5px;font-weight:600;transition:all 0.13s;font-family:inherit}
+.action-btn.icon-only{width:28px;padding:0}
+.action-btn:hover{background:var(--accent-light);color:var(--accent);border-color:rgba(109,40,217,0.25)}
+.action-btn.dl:hover{background:var(--green-bg);color:var(--green);border-color:#bbf7d0}
+.action-btn.del:hover{background:var(--red-bg);color:var(--red);border-color:rgba(220,38,38,0.2)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:0 18px;height:36px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s}
+.btn-primary{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;box-shadow:0 4px 14px rgba(109,40,217,0.3)}
+.btn-primary:hover{background:linear-gradient(135deg,#6d28d9,#5b21b6);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border);border-radius:20px}
+.btn-ghost:hover{background:var(--bg)}
+.btn-sm{height:30px;padding:0 14px;font-size:12px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--surface);border-radius:18px;width:480px;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto}
+.modal-box::-webkit-scrollbar{width:0}
+.modal-hd{padding:22px 26px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
+.modal-close{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all 0.14s}
+.modal-close:hover{background:var(--red-bg);color:var(--red);border-color:rgba(220,38,38,0.25)}
+.modal-bd{padding:22px 26px}
+.modal-ft{padding:14px 26px 22px;display:flex;justify-content:flex-end;gap:9px;border-top:1px solid var(--border)}
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.field-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;height:38px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface);color:var(--text);transition:border 0.13s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(109,40,217,0.08)}
+.field textarea{height:70px;padding:10px 12px;resize:none}
+.field-row.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.upload-box{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:28px;text-align:center;cursor:pointer;transition:border 0.13s;background:var(--bg)}
+.upload-box:hover{border-color:var(--accent);background:var(--accent-light)}
+.upload-box p{font-size:12.5px;color:var(--muted)}
+.upload-box strong{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h14V7L10 2zm0 2.5l5 3.5v8H5V8l5-3.5z"/><rect x="7.5" y="11" width="5" height="5" rx="0.5"/></svg></div>
+    <div><div class="logo-name">LMS Portal</div><div class="logo-sub">Sudarshini Inst.</div></div>
+  </div>
+  <div class="sidebar-scroll">
+    <div class="nav-section">Main</div>
+    <a href="dashboard.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      Dashboard
+    </a>
+    <a href="courses_page.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12a1 1 0 011 1v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1zm1 3v7h10V5H3z"/><path d="M5 7h6v1.5H5z"/></svg>
+      Courses <span class="nav-badge">12</span>
+    </a>
+    <a href="student_management.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H3z"/></svg>
+      Students <span class="nav-badge">247</span>
+    </a>
+    <a href="mentor_management.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm2 3h6v1H5V5zm0 2.5h6v1H5v-1zm0 2.5h4v1H5V10z"/></svg>
+      Mentors <span class="nav-badge">6</span>
+    </a>
+    <a href="class_sessions.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V4zm0 5a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-1 1H2a1 1 0 01-1-1V9z"/></svg>
+      Class Sessions
+    </a>
+    <a href="attendance.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 3H2a1 1 0 00-1 1v8a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1zM5 9H3V7h2v2zm4 0H7V7h2v2zm4 0h-2V7h2v2z"/></svg>
+      Attendance
+    </a>
+    <div class="nav-section">Finance</div>
+    <a href="invoices.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2-1v9h8V3H4zm1 2h6v1H5V5zm0 2h6v1H5V7zm0 2h4v1H5V9z"/></svg>
+      Invoices <span class="nav-badge red">3</span>
+    </a>
+    <a href="payouts.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 5v3l2 1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      Payouts
+    </a>
+    <a href="wallet.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="4" width="14" height="10" rx="1.5"/><path d="M1 7h14v2H1z"/><circle cx="12" cy="10" r="1"/></svg>
+      Wallet
+    </a>
+    <div class="nav-section">Files</div>
+    <a href="levels.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h12v2H2zm0-4h9v2H2zm0-4h6v2H2z"/></svg>
+      Levels
+    </a>
+    <a href="assets.html" class="nav-item active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm1 2h3v3H4V4zm5 0h3v3H9V4zM4 9h3v3H4V9zm5 0h3v3H9V9z"/></svg>
+      Assets & Topics
+    </a>
+    <div class="nav-section">System</div>
+    <a href="settings.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1.5V3M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/></svg>
+      Settings
+    </a>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">AT</div>
+      <div><div class="user-name">Alex Thompson</div><div class="user-role">Org Admin</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title" id="topbar-title">Assets & Topics</div>
+      <div class="topbar-breadcrumb">Sudarshini Institute · Files</div>
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a6 6 0 00-6 6v3.5L1 12h14l-1-1.5V7a6 6 0 00-6-6zm0 14a2 2 0 002-2H6a2 2 0 002 2z"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="topbar-user">
+        <div class="topbar-avatar">AT</div>
+        <div><div class="topbar-uname">Alex Thompson</div><div class="topbar-urole">Org Admin</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS TOOLBAR -->
+  <div class="tabs-toolbar">
+    <button class="tab-btn active" id="tab-topics" onclick="switchTab('topics')">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h9v2H2zm0 4h6v2H2z"/></svg>
+      Topics
+    </button>
+    <button class="tab-btn" id="tab-assets" onclick="switchTab('assets')">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm1 2h3v3H4V4zm5 0h3v3H9V4zM4 9h3v3H4V9zm5 0h3v3H9V9z"/></svg>
+      Assets
+    </button>
+    <div class="tab-actions" id="topics-actions">
+      <select class="filter-select">
+        <option>All Levels</option>
+        <option>Beginner</option>
+        <option>Intermediate</option>
+        <option>Advanced</option>
+        <option>Foundation</option>
+      </select>
+      <span class="count-tag">18 topics</span>
+      <button class="btn btn-primary btn-sm" onclick="openModal('topic-modal')">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>
+        Add Topic
+      </button>
+    </div>
+    <div class="tab-actions" id="assets-actions" style="display:none">
+      <div class="search-box">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="#94a3b8" stroke-width="1.8"><circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/></svg>
+        <input type="text" placeholder="Search assets…">
+      </div>
+      <select class="filter-select">
+        <option>All Types</option>
+        <option>PDF</option>
+        <option>Video</option>
+        <option>Image</option>
+        <option>Doc</option>
+      </select>
+      <span class="count-tag">14 assets</span>
+      <button class="btn btn-primary btn-sm" onclick="openModal('upload-modal')">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M6 1L3 4h2v4h2V4h2L6 1zM1 10h10v1H1z"/></svg>
+        Upload
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ASSETS PANEL -->
+    <div class="tab-panel" id="panel-assets">
+      <div class="four-col">
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div>
+          <div class="sc-icon" style="background:var(--accent-light)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm1 2h3v3H4V4zm5 0h3v3H9V4zM4 9h3v3H4V9zm5 0h3v3H9V9z"/></svg>
+          </div>
+          <div class="sc-label">Total Assets</div>
+          <div class="sc-val" style="color:var(--accent)">14</div>
+          <div class="sc-note">Across all courses</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#dc2626,#f87171)"></div>
+          <div class="sc-icon" style="background:var(--red-bg)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M3 2h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1zm1 3h8v1H4V5zm0 3h8v1H4V8zm0 3h5v1H4v-1z"/></svg>
+          </div>
+          <div class="sc-label">PDFs</div>
+          <div class="sc-val" style="color:var(--red)">6</div>
+          <div class="sc-note">Notes & worksheets</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#2563eb,#60a5fa)"></div>
+          <div class="sc-icon" style="background:var(--blue-bg)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="var(--blue)" stroke-width="1.5"><path d="M2 4a1 1 0 011-1h10a1 1 0 011 1v8a1 1 0 01-1 1H3a1 1 0 01-1-1V4zm5 2l4 2-4 2V6z"/></svg>
+          </div>
+          <div class="sc-label">Videos</div>
+          <div class="sc-val" style="color:var(--blue)">5</div>
+          <div class="sc-note">Lecture recordings</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#059669,#34d399)"></div>
+          <div class="sc-icon" style="background:var(--green-bg)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M6 1L3 4h2v4h2V4h2L6 1zM1 10h10v1H1z"/></svg>
+          </div>
+          <div class="sc-label">Recent Uploads</div>
+          <div class="sc-val" style="color:var(--green)">3</div>
+          <div class="sc-note">This week</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">All Assets</div>
+          <span style="font-size:11px;color:var(--muted)">14 files</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr><th>File Name</th><th>Type</th><th>Course</th><th>Level</th><th>Size</th><th>Uploaded</th><th>Uploaded By</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="file-icon" style="background:#dc2626">PDF</div><div class="td-main">Algebra Basics — Notes.pdf</div></div></td>
+                <td><span class="type-tag" style="background:#fff1f2;color:#dc2626;border:1px solid #fecaca">PDF</span></td>
+                <td style="color:var(--muted);font-size:12px">Mathematics</td>
+                <td style="color:var(--muted);font-size:12px">Beginner</td>
+                <td style="color:var(--muted);font-size:12px">1.2 MB</td>
+                <td style="color:var(--muted);font-size:12px">Apr 22, 2026</td>
+                <td style="font-size:12px">Anand Kumar</td>
+                <td><div class="act-group"><button class="action-btn dl">Download</button><button class="action-btn del">Delete</button></div></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="file-icon" style="background:#2563eb">VID</div><div class="td-main">Linear Equations — Lecture 1.mp4</div></div></td>
+                <td><span class="type-tag" style="background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe">Video</span></td>
+                <td style="color:var(--muted);font-size:12px">Mathematics</td>
+                <td style="color:var(--muted);font-size:12px">Beginner</td>
+                <td style="color:var(--muted);font-size:12px">148 MB</td>
+                <td style="color:var(--muted);font-size:12px">Apr 20, 2026</td>
+                <td style="font-size:12px">Anand Kumar</td>
+                <td><div class="act-group"><button class="action-btn dl">Download</button><button class="action-btn del">Delete</button></div></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="file-icon" style="background:#dc2626">PDF</div><div class="td-main">Geometry Worksheet — Set A.pdf</div></div></td>
+                <td><span class="type-tag" style="background:#fff1f2;color:#dc2626;border:1px solid #fecaca">PDF</span></td>
+                <td style="color:var(--muted);font-size:12px">Mathematics</td>
+                <td style="color:var(--muted);font-size:12px">Intermediate</td>
+                <td style="color:var(--muted);font-size:12px">0.8 MB</td>
+                <td style="color:var(--muted);font-size:12px">Apr 18, 2026</td>
+                <td style="font-size:12px">Anand Kumar</td>
+                <td><div class="act-group"><button class="action-btn dl">Download</button><button class="action-btn del">Delete</button></div></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="file-icon" style="background:#2563eb">VID</div><div class="td-main">Mechanics Introduction.mp4</div></div></td>
+                <td><span class="type-tag" style="background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe">Video</span></td>
+                <td style="color:var(--muted);font-size:12px">Physics</td>
+                <td style="color:var(--muted);font-size:12px">Foundation</td>
+                <td style="color:var(--muted);font-size:12px">210 MB</td>
+                <td style="color:var(--muted);font-size:12px">Apr 15, 2026</td>
+                <td style="font-size:12px">Sneha Rao</td>
+                <td><div class="act-group"><button class="action-btn dl">Download</button><button class="action-btn del">Delete</button></div></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="file-icon" style="background:#059669">IMG</div><div class="td-main">Circuit Diagram — Capacitor.png</div></div></td>
+                <td><span class="type-tag" style="background:#ecfdf5;color:#059669;border:1px solid #bbf7d0">Image</span></td>
+                <td style="color:var(--muted);font-size:12px">Physics</td>
+                <td style="color:var(--muted);font-size:12px">Electromagnetism</td>
+                <td style="color:var(--muted);font-size:12px">0.3 MB</td>
+                <td style="color:var(--muted);font-size:12px">Apr 12, 2026</td>
+                <td style="font-size:12px">Sneha Rao</td>
+                <td><div class="act-group"><button class="action-btn dl">Download</button><button class="action-btn del">Delete</button></div></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="file-icon" style="background:#d97706">DOC</div><div class="td-main">Calculus Practice Problems.docx</div></div></td>
+                <td><span class="type-tag" style="background:#fffbeb;color:#d97706;border:1px solid #fde68a">Doc</span></td>
+                <td style="color:var(--muted);font-size:12px">Mathematics</td>
+                <td style="color:var(--muted);font-size:12px">Advanced</td>
+                <td style="color:var(--muted);font-size:12px">0.4 MB</td>
+                <td style="color:var(--muted);font-size:12px">Apr 10, 2026</td>
+                <td style="font-size:12px">Anand Kumar</td>
+                <td><div class="act-group"><button class="action-btn dl">Download</button><button class="action-btn del">Delete</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOPICS PANEL -->
+    <div class="tab-panel active" id="panel-topics">
+      <div class="four-col">
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div>
+          <div class="sc-icon" style="background:var(--accent-light)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M2 3h12v2H2zm0 4h9v2H2zm0 4h6v2H2z"/></svg>
+          </div>
+          <div class="sc-label">Total Topics</div>
+          <div class="sc-val" style="color:var(--accent)">18</div>
+          <div class="sc-note">Across all levels</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#059669,#34d399)"></div>
+          <div class="sc-icon" style="background:var(--green-bg)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M2 6l3 3 8-7"/></svg>
+          </div>
+          <div class="sc-label">Completed</div>
+          <div class="sc-val" style="color:var(--green)">8</div>
+          <div class="sc-note">Topics marked done</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#d97706,#fbbf24)"></div>
+          <div class="sc-icon" style="background:var(--amber-bg)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="var(--amber)" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+          </div>
+          <div class="sc-label">In Progress</div>
+          <div class="sc-val" style="color:var(--amber)">5</div>
+          <div class="sc-note">Currently being taught</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#64748b,#94a3b8)"></div>
+          <div class="sc-icon" style="background:#f1f5f9">
+            <svg viewBox="0 0 16 16" fill="none" stroke="#64748b" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M5 8h6M8 5v6"/></svg>
+          </div>
+          <div class="sc-label">To Do</div>
+          <div class="sc-val" style="color:#64748b">5</div>
+          <div class="sc-note">Not yet started</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">All Topics</div>
+          <span style="font-size:11px;color:var(--muted)">18 topics</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Topic Name</th><th>Course</th><th>Level</th><th>Status</th><th>Students</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color:var(--muted);font-weight:700;font-family:'Sora',sans-serif">1</td>
+                <td><div class="td-main">Introduction to Algebra</div></td>
+                <td><span class="tag">Mathematics</span></td>
+                <td><div style="display:flex;align-items:center;gap:7px"><div class="level-badge" style="background:#7c3aed">L1</div><span style="font-size:12px;color:var(--muted)">Beginner</span></div></td>
+                <td><span class="pill done">Done</span></td>
+                <td style="font-weight:700;font-family:'Sora',sans-serif">28</td>
+                <td><div class="act-group"><button class="action-btn icon-only"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button><button class="action-btn icon-only del"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8M5 3V2h2v1M4 5v4M8 5v4M3 3l1 7h4l1-7"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td style="color:var(--muted);font-weight:700;font-family:'Sora',sans-serif">2</td>
+                <td><div class="td-main">Linear Equations</div></td>
+                <td><span class="tag">Mathematics</span></td>
+                <td><div style="display:flex;align-items:center;gap:7px"><div class="level-badge" style="background:#7c3aed">L1</div><span style="font-size:12px;color:var(--muted)">Beginner</span></div></td>
+                <td><span class="pill done">Done</span></td>
+                <td style="font-weight:700;font-family:'Sora',sans-serif">28</td>
+                <td><div class="act-group"><button class="action-btn icon-only"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button><button class="action-btn icon-only del"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8M5 3V2h2v1M4 5v4M8 5v4M3 3l1 7h4l1-7"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td style="color:var(--muted);font-weight:700;font-family:'Sora',sans-serif">3</td>
+                <td><div class="td-main">Quadratic Equations</div></td>
+                <td><span class="tag">Mathematics</span></td>
+                <td><div style="display:flex;align-items:center;gap:7px"><div class="level-badge" style="background:#7c3aed">L1</div><span style="font-size:12px;color:var(--muted)">Beginner</span></div></td>
+                <td><span class="pill wip">In Progress</span></td>
+                <td style="font-weight:700;font-family:'Sora',sans-serif">22</td>
+                <td><div class="act-group"><button class="action-btn icon-only"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button><button class="action-btn icon-only del"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8M5 3V2h2v1M4 5v4M8 5v4M3 3l1 7h4l1-7"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td style="color:var(--muted);font-weight:700;font-family:'Sora',sans-serif">4</td>
+                <td><div class="td-main">Trigonometric Ratios</div></td>
+                <td><span class="tag">Mathematics</span></td>
+                <td><div style="display:flex;align-items:center;gap:7px"><div class="level-badge" style="background:#0369a1">L2</div><span style="font-size:12px;color:var(--muted)">Intermediate</span></div></td>
+                <td><span class="pill wip">In Progress</span></td>
+                <td style="font-weight:700;font-family:'Sora',sans-serif">18</td>
+                <td><div class="act-group"><button class="action-btn icon-only"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button><button class="action-btn icon-only del"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8M5 3V2h2v1M4 5v4M8 5v4M3 3l1 7h4l1-7"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td style="color:var(--muted);font-weight:700;font-family:'Sora',sans-serif">5</td>
+                <td><div class="td-main">Limits &amp; Continuity</div></td>
+                <td><span class="tag">Mathematics</span></td>
+                <td><div style="display:flex;align-items:center;gap:7px"><div class="level-badge" style="background:#be123c">L3</div><span style="font-size:12px;color:var(--muted)">Advanced</span></div></td>
+                <td><span class="pill done">Done</span></td>
+                <td style="font-weight:700;font-family:'Sora',sans-serif">11</td>
+                <td><div class="act-group"><button class="action-btn icon-only"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button><button class="action-btn icon-only del"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8M5 3V2h2v1M4 5v4M8 5v4M3 3l1 7h4l1-7"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td style="color:var(--muted);font-weight:700;font-family:'Sora',sans-serif">6</td>
+                <td><div class="td-main">Units &amp; Measurements</div></td>
+                <td><span class="tag">Physics</span></td>
+                <td><div style="display:flex;align-items:center;gap:7px"><div class="level-badge" style="background:#059669">L1</div><span style="font-size:12px;color:var(--muted)">Foundation</span></div></td>
+                <td><span class="pill done">Done</span></td>
+                <td style="font-weight:700;font-family:'Sora',sans-serif">34</td>
+                <td><div class="act-group"><button class="action-btn icon-only"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button><button class="action-btn icon-only del"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8M5 3V2h2v1M4 5v4M8 5v4M3 3l1 7h4l1-7"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td style="color:var(--muted);font-weight:700;font-family:'Sora',sans-serif">7</td>
+                <td><div class="td-main">Laws of Motion (Newton)</div></td>
+                <td><span class="tag">Physics</span></td>
+                <td><div style="display:flex;align-items:center;gap:7px"><div class="level-badge" style="background:#059669">L1</div><span style="font-size:12px;color:var(--muted)">Foundation</span></div></td>
+                <td><span class="pill wip">In Progress</span></td>
+                <td style="font-weight:700;font-family:'Sora',sans-serif">34</td>
+                <td><div class="act-group"><button class="action-btn icon-only"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button><button class="action-btn icon-only del"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8M5 3V2h2v1M4 5v4M8 5v4M3 3l1 7h4l1-7"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td style="color:var(--muted);font-weight:700;font-family:'Sora',sans-serif">8</td>
+                <td><div class="td-main">Electric Charges &amp; Fields</div></td>
+                <td><span class="tag">Physics</span></td>
+                <td><div style="display:flex;align-items:center;gap:7px"><div class="level-badge" style="background:#0891b2">L2</div><span style="font-size:12px;color:var(--muted)">Electromagnetism</span></div></td>
+                <td><span class="pill done">Done</span></td>
+                <td style="font-weight:700;font-family:'Sora',sans-serif">19</td>
+                <td><div class="act-group"><button class="action-btn icon-only"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button><button class="action-btn icon-only del"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8M5 3V2h2v1M4 5v4M8 5v4M3 3l1 7h4l1-7"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td style="color:var(--muted);font-weight:700;font-family:'Sora',sans-serif">9</td>
+                <td><div class="td-main">Capacitance</div></td>
+                <td><span class="tag">Physics</span></td>
+                <td><div style="display:flex;align-items:center;gap:7px"><div class="level-badge" style="background:#0891b2">L2</div><span style="font-size:12px;color:var(--muted)">Electromagnetism</span></div></td>
+                <td><span class="pill todo">To Do</span></td>
+                <td style="font-weight:700;font-family:'Sora',sans-serif">19</td>
+                <td><div class="act-group"><button class="action-btn icon-only"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button><button class="action-btn icon-only del"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8M5 3V2h2v1M4 5v4M8 5v4M3 3l1 7h4l1-7"/></svg></button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+</div><!-- end main -->
+</div><!-- end layout -->
+
+<!-- UPLOAD ASSET MODAL -->
+<div class="modal-overlay" id="upload-modal" onclick="closeModal('upload-modal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <div><div class="modal-title">Upload Asset</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Add a file to the asset library</div></div>
+      <button class="modal-close" onclick="closeModal('upload-modal')"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l10 10M11 1L1 11"/></svg></button>
+    </div>
+    <div class="modal-bd">
+      <div class="field" style="margin-bottom:16px">
+        <div class="upload-box">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" style="margin:0 auto 10px;display:block"><path d="M12 3L9 6h2v6h2V6h2L12 3zM4 17h16v2H4z"/></svg>
+          <p><strong>Click to upload</strong> or drag and drop</p>
+          <p style="font-size:11px;margin-top:4px">PDF, Video, Image, DOC — up to 500 MB</p>
+        </div>
+      </div>
+      <div class="field-row two" style="margin-bottom:16px">
+        <div class="field"><div class="field-label">Asset Type</div><select>
+          <option value="">Select…</option>
+          <option value="video">Video</option>
+          <option value="audio">Audio</option>
+          <option value="file">File</option>
+        </select></div>
+        <div class="field"><div class="field-label">Protection Level</div><select>
+          <option value="">Select…</option>
+          <option value="view_only">View Only</option>
+          <option value="download_allowed">Download Allowed</option>
+          <option value="restricted">Restricted</option>
+        </select></div>
+      </div>
+      <div class="field" style="margin-bottom:0"><div class="field-label">Level</div><select id="upload-level-select" onchange="showTopicsForLevel(this.value)"><option value="">Select…</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option><option value="foundation">Foundation</option><option value="electro">Electromagnetism</option></select></div>
+      <div id="level-topics-box" style="display:none;margin-top:14px;border:1.5px solid var(--border);border-radius:9px;overflow:hidden">
+        <div style="padding:9px 14px;background:#f8f9fc;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:10.5px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.07em" id="level-topics-title">Topics in this level</span>
+          <span style="font-size:11px;font-weight:600;color:var(--accent);cursor:pointer" onclick="toggleAllTopics(this)">Select All</span>
+        </div>
+        <div id="level-topics-list" style="max-height:180px;overflow-y:auto;padding:4px 0"></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('upload-modal')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="closeModal('upload-modal')">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M6 1L3 4h2v4h2V4h2L6 1z"/></svg>
+        Upload
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TOPIC MODAL -->
+<div class="modal-overlay" id="topic-modal" onclick="closeModal('topic-modal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <div><div class="modal-title">Add Topic</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Create a new topic</div></div>
+      <button class="modal-close" onclick="closeModal('topic-modal')"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l10 10M11 1L1 11"/></svg></button>
+    </div>
+    <div class="modal-bd">
+      <div class="field" style="margin-bottom:16px"><div class="field-label">Topic Name</div><input type="text" placeholder="e.g. Linear Equations"></div>
+      <div class="field"><div class="field-label">Level</div><select><option value="">Select…</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>Foundation</option><option>Electromagnetism</option></select></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('topic-modal')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="closeModal('topic-modal')">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>
+        Add Topic
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  document.getElementById('topics-actions').style.display=name==='topics'?'flex':'none';
+  document.getElementById('assets-actions').style.display=name==='assets'?'flex':'none';
+  document.getElementById('topbar-title').textContent=name==='topics'?'Assets & Topics — Topics':'Assets & Topics — Assets';
+}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+  if(id==='upload-modal'){
+    document.getElementById('upload-level-select').value='';
+    document.getElementById('level-topics-box').style.display='none';
+  }
+}
+
+const levelTopics={
+  beginner:{label:'Beginner — Mathematics',topics:[
+    {n:'Introduction to Algebra',s:'done'},
+    {n:'Linear Equations',s:'done'},
+    {n:'Quadratic Equations',s:'wip'},
+    {n:'Polynomials',s:'todo'}
+  ]},
+  intermediate:{label:'Intermediate — Mathematics',topics:[
+    {n:'Triangles & Congruence',s:'done'},
+    {n:'Circles',s:'done'},
+    {n:'Trigonometric Ratios',s:'wip'},
+    {n:'Heights & Distances',s:'wip'},
+    {n:'Coordinate Geometry',s:'todo'}
+  ]},
+  advanced:{label:'Advanced — Mathematics',topics:[
+    {n:'Limits & Continuity',s:'done'},
+    {n:'Derivatives',s:'done'},
+    {n:'Integrals',s:'wip'},
+    {n:'Differential Equations',s:'todo'},
+    {n:'Probability & Statistics',s:'todo'},
+    {n:'Vectors & 3D Geometry',s:'todo'}
+  ]},
+  foundation:{label:'Foundation — Physics',topics:[
+    {n:'Units & Measurements',s:'done'},
+    {n:'Laws of Motion (Newton)',s:'wip'},
+    {n:'Work, Energy & Power',s:'todo'}
+  ]},
+  electro:{label:'Electromagnetism — Physics',topics:[
+    {n:'Electric Charges & Fields',s:'done'},
+    {n:'Current Electricity',s:'done'},
+    {n:'Capacitance',s:'wip'},
+    {n:'Magnetic Effects of Current',s:'todo'}
+  ]}
+};
+
+const statusStyle={
+  done:'background:#dcfce7;color:#16a34a',
+  wip:'background:#fef3c7;color:#b45309',
+  todo:'background:#f1f5f9;color:#64748b'
+};
+const statusLabel={done:'Done',wip:'In Progress',todo:'To Do'};
+
+function showTopicsForLevel(key){
+  const box=document.getElementById('level-topics-box');
+  if(!key){box.style.display='none';return;}
+  const d=levelTopics[key];
+  document.getElementById('level-topics-title').textContent=d.label+' · '+d.topics.length+' topics';
+  document.getElementById('level-topics-list').innerHTML=d.topics.map((t,i)=>`
+    <label style="display:flex;align-items:center;gap:10px;padding:9px 14px;${i<d.topics.length-1?'border-bottom:1px solid var(--border)':''}; cursor:pointer;transition:background 0.12s" onmouseover="this.style.background='#faf8ff'" onmouseout="this.style.background='transparent'">
+      <input type="checkbox" class="topic-cb" style="width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex-shrink:0">
+      <span style="flex:1;font-size:12.5px;font-weight:500;color:var(--text)">${t.n}</span>
+      <span style="display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:700;${statusStyle[t.s]}">${statusLabel[t.s]}</span>
+    </label>`).join('');
+  box.style.display='block';
+}
+
+function toggleAllTopics(el){
+  const boxes=document.querySelectorAll('.topic-cb');
+  const allChecked=[...boxes].every(b=>b.checked);
+  boxes.forEach(b=>b.checked=!allChecked);
+  el.textContent=allChecked?'Select All':'Deselect All';
+}
+</script>
+</body>
+</html>

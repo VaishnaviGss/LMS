@@ -150,10 +150,11 @@ tr:hover td{background:#faf9ff}
 .mh-lbl{font-size:10px;color:var(--muted);margin-top:2px}
 
 /* TABS */
-.tab-nav{display:flex;border-bottom:1.5px solid var(--border);background:var(--surface);border-radius:12px 12px 0 0;margin-bottom:0;overflow:hidden;margin-bottom:14px;border:1.5px solid var(--border)}
-.tab-btn{padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;transition:all 0.15s;border:none;background:none;font-family:inherit;white-space:nowrap}
-.tab-btn:hover{color:var(--text)}
-.tab-btn.active{color:var(--accent);border-bottom:2.5px solid var(--accent)}
+.tab-nav{display:flex;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:16px;overflow-x:auto;gap:2px;box-shadow:var(--shadow-sm);border:1px solid var(--border)}
+.tab-nav::-webkit-scrollbar{height:0}
+.tab-btn{padding:8px 16px;border-radius:9px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.14s;border:none;background:none;font-family:inherit;white-space:nowrap}
+.tab-btn:hover{color:var(--text);background:var(--bg)}
+.tab-btn.active{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;box-shadow:0 2px 10px rgba(109,40,217,0.3)}
 .tab-panel{display:none}
 .tab-panel.visible{display:block}
 
@@ -392,9 +393,8 @@ tr:hover td{background:#faf9ff}
           <tr>
             <th style="width:220px">Mentor</th>
             <th style="width:140px">Phone</th>
-            <th style="width:130px">Courses</th>
+            <th style="width:150px">Courses</th>
             <th style="width:130px">Active Students</th>
-            <th style="width:120px">Commission</th>
             <th style="width:110px">Status</th>
             <th style="width:80px">Actions</th>
           </tr>
@@ -413,7 +413,7 @@ tr:hover td{background:#faf9ff}
 
 <!-- ADD MENTOR MODAL -->
 <div class="mo" id="mo-add-mentor" onclick="moOut(event,'mo-add-mentor')">
-  <div class="mo-box">
+  <div class="mo-box" style="max-height:90vh;overflow-y:auto">
     <div class="mo-hd">
       <div class="mo-title">Add New Mentor</div>
       <button class="mo-close" onclick="closeMo('mo-add-mentor')">
@@ -421,44 +421,49 @@ tr:hover td{background:#faf9ff}
       </button>
     </div>
     <div class="mo-body">
+      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)">Personal Details</div>
+      <div class="form-grid">
+        <div class="form-row" style="margin-bottom:0">
+          <label class="form-label">First Name *</label>
+          <input class="form-input" id="add-m-fname" placeholder="e.g. Anand">
+        </div>
+        <div class="form-row" style="margin-bottom:0">
+          <label class="form-label">Last Name *</label>
+          <input class="form-input" id="add-m-lname" placeholder="e.g. Kumar">
+        </div>
+      </div>
       <div class="form-row">
-        <label class="form-label">Full Name *</label>
-        <input class="form-input" placeholder="e.g. Anand Kumar">
+        <label class="form-label">Phone *</label>
+        <input class="form-input" id="add-m-phone" placeholder="e.g. 98100 11001">
       </div>
-      <div class="form-grid">
-        <div class="form-row" style="margin-bottom:0">
-          <label class="form-label">Phone *</label>
-          <input class="form-input" placeholder="e.g. 98100 11001">
-        </div>
-        <div class="form-row" style="margin-bottom:0">
-          <label class="form-label">Status</label>
-          <div style="height:36px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 11px;display:flex;align-items:center;background:#f8f9fa">
-            <span class="pill active">Active</span>
-          </div>
-        </div>
+      <div class="form-row">
+        <label class="form-label">Email (optional)</label>
+        <input class="form-input" id="add-m-email" type="email" placeholder="e.g. anand@email.com" oninput="togglePasswordField()">
       </div>
-      <div style="height:14px"></div>
-      <div class="form-grid">
-        <div class="form-row" style="margin-bottom:0">
-          <label class="form-label">Date Joined *</label>
-          <input class="form-input" type="date" value="2026-04-24">
-        </div>
-        <div class="form-row" style="margin-bottom:0">
-          <label class="form-label">Commission %</label>
-          <input class="form-input" type="number" placeholder="e.g. 30">
-        </div>
+      <div class="form-row" id="add-m-pass-row" style="display:none">
+        <label class="form-label">Password *</label>
+        <input class="form-input" id="add-m-pass" type="password" placeholder="Set password">
       </div>
+      <div class="form-row" style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <input type="checkbox" id="add-m-active" checked style="width:16px;height:16px;cursor:pointer">
+        <label style="margin:0;font-size:13px;color:var(--text);cursor:pointer;user-select:none" for="add-m-active">Active</label>
+      </div>
+
+      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-top:18px">Available Slots</div>
+      <div id="add-m-slots-container" style="max-height:200px;overflow-y:auto;margin-bottom:12px"></div>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="addSlotRow()" style="width:100%;justify-content:center">+ Add Slot</button>
+      <div id="add-m-slot-error" style="color:var(--red);font-size:11px;margin-top:6px;display:none"></div>
     </div>
     <div class="mo-ft">
       <button class="btn btn-ghost btn-sm" onclick="closeMo('mo-add-mentor')">Cancel</button>
-      <button class="btn btn-primary btn-sm">Add Mentor</button>
+      <button class="btn btn-primary btn-sm" onclick="createMentor()">Add Mentor</button>
     </div>
   </div>
 </div>
 
 <!-- EDIT MENTOR MODAL -->
 <div class="mo" id="mo-edit-mentor" onclick="moOut(event,'mo-edit-mentor')">
-  <div class="mo-box">
+  <div class="mo-box" style="max-height:90vh;overflow-y:auto">
     <div class="mo-hd">
       <div>
         <div class="mo-title">Edit Mentor</div>
@@ -468,37 +473,36 @@ tr:hover td{background:#faf9ff}
         <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l10 10M11 1L1 11"/></svg>
       </button>
     </div>
-    <div class="mo-body" style="max-height:68vh;overflow-y:auto">
+    <div class="mo-body" style="max-height:calc(90vh - 120px);overflow-y:auto">
 
       <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)">Personal Details</div>
-      <div class="form-row">
-        <label class="form-label">Full Name *</label>
-        <input class="form-input" id="edit-m-name" placeholder="Full name">
-      </div>
       <div class="form-grid">
         <div class="form-row" style="margin-bottom:0">
-          <label class="form-label">Phone *</label>
-          <input class="form-input" id="edit-m-phone" placeholder="e.g. 98100 11001">
+          <label class="form-label">First Name *</label>
+          <input class="form-input" id="edit-m-fname" placeholder="First name">
         </div>
         <div class="form-row" style="margin-bottom:0">
-          <label class="form-label">Status</label>
-          <select class="form-select" id="edit-m-status">
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
+          <label class="form-label">Last Name *</label>
+          <input class="form-input" id="edit-m-lname" placeholder="Last name">
         </div>
       </div>
-      <div style="height:14px"></div>
-      <div class="form-row" style="margin-bottom:0">
-        <label class="form-label">Date Joined *</label>
-        <input class="form-input" id="edit-m-joined" type="date">
+      <div class="form-row">
+        <label class="form-label">Phone *</label>
+        <input class="form-input" id="edit-m-phone" placeholder="e.g. 98100 11001">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="edit-m-email" type="email" placeholder="e.g. anand@email.com">
+      </div>
+      <div class="form-row" style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <input type="checkbox" id="edit-m-active" style="width:16px;height:16px;cursor:pointer">
+        <label style="margin:0;font-size:13px;color:var(--text);cursor:pointer;user-select:none" for="edit-m-active">Active</label>
       </div>
 
-      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;margin:18px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)">Commission</div>
-      <div class="form-row" style="margin-bottom:0">
-        <label class="form-label">Commission %</label>
-        <input class="form-input" id="edit-m-commission" type="number" placeholder="30">
-      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-top:18px">Available Slots</div>
+      <div id="edit-m-slots-container" style="max-height:200px;overflow-y:auto;margin-bottom:12px"></div>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="addEditSlotRow()" style="width:100%;justify-content:center">+ Add Slot</button>
+      <div id="edit-m-slot-error" style="color:var(--red);font-size:11px;margin-top:6px;display:none"></div>
 
     </div>
     <div class="mo-ft">
@@ -519,28 +523,125 @@ function moOut(e,id){if(e.target===e.currentTarget)closeMo(id)}
 
 let editingMentorId = null;
 
+function togglePasswordField(){
+  const email = document.getElementById('add-m-email').value;
+  const passRow = document.getElementById('add-m-pass-row');
+  passRow.style.display = email ? 'block' : 'none';
+}
+
+function validateSlots(slots,mode='add'){
+  const days = slots.map(s => s.day);
+  const dups = days.filter((d,i) => days.indexOf(d) !== i);
+  const errDiv = document.getElementById(mode==='' ? 'add-m-slot-error' : `${mode}-m-slot-error`);
+  if(dups.length){
+    errDiv.textContent = 'Duplicate slots on same day not allowed';
+    errDiv.style.display = 'block';
+    return false;
+  }
+  errDiv.style.display = 'none';
+  return true;
+}
+
+function addSlotRow(){
+  const cont = document.getElementById('add-m-slots-container');
+  const idx = cont.children.length;
+  const row = document.createElement('div');
+  row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)';
+  row.innerHTML = `
+    <select class="form-select" style="height:32px;font-size:12px" data-slot-day>
+      <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+    </select>
+    <input class="form-input" type="time" style="height:32px;font-size:12px" data-slot-start>
+    <input class="form-input" type="time" style="height:32px;font-size:12px" data-slot-end>
+    <button type="button" class="btn btn-ghost" style="height:32px;width:32px;padding:0;border-radius:6px" onclick="this.parentElement.remove()">✕</button>
+  `;
+  cont.appendChild(row);
+}
+
+function addEditSlotRow(){
+  const cont = document.getElementById('edit-m-slots-container');
+  const idx = cont.children.length;
+  const row = document.createElement('div');
+  row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)';
+  row.innerHTML = `
+    <select class="form-select" style="height:32px;font-size:12px" data-slot-day>
+      <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+    </select>
+    <input class="form-input" type="time" style="height:32px;font-size:12px" data-slot-start>
+    <input class="form-input" type="time" style="height:32px;font-size:12px" data-slot-end>
+    <button type="button" class="btn btn-ghost" style="height:32px;width:32px;padding:0;border-radius:6px" onclick="this.parentElement.remove()">✕</button>
+  `;
+  cont.appendChild(row);
+}
+
+function createMentor(){
+  const fname = document.getElementById('add-m-fname').value.trim();
+  const lname = document.getElementById('add-m-lname').value.trim();
+  const phone = document.getElementById('add-m-phone').value.trim();
+  const email = document.getElementById('add-m-email').value.trim();
+  const pass = document.getElementById('add-m-pass').value.trim();
+  const active = document.getElementById('add-m-active').checked;
+
+  if(!fname || !lname || !phone) return alert('First Name, Last Name, Phone required');
+  if(email && !pass) return alert('Password required if email is provided');
+
+  const slotElems = document.getElementById('add-m-slots-container').querySelectorAll('[data-slot-day]');
+  const slots = Array.from(slotElems).map(row => ({
+    day: row.parentElement.querySelector('[data-slot-day]').value,
+    start: row.parentElement.querySelector('[data-slot-start]').value,
+    end: row.parentElement.querySelector('[data-slot-end]').value,
+  }));
+
+  if(!validateSlots(slots.map(s => ({day: s.day})),'')) return;
+
+  const id = 'MNT' + String(mentors.length + 1).padStart(3,'0');
+  const created = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+  mentors.push({
+    id, firstName:fname, lastName:lname, name:`${fname} ${lname}`, phone, email:email||null, status: active?'active':'inactive', created, joined:created,
+    courses:[], schedule:[], totalClasses:0, attendance:{total:0,marked:0,recent:[]}, earnings:{thisMonth:0,total:0,status:'pending',payouts:[]}, slots
+  });
+
+  closeMo('mo-add-mentor');
+  filterMentors();
+  alert('Mentor created!');
+}
+
 function openEditMo(id){
   const m = mentors.find(x => x.id === id);
   if(!m) return;
   editingMentorId = id;
 
   document.getElementById('edit-mentor-id-label').textContent = m.id;
-  document.getElementById('edit-m-name').value = m.name;
+  document.getElementById('edit-m-fname').value = m.firstName || m.name.split(' ')[0];
+  document.getElementById('edit-m-lname').value = m.lastName || m.name.split(' ')[1] || '';
   document.getElementById('edit-m-phone').value = m.phone;
-  document.getElementById('edit-m-status').value = m.status;
+  document.getElementById('edit-m-email').value = m.email || '';
+  document.getElementById('edit-m-active').checked = m.status === 'active';
 
-  const months={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
-  const dp = m.joined.split(' ');
-  if(dp.length === 3){
-    const d = dp[1].replace(',','').padStart(2,'0');
-    document.getElementById('edit-m-joined').value = `${dp[2]}-${months[dp[0]]||'01'}-${d}`;
-  } else {
-    document.getElementById('edit-m-joined').value = '';
+  const slotCont = document.getElementById('edit-m-slots-container');
+  slotCont.innerHTML = '';
+  if(m.slots && m.slots.length){
+    m.slots.forEach(slot => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)';
+      row.innerHTML = `
+        <select class="form-select" style="height:32px;font-size:12px" data-slot-day>
+          <option ${slot.day==='Monday'?'selected':''}>Monday</option>
+          <option ${slot.day==='Tuesday'?'selected':''}>Tuesday</option>
+          <option ${slot.day==='Wednesday'?'selected':''}>Wednesday</option>
+          <option ${slot.day==='Thursday'?'selected':''}>Thursday</option>
+          <option ${slot.day==='Friday'?'selected':''}>Friday</option>
+          <option ${slot.day==='Saturday'?'selected':''}>Saturday</option>
+          <option ${slot.day==='Sunday'?'selected':''}>Sunday</option>
+        </select>
+        <input class="form-input" type="time" style="height:32px;font-size:12px" data-slot-start value="${slot.start||''}">
+        <input class="form-input" type="time" style="height:32px;font-size:12px" data-slot-end value="${slot.end||''}">
+        <button type="button" class="btn btn-ghost" style="height:32px;width:32px;padding:0;border-radius:6px" onclick="this.parentElement.remove()">✕</button>
+      `;
+      slotCont.appendChild(row);
+    });
   }
-
-  const firstCourse = m.courses && m.courses[0];
-  document.getElementById('edit-m-commission').value = firstCourse ? firstCourse.commission : '';
-  document.getElementById('edit-m-commission-type').value = firstCourse ? firstCourse.type : 'default';
 
   openMo('mo-edit-mentor');
 }
@@ -549,20 +650,27 @@ function saveMentorEdit(){
   const m = mentors.find(x => x.id === editingMentorId);
   if(!m) return;
 
-  m.name   = document.getElementById('edit-m-name').value.trim() || m.name;
-  m.phone  = document.getElementById('edit-m-phone').value.trim() || m.phone;
-  m.status = document.getElementById('edit-m-status').value;
+  const fname = document.getElementById('edit-m-fname').value.trim();
+  const lname = document.getElementById('edit-m-lname').value.trim();
+  if(!fname || !lname) return alert('First Name and Last Name required');
 
-  const raw = document.getElementById('edit-m-joined').value;
-  if(raw){
-    const dt = new Date(raw + 'T00:00:00');
-    m.joined = dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  }
+  m.firstName = fname;
+  m.lastName = lname;
+  m.name = `${fname} ${lname}`;
+  m.phone = document.getElementById('edit-m-phone').value.trim() || m.phone;
+  m.email = document.getElementById('edit-m-email').value.trim() || null;
+  m.status = document.getElementById('edit-m-active').checked ? 'active' : 'inactive';
 
-  const newComm = parseInt(document.getElementById('edit-m-commission').value);
-  if(m.courses && m.courses.length){
-    m.courses.forEach(c => { c.commission = newComm || c.commission; });
-  }
+  const slotElems = document.getElementById('edit-m-slots-container').querySelectorAll('[data-slot-day]');
+  const slots = Array.from(slotElems).map(elem => {
+    const day = elem.parentElement.querySelector('[data-slot-day]').value;
+    const start = elem.parentElement.querySelector('[data-slot-start]').value;
+    const end = elem.parentElement.querySelector('[data-slot-end]').value;
+    return {day,start,end};
+  });
+
+  if(!validateSlots(slots.map(s => ({day: s.day})),'edit')) return;
+  m.slots = slots;
 
   closeMo('mo-edit-mentor');
   filterMentors();
@@ -570,7 +678,7 @@ function saveMentorEdit(){
 
 const mentors = [
   {
-    id:'MNT001', name:'Anand Kumar', phone:'98100 11001', status:'active', joined:'Sep 5, 2022',
+    id:'MNT001', firstName:'Anand', lastName:'Kumar', name:'Anand Kumar', email:'anand@email.com', phone:'98100 11001', status:'active', created:'Sep 5, 2022', joined:'Sep 5, 2022',
     courses:[
       {name:'Mathematics',commission:28,type:'custom',assigned:'01 Jan 2024',end:null,status:'active',students:34},
       {name:'Physics',commission:30,type:'default',assigned:'15 Mar 2024',end:null,status:'active',students:18}
@@ -604,20 +712,21 @@ const mentors = [
       {period:'Jan 2026',amount:17600,status:'paid',date:'Feb 5, 2026'},
     ]},
     slots:[
-      {day:'Monday',times:['09:00–10:00','10:30–11:30']},
-      {day:'Tuesday',times:['09:00–10:00','10:30–11:30']},
-      {day:'Wednesday',times:['09:00–10:00']},
-      {day:'Thursday',times:['09:00–10:00','10:30–11:30']},
-      {day:'Friday',times:['09:00–10:00']},
-      {day:'Saturday',times:['10:00–11:00','11:00–12:00','12:00–13:00']},
-    ],
-    history:[
-      {course:'Mathematics',student:'Kavya Nair',assigned:'01 Jan 2024',end:'15 Apr 2024',reason:'Student requested change'},
-      {course:'Physics',student:'Kiran Verma',assigned:'01 Mar 2024',end:'20 Dec 2024',reason:'Mentor schedule conflict'},
+      {day:'Monday',start:'09:00',end:'10:00'},
+      {day:'Monday',start:'10:30',end:'11:30'},
+      {day:'Tuesday',start:'09:00',end:'10:00'},
+      {day:'Tuesday',start:'10:30',end:'11:30'},
+      {day:'Wednesday',start:'09:00',end:'10:00'},
+      {day:'Thursday',start:'09:00',end:'10:00'},
+      {day:'Thursday',start:'10:30',end:'11:30'},
+      {day:'Friday',start:'09:00',end:'10:00'},
+      {day:'Saturday',start:'10:00',end:'11:00'},
+      {day:'Saturday',start:'11:00',end:'12:00'},
+      {day:'Saturday',start:'12:00',end:'13:00'},
     ]
   },
   {
-    id:'MNT002', name:'Sneha Rao', phone:'97200 22002', status:'active', joined:'Feb 15, 2024',
+    id:'MNT002', firstName:'Sneha', lastName:'Rao', name:'Sneha Rao', email:'sneha@email.com', phone:'97200 22002', status:'active', created:'Feb 15, 2024', joined:'Feb 15, 2024',
     courses:[
       {name:'Physics',commission:30,type:'default',assigned:'15 Feb 2024',end:null,status:'active',students:27},
       {name:'Chemistry',commission:32,type:'custom',assigned:'01 Jun 2024',end:null,status:'active',students:12}
@@ -644,17 +753,18 @@ const mentors = [
       {period:'Feb 2026',amount:12800,status:'paid',date:'Mar 5, 2026'},
     ]},
     slots:[
-      {day:'Monday',times:['10:30–11:30','02:00–03:00']},
-      {day:'Wednesday',times:['10:30–11:30','02:00–03:00']},
-      {day:'Friday',times:['10:30–11:30','02:00–03:00']},
-      {day:'Saturday',times:['09:00–10:00','10:00–11:00']},
-    ],
-    history:[
-      {course:'Physics',student:'Neel Shah',assigned:'15 Feb 2024',end:'30 Sep 2024',reason:'Course completed'},
+      {day:'Monday',start:'10:30',end:'11:30'},
+      {day:'Monday',start:'02:00',end:'03:00'},
+      {day:'Wednesday',start:'10:30',end:'11:30'},
+      {day:'Wednesday',start:'02:00',end:'03:00'},
+      {day:'Friday',start:'10:30',end:'11:30'},
+      {day:'Friday',start:'02:00',end:'03:00'},
+      {day:'Saturday',start:'09:00',end:'10:00'},
+      {day:'Saturday',start:'10:00',end:'11:00'},
     ]
   },
   {
-    id:'MNT003', name:'Ravi Pillai', phone:'88300 33003', status:'active', joined:'Jan 1, 2024',
+    id:'MNT003', firstName:'Ravi', lastName:'Pillai', name:'Ravi Pillai', email:'ravi@email.com', phone:'88300 33003', status:'active', created:'Jan 1, 2024', joined:'Jan 1, 2024',
     courses:[
       {name:'Chemistry',commission:32,type:'custom',assigned:'01 Jan 2024',end:null,status:'active',students:22},
     ],
@@ -679,16 +789,14 @@ const mentors = [
       {period:'Feb 2026',amount:10400,status:'paid',date:'Feb 5, 2026'},
     ]},
     slots:[
-      {day:'Tuesday',times:['04:00–05:00']},
-      {day:'Thursday',times:['04:00–05:00']},
-      {day:'Saturday',times:['09:00–10:00','10:00–11:00']},
-    ],
-    history:[
-      {course:'Chemistry',student:'Rohan Das',assigned:'01 Jan 2024',end:'28 Feb 2024',reason:'Student withdrawal'},
+      {day:'Tuesday',start:'04:00',end:'05:00'},
+      {day:'Thursday',start:'04:00',end:'05:00'},
+      {day:'Saturday',start:'09:00',end:'10:00'},
+      {day:'Saturday',start:'10:00',end:'11:00'},
     ]
   },
   {
-    id:'MNT004', name:'Pradeep Joshi', phone:'77400 44004', status:'active', joined:'Mar 1, 2025',
+    id:'MNT004', firstName:'Pradeep', lastName:'Joshi', name:'Pradeep Joshi', email:'pradeep@email.com', phone:'77400 44004', status:'active', created:'Mar 1, 2025', joined:'Mar 1, 2025',
     courses:[
       {name:'Biology',commission:30,type:'default',assigned:'01 Mar 2025',end:null,status:'active',students:19},
     ],
@@ -710,16 +818,13 @@ const mentors = [
       {period:'Mar 2026',amount:8800,status:'paid',date:'Apr 5, 2026'},
     ]},
     slots:[
-      {day:'Monday',times:['04:00–05:00']},
-      {day:'Wednesday',times:['04:00–05:00']},
-      {day:'Friday',times:['04:00–05:00']},
-    ],
-    history:[
-      {course:'Biology',student:'Meera Singh',assigned:'01 Mar 2025',end:'31 Jul 2025',reason:'Course completed'},
+      {day:'Monday',start:'04:00',end:'05:00'},
+      {day:'Wednesday',start:'04:00',end:'05:00'},
+      {day:'Friday',start:'04:00',end:'05:00'},
     ]
   },
   {
-    id:'MNT005', name:'Nisha Kothari', phone:'66500 55005', status:'active', joined:'Aug 10, 2025',
+    id:'MNT005', firstName:'Nisha', lastName:'Kothari', name:'Nisha Kothari', email:'nisha@email.com', phone:'66500 55005', status:'active', created:'Aug 10, 2025', joined:'Aug 10, 2025',
     courses:[
       {name:'English',commission:30,type:'default',assigned:'10 Aug 2025',end:null,status:'active',students:32},
       {name:'Social Science',commission:30,type:'default',assigned:'10 Aug 2025',end:null,status:'active',students:28}
@@ -742,15 +847,14 @@ const mentors = [
       {period:'Mar 2026',amount:10800,status:'paid',date:'Apr 5, 2026'},
     ]},
     slots:[
-      {day:'Monday',times:['06:00–07:00']},
-      {day:'Tuesday',times:['06:00–07:00']},
-      {day:'Thursday',times:['06:00–07:00']},
-      {day:'Friday',times:['06:00–07:00']},
-    ],
-    history:[]
+      {day:'Monday',start:'06:00',end:'07:00'},
+      {day:'Tuesday',start:'06:00',end:'07:00'},
+      {day:'Thursday',start:'06:00',end:'07:00'},
+      {day:'Friday',start:'06:00',end:'07:00'},
+    ]
   },
   {
-    id:'MNT006', name:'Kiran Bose', phone:'55600 66006', status:'inactive', joined:'Jun 1, 2024',
+    id:'MNT006', firstName:'Kiran', lastName:'Bose', name:'Kiran Bose', email:null, phone:'55600 66006', status:'inactive', created:'Jun 1, 2024', joined:'Jun 1, 2024',
     courses:[
       {name:'Mathematics',commission:30,type:'default',assigned:'01 Jun 2024',end:'31 Dec 2024',status:'ended',students:0},
     ],
@@ -764,10 +868,7 @@ const mentors = [
       {period:'Dec 2024',amount:6400,status:'paid',date:'Jan 5, 2025'},
       {period:'Nov 2024',amount:5800,status:'paid',date:'Dec 5, 2024'},
     ]},
-    slots:[],
-    history:[
-      {course:'Mathematics',student:'Multiple Students',assigned:'01 Jun 2024',end:'31 Dec 2024',reason:'Contract ended'},
-    ]
+    slots:[]
   },
 ];
 
@@ -790,16 +891,13 @@ function renderTable() {
   const tbody = document.getElementById('mentorTableBody');
   document.getElementById('countTag').textContent = filtered.length + ' mentor' + (filtered.length !== 1 ? 's' : '');
   if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--muted)">No mentors found.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:36px;color:var(--muted)">No mentors found.</td></tr>';
     return;
   }
   tbody.innerHTML = filtered.map(m => {
     const mi = mentors.indexOf(m);
-    const activeStudents = m.students.filter(s => s.subStatus === 'active').length;
-    const commDisplay = m.courses.length ? m.courses[0].commission + '%' : '—';
+    const activeStudents = m.students ? m.students.filter(s => s.subStatus === 'active').length : 0;
     const courseCount = m.courses.length;
-    const tags = m.courses.slice(0, 2).map(c => `<span class="tag" style="font-size:10.5px">${c.name}</span>`).join(' ') +
-      (m.courses.length > 2 ? ` <span class="tag">+${m.courses.length - 2}</span>` : '');
     return `<tr style="cursor:pointer" onclick="openDetail('${m.id}')" onmouseenter="this.querySelectorAll('td').forEach(t=>t.style.background='#faf9ff')" onmouseleave="this.querySelectorAll('td').forEach(t=>t.style.background='')">
       <td>
         <div class="mentor-name-cell">
@@ -811,9 +909,8 @@ function renderTable() {
         </div>
       </td>
       <td style="font-family:'Sora',sans-serif;font-size:12px;color:var(--muted)">${m.phone}</td>
-      <td><div style="display:flex;gap:4px;flex-wrap:wrap">${tags}</div></td>
+      <td><div style="display:flex;gap:4px;flex-wrap:wrap">${courseCount}</div></td>
       <td style="font-weight:700;font-size:14px">${activeStudents}</td>
-      <td style="font-weight:700;font-size:13px">${commDisplay}</td>
       <td><span class="pill ${m.status}">${m.status.charAt(0).toUpperCase() + m.status.slice(1)}</span></td>
       <td>
         <div class="act-group">
@@ -850,8 +947,9 @@ function openDetail(id) {
         <div class="mh-name">${m.name}</div>
         <div class="mh-meta">
           ${spill(m.status)}
-          <span class="mh-meta-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="10" height="9" rx="1"/><path d="M1 5h10M4 1v2M8 1v2"/></svg>Joined ${m.joined}</span>
+          ${m.email ? `<span class="mh-meta-item" style="font-family:'Sora',sans-serif;font-size:11.5px">${m.email}</span>` : ''}
           <span class="mh-meta-item" style="font-family:'Sora',sans-serif;font-size:11.5px">${m.phone}</span>
+          <span class="mh-meta-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="10" height="9" rx="1"/><path d="M1 5h10M4 1v2M8 1v2"/></svg>${m.created || m.joined}</span>
           <span class="mh-meta-item">${m.id}</span>
         </div>
       </div>
@@ -865,12 +963,10 @@ function openDetail(id) {
 
     <div class="tab-nav" id="tabNav-${m.id}">
       <button class="tab-btn active" onclick="switchTab(this, 'tab-courses')">Courses</button>
-      <button class="tab-btn" onclick="switchTab(this, 'tab-students')">Students</button>
       <button class="tab-btn" onclick="switchTab(this, 'tab-schedule')">Schedule</button>
       <button class="tab-btn" onclick="switchTab(this, 'tab-attendance')">Attendance</button>
       <button class="tab-btn" onclick="switchTab(this, 'tab-earnings')">Earnings</button>
       <button class="tab-btn" onclick="switchTab(this, 'tab-availability')">Availability</button>
-      <button class="tab-btn" onclick="switchTab(this, 'tab-history')">Assignment History</button>
     </div>
 
     <!-- ── COURSES TAB ── -->
@@ -896,37 +992,6 @@ function openDetail(id) {
               </div>
             </div>
           `).join('') : '<p style="color:var(--muted);text-align:center;padding:20px">No courses assigned.</p>'}
-        </div>
-      </div>
-    </div>
-
-    <!-- ── STUDENTS TAB ── -->
-    <div class="tab-panel" id="tab-students">
-      <div class="card">
-        <div class="card-hd">
-          <div class="card-title">Students Handled</div>
-          <span class="tag">${m.students.length} student${m.students.length !== 1 ? 's' : ''}</span>
-        </div>
-        <div style="overflow-x:auto">
-          <table>
-            <thead><tr><th>Student</th><th>Course</th><th>Subscription Status</th><th>Classes Taken</th><th>Actions</th></tr></thead>
-            <tbody>
-              ${m.students.length ? m.students.map((s, si) => `
-                <tr>
-                  <td>
-                    <div style="display:flex;align-items:center;gap:9px">
-                      <div class="m-av" style="width:28px;height:28px;font-size:10px;background:${col(si + 2)}">${ini(s.name)}</div>
-                      <div class="td-main">${s.name}</div>
-                    </div>
-                  </td>
-                  <td><span class="tag">${s.course}</span></td>
-                  <td>${spill(s.subStatus)}</td>
-                  <td style="font-weight:700;font-family:'Sora',sans-serif;font-size:14px">${s.classes}</td>
-                  <td></td>
-                </tr>
-              `).join('') : '<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--muted)">No students assigned.</td></tr>'}
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
@@ -1050,54 +1115,28 @@ function openDetail(id) {
       <div class="card">
         <div class="card-hd">
           <div class="card-title">Weekly Availability Slots</div>
-          <span class="tag">${m.slots.reduce((a, s) => a + s.times.length, 0)} total slots</span>
+          <span class="tag">${m.slots.length} total slots</span>
         </div>
         <div class="card-bd">
-          ${m.slots.length ? m.slots.map(s => `
-            <div class="avail-day">
-              <span class="avail-day-name">${s.day}</span>
-              <div class="avail-slots">
-                ${s.times.map(t => `<span class="avail-slot">${t}</span>`).join('')}
+          ${m.slots.length ? (() => {
+            const slotsByDay = {};
+            m.slots.forEach(s => {
+              if(!slotsByDay[s.day]) slotsByDay[s.day] = [];
+              slotsByDay[s.day].push(`${s.start}–${s.end}`);
+            });
+            return Object.entries(slotsByDay).map(([day, times]) => `
+              <div class="avail-day">
+                <span class="avail-day-name">${day}</span>
+                <div class="avail-slots">
+                  ${times.map(t => `<span class="avail-slot">${t}</span>`).join('')}
+                </div>
               </div>
-            </div>
-          `).join('') : '<p style="color:var(--muted);text-align:center;padding:20px">No availability slots set.</p>'}
+            `).join('');
+          })() : '<p style="color:var(--muted);text-align:center;padding:20px">No availability slots set.</p>'}
         </div>
       </div>
     </div>
 
-    <!-- ── ASSIGNMENT HISTORY TAB ── -->
-    <div class="tab-panel" id="tab-history">
-      <div class="card">
-        <div class="card-hd">
-          <div class="card-title">Assignment History</div>
-          <span class="tag">${m.history.length} record${m.history.length !== 1 ? 's' : ''}</span>
-        </div>
-        <div style="overflow-x:auto">
-          <table class="hist-table">
-            <thead>
-              <tr>
-                <th>Course</th>
-                <th>Student</th>
-                <th>Assigned Date</th>
-                <th>End Date</th>
-                <th>Reason for Change</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${m.history.length ? m.history.map(h => `
-                <tr>
-                  <td><span class="tag">${h.course}</span></td>
-                  <td class="td-main">${h.student}</td>
-                  <td style="color:var(--muted);font-size:12px">${h.assigned}</td>
-                  <td style="color:var(--muted);font-size:12px">${h.end || '—'}</td>
-                  <td class="reason">${h.reason}</td>
-                </tr>
-              `).join('') : '<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--muted)">No assignment history.</td></tr>'}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
   `;
 
   document.getElementById('screen-list').classList.remove('visible');
