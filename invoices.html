@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>LMS Portal — Invoices</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f2f8;--surface:#ffffff;
+  --sidebar-bg:#16012e;
+  --sidebar-hover:rgba(255,255,255,0.06);
+  --sidebar-active:rgba(167,139,250,0.15);
+  --sidebar-active-border:#a78bfa;
+  --text:#0f172a;--muted:#64748b;
+  --border:#e8eaf0;
+  --accent:#6d28d9;--accent-light:#ede9fe;
+  --green:#059669;--green-bg:#ecfdf5;
+  --red:#dc2626;--red-bg:#fff1f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --blue:#2563eb;--blue-bg:#eff6ff;
+  --teal:#0891b2;--teal-bg:#ecfeff;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06);
+  --shadow:0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg:0 20px 48px rgba(0,0,0,0.14);
+  --radius:14px;--radius-sm:9px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow:hidden}
+.layout{display:flex;height:100vh}
+
+.sidebar{width:248px;flex-shrink:0;background:var(--sidebar-bg);display:flex;flex-direction:column;height:100vh;position:relative;overflow:hidden}
+.sidebar::before{content:'';position:absolute;top:-80px;left:-60px;width:260px;height:260px;background:radial-gradient(circle,rgba(109,40,217,0.4) 0%,transparent 65%);pointer-events:none}
+.sidebar::after{content:'';position:absolute;bottom:40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(167,139,250,0.15) 0%,transparent 70%);pointer-events:none}
+.sidebar-logo{padding:24px 20px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.logo-icon{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 16px rgba(109,40,217,0.45)}
+.logo-icon svg{width:18px;height:18px;fill:#fff}
+.logo-name{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.logo-sub{font-size:9px;color:rgba(167,139,250,0.6);letter-spacing:0.1em;text-transform:uppercase;font-weight:500;margin-top:1px}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:10px 12px}
+.sidebar-scroll::-webkit-scrollbar{width:0}
+.nav-section{font-size:9px;font-weight:700;color:rgba(255,255,255,0.2);letter-spacing:0.12em;text-transform:uppercase;padding:14px 10px 5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;cursor:pointer;color:rgba(255,255,255,0.45);font-size:13px;font-weight:500;margin:1px 0;transition:all 0.14s;border:1px solid transparent}
+.nav-item:hover{background:var(--sidebar-hover);color:rgba(255,255,255,0.8)}
+.nav-item.active{background:rgba(109,40,217,0.22);color:#fff;border-color:rgba(167,139,250,0.2)}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:0.8}
+.nav-item.active svg{opacity:1}
+.nav-badge{margin-left:auto;background:rgba(109,40,217,0.6);color:#ddd6fe;font-size:10px;font-weight:700;padding:1px 8px;border-radius:20px}
+.nav-badge.red{background:rgba(220,38,38,0.55);color:#fecaca}
+.sidebar-footer{padding:14px 12px 16px;border-top:1px solid rgba(255,255,255,0.05)}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:10px;cursor:pointer;transition:background 0.14s}
+.user-card:hover{background:var(--sidebar-hover)}
+.user-avatar{width:33px;height:33px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;color:#fff}
+.user-role{font-size:10px;color:rgba(255,255,255,0.35);margin-top:1px}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:62px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 28px;flex-shrink:0;box-shadow:var(--shadow-sm)}
+.topbar-left{display:flex;flex-direction:column}
+.topbar-title{font-size:16px;font-weight:700;letter-spacing:-0.025em;font-family:'Sora',sans-serif;color:var(--text)}
+.topbar-breadcrumb{font-size:11px;color:var(--muted);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.icon-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all 0.14s;position:relative}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.notif-dot{position:absolute;top:2px;right:2px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff}
+.topbar-user{display:flex;align-items:center;gap:9px;cursor:pointer;padding:6px 12px;border-radius:22px;transition:background 0.14s}
+.topbar-user:hover{background:var(--bg)}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.topbar-uname{font-size:13px;font-weight:600;color:var(--text)}
+.topbar-urole{font-size:10.5px;color:var(--muted)}
+
+.toolbar{padding:14px 28px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.filter-select{height:33px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 11px;font-size:12px;font-family:inherit;background:var(--bg);color:var(--text);outline:none;cursor:pointer}
+.filter-select:focus{border-color:var(--accent)}
+.count-tag{background:var(--accent-light);border:1.5px solid rgba(109,40,217,0.15);border-radius:20px;padding:3px 12px;font-size:11.5px;font-weight:600;color:var(--accent)}
+
+.content{flex:1;overflow-y:auto;padding:24px 28px}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px}
+
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13.5px;font-weight:700;letter-spacing:-0.015em;color:var(--text)}
+
+table{width:100%;border-collapse:collapse}
+th{font-size:10.5px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.07em;padding:10px 18px;text-align:left;border-bottom:1.5px solid var(--border);white-space:nowrap;background:#f8f9fc}
+td{padding:14px 18px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:middle;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#faf8ff}
+.td-main{font-weight:600;font-size:13px}
+.td-num{font-family:'Sora',sans-serif;font-size:12px;font-weight:600;color:var(--muted)}
+
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.pill.paid{background:#dcfce7;color:#16a34a}
+.pill.pending{background:#fef3c7;color:#b45309}
+.pill.failed{background:#fee2e2;color:#dc2626}
+.pill.cancelled{background:#fee2e2;color:#dc2626}
+
+.btn{display:inline-flex;align-items:center;gap:7px;padding:0 18px;height:36px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s}
+.btn-primary{background:linear-gradient(135deg,#6d28d9,#5b21b6);color:#fff;box-shadow:0 4px 14px rgba(109,40,217,0.3)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--bg)}
+.btn-sm{height:30px;padding:0 14px;font-size:12px}
+
+.lock-btn{padding:5px 12px;border-radius:6px;font-size:10.5px;font-weight:600;border:1px solid rgba(109,40,217,0.2);background:var(--accent-light);color:var(--accent);cursor:pointer;transition:all 0.13s}
+.lock-btn:hover{background:var(--accent);color:#fff}
+.lock-btn.locked{background:var(--amber-bg);color:var(--amber);border-color:rgba(217,119,6,0.2)}
+
+.act-group{display:flex;gap:5px}
+.action-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:0 10px;height:28px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;color:var(--muted);font-size:11.5px;font-weight:600;transition:all 0.13s;font-family:inherit}
+.action-btn:hover{background:var(--accent-light);color:var(--accent);border-color:rgba(109,40,217,0.25)}
+
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:20px 22px;position:relative;overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:4px}
+.sc-icon{position:absolute;right:16px;top:16px;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.sc-icon svg{width:17px;height:17px}
+.sc-label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
+.sc-val{font-family:'Sora',sans-serif;font-size:28px;font-weight:700;letter-spacing:-0.04em;line-height:1}
+.sc-note{font-size:11px;color:var(--muted);margin-top:6px}
+.four-col{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--surface);border-radius:18px;width:580px;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.modal-box::-webkit-scrollbar{width:0}
+.modal-hd{padding:22px 26px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
+.modal-subtitle{font-size:11px;color:var(--muted);margin-top:2px}
+.modal-close{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all 0.14s}
+.modal-close:hover{background:var(--red-bg);color:var(--red)}
+.modal-bd{padding:22px 26px}
+.modal-ft{padding:14px 26px 22px;display:flex;justify-content:flex-end;gap:9px;border-top:1px solid var(--border)}
+
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.field-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.field input,.field select{width:100%;height:38px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface);color:var(--text);transition:border 0.13s}
+.field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(109,40,217,0.08)}
+.field input::placeholder{color:#94a3b8}
+.field-row.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+.student-select{border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;background:var(--bg);max-height:160px;overflow-y:auto;margin-bottom:12px}
+.student-select::-webkit-scrollbar{width:4px}
+.student-select::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px}
+.student-check{display:flex;align-items:center;gap:8px;padding:7px 0;cursor:pointer;font-size:12.5px}
+.student-check input{cursor:pointer}
+
+.line-items{margin-top:18px;margin-bottom:18px}
+.line-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr 0.8fr 1fr auto;gap:10px;align-items:end}
+.li-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
+.li-input{height:32px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 9px;font-size:12px;font-family:inherit;outline:none;background:var(--surface);color:var(--text)}
+.li-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(109,40,217,0.06)}
+.li-remove{width:32px;height:32px;border-radius:var(--radius-sm);border:1.5px solid var(--red);background:var(--red-bg);color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.13s}
+.li-remove:hover{background:var(--red);color:#fff}
+
+.summary-box{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px}
+.summary-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.summary-row:last-child{border-bottom:none;font-weight:700;font-family:'Sora',sans-serif;font-size:16px;color:var(--text)}
+.summary-label{color:var(--muted)}
+.summary-val{font-weight:600;font-family:'Sora',sans-serif}
+
+.inv-detail-panel{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.inv-detail-panel.open{display:flex}
+.inv-panel{background:var(--surface);border-radius:18px;width:620px;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.inv-panel::-webkit-scrollbar{width:0}
+.inv-panel-header{background:linear-gradient(135deg,#1e0a3c,#3b0f72,#4c1d95);padding:24px 28px;color:#fff;position:relative;overflow:hidden}
+.inv-panel-header::before{content:'';position:absolute;top:-40px;right:-30px;width:180px;height:180px;background:radial-gradient(circle,rgba(167,139,250,0.2) 0%,transparent 70%)}
+.inv-header-row{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;gap:16px}
+.inv-num-large{font-family:'Sora',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.02em}
+.inv-status-badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700}
+.inv-status-badge.paid{background:rgba(5,150,105,0.25);color:#6ee7b7;border:1px solid rgba(110,231,183,0.3)}
+.inv-status-badge.pending{background:rgba(217,119,6,0.25);color:#fcd34d;border:1px solid rgba(252,211,77,0.3)}
+.inv-status-badge.failed{background:rgba(220,38,38,0.25);color:#fca5a5;border:1px solid rgba(252,165,165,0.3)}
+.inv-status-badge.cancelled{background:rgba(107,114,128,0.25);color:#d1d5db;border:1px solid rgba(209,213,219,0.3)}
+.inv-amount-hero{font-family:'Sora',sans-serif;font-size:38px;font-weight:800;letter-spacing:-0.03em;margin-top:14px;position:relative;z-index:1}
+.inv-amount-label{font-size:11px;color:rgba(255,255,255,0.55);margin-top:3px;text-transform:uppercase;letter-spacing:0.06em;position:relative;z-index:1}
+.inv-panel-body{padding:24px 28px}
+.inv-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.info-item-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin-bottom:4px}
+.info-item-val{font-size:13px;font-weight:600;color:var(--text)}
+.lock-notice{background:var(--amber-bg);border:1.5px solid rgba(217,119,6,0.3);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px}
+.lock-notice svg{width:16px;height:16px;color:var(--amber);flex-shrink:0;margin-top:2px}
+.lock-notice-text{font-size:12px;color:var(--amber)}
+
+.line-items-table{width:100%;border-collapse:collapse;margin-bottom:18px}
+.line-items-table th{font-size:10.5px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;padding:10px 12px;text-align:left;border-bottom:1.5px solid var(--border);background:#f8f9fc}
+.line-items-table td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:12px}
+.line-items-table tr:last-child td{border-bottom:none}
+
+.inv-panel-footer{padding:16px 28px 22px;display:flex;justify-content:flex-end;gap:9px;border-top:1px solid var(--border)}
+
+.error-msg{color:var(--red);font-size:11px;margin-top:4px;display:none}
+.error-msg.show{display:block}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h14V7L10 2zm0 2.5l5 3.5v8H5V8l5-3.5z"/><rect x="7.5" y="11" width="5" height="5" rx="0.5"/></svg></div>
+    <div><div class="logo-name">LMS Portal</div><div class="logo-sub">Sudarshini Inst.</div></div>
+  </div>
+  <div class="sidebar-scroll">
+    <div class="nav-section">Main</div>
+    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>Dashboard</a>
+    <a href="courses_page.html" class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12a1 1 0 011 1v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1zm1 3v7h10V5H3z"/><path d="M5 7h6v1.5H5z"/></svg>Courses<span class="nav-badge">12</span></a>
+    <a href="student_management.html" class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H3z"/></svg>Students<span class="nav-badge">247</span></a>
+    <a href="mentor_management.html" class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm2 3h6v1H5V5zm0 2.5h6v1H5v-1zm0 2.5h4v1H5V10z"/></svg>Mentors<span class="nav-badge">6</span></a>
+    <a href="class_sessions.html" class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V4zm0 5a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-1 1H2a1 1 0 01-1-1V9z"/></svg>Class Sessions</a>
+    <a href="attendance.html" class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 3H2a1 1 0 00-1 1v8a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1zM5 9H3V7h2v2zm4 0H7V7h2v2zm4 0h-2V7h2v2z"/></svg>Attendance</a>
+    <div class="nav-section">Finance</div>
+    <a href="invoices.html" class="nav-item active"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2-1v9h8V3H4zm1 2h6v1H5V5zm0 2h6v1H5V7zm0 2h4v1H5V9z"/></svg>Invoices<span class="nav-badge red">3</span></a>
+    <a href="payouts.html" class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 5v3l2 1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>Payouts</a>
+    <a href="levels.html" class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h12v2H2zm0-4h9v2H2zm0-4h6v2H2z"/></svg>Levels</a>
+    <div class="nav-section">System</div>
+    <a href="settings.html" class="nav-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1.5V3M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/></svg>Settings</a>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card"><div class="user-avatar">AT</div><div><div class="user-name">Alex Thompson</div><div class="user-role">Org Admin</div></div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">Invoices</div>
+      <div class="topbar-breadcrumb">Sudarshini Institute · Finance</div>
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a6 6 0 00-6 6v3.5L1 12h14l-1-1.5V7a6 6 0 00-6-6zm0 14a2 2 0 002-2H6a2 2 0 002 2z"/></svg><div class="notif-dot"></div></div>
+      <div class="topbar-user"><div class="topbar-avatar">AT</div><div><div class="topbar-uname">Alex Thompson</div><div class="topbar-urole">Org Admin</div></div></div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <input type="date" class="filter-select" id="date-from" style="max-width:150px" onchange="filterInvoices()">
+    <input type="date" class="filter-select" id="date-to" style="max-width:150px" onchange="filterInvoices()">
+    <select class="filter-select" id="status-filter" onchange="filterInvoices()" style="max-width:140px">
+      <option value="">All Status</option>
+      <option value="paid">Paid</option>
+      <option value="pending">Pending</option>
+      <option value="failed">Failed</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
+    <select class="filter-select" id="student-filter" onchange="filterInvoices()" style="max-width:160px">
+      <option value="">All Students</option>
+      <option>Priya Sharma</option>
+      <option>Arjun Mehta</option>
+      <option>Kavya Nair</option>
+      <option>Rohan Das</option>
+      <option>Aarav Joshi</option>
+      <option>Diya Patel</option>
+    </select>
+    <span class="count-tag" id="inv-count">5 invoices</span>
+    <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="openGenerateModal()"><svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>Generate</button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- STAT CARDS -->
+    <div class="four-col">
+      <div class="stat-card">
+        <div class="sc-bar" style="background:linear-gradient(90deg,#059669,#34d399)"></div>
+        <div class="sc-icon" style="background:var(--green-bg)"><svg viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M2 6l3 3 8-7"/></svg></div>
+        <div class="sc-label">Total Paid</div>
+        <div class="sc-val" style="color:var(--green)">₹1.8L</div>
+        <div class="sc-note">9 invoices collected</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-bar" style="background:linear-gradient(90deg,#d97706,#fbbf24)"></div>
+        <div class="sc-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 16 16" fill="none" stroke="var(--amber)" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg></div>
+        <div class="sc-label">Pending</div>
+        <div class="sc-val" style="color:var(--amber)">₹8.8K</div>
+        <div class="sc-note">2 invoices awaiting</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-bar" style="background:linear-gradient(90deg,#dc2626,#f87171)"></div>
+        <div class="sc-icon" style="background:var(--red-bg)"><svg viewBox="0 0 16 16" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M8 2l6 11H2L8 2z"/><path d="M8 7v3M8 11.5v.5"/></svg></div>
+        <div class="sc-label">Failed</div>
+        <div class="sc-val" style="color:var(--red)">₹4.2K</div>
+        <div class="sc-note">1 invoice failed</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-bar" style="background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div>
+        <div class="sc-icon" style="background:var(--accent-light)"><svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M1 12l3-3 3 3 4-5 4 2"/></svg></div>
+        <div class="sc-label">Total This Month</div>
+        <div class="sc-val">₹2.4L</div>
+        <div class="sc-note">Apr 2026</div>
+      </div>
+    </div>
+
+    <!-- INVOICES TABLE -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title">All Invoices</div>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Student</th>
+              <th>Period</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Lock</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="invoice-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- GENERATE INVOICE MODAL -->
+<div class="modal-overlay" id="generate-modal" onclick="closeGenerateModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <div><div class="modal-title">Generate Invoice</div><div class="modal-subtitle">Create invoices for selected students</div></div>
+      <button class="modal-close" onclick="closeGenerateModal()"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l10 10M11 1L1 11"/></svg></button>
+    </div>
+    <div class="modal-bd">
+
+      <!-- DATE RANGE -->
+      <div class="field-row two" style="margin-bottom:18px">
+        <div class="field">
+          <div class="field-label">Period Start Date *</div>
+          <input type="date" id="gen-start-date" onchange="validateDates()">
+          <div class="error-msg" id="gen-date-err">End date must be ≥ start date</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Period End Date *</div>
+          <input type="date" id="gen-end-date" onchange="validateDates()">
+        </div>
+      </div>
+
+      <!-- STUDENT SELECTION -->
+      <div class="field">
+        <div class="field-label">Select Students</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px;font-size:11px">
+          <button class="btn btn-ghost btn-sm" onclick="selectAllStudents()">Select All</button>
+          <button class="btn btn-ghost btn-sm" onclick="clearAllStudents()">Clear All</button>
+        </div>
+        <div class="student-select" id="student-list"></div>
+      </div>
+
+      <!-- LINE ITEMS SECTION -->
+      <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+        <div style="margin-bottom:12px">
+          <div class="field-label">Billing Template (same for all selected students)</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">Define standard course billing rates. Each student invoice will include only their enrolled courses.</div>
+        </div>
+        <div class="line-items" id="line-items-container" style="max-height:200px;overflow-y:auto"></div>
+      </div>
+
+      <!-- SUMMARY -->
+      <div class="summary-box">
+        <div class="summary-row">
+          <span class="summary-label">Subtotal</span>
+          <span class="summary-val" id="gen-subtotal">₹0</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Wallet Deduction</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="number" id="gen-wallet-ded" placeholder="₹" style="width:80px;height:28px;border:1.5px solid var(--border);border-radius:6px;padding:0 8px;font-size:12px" onchange="calculateTotals()" min="0" value="0">
+          </div>
+        </div>
+        <div class="summary-row">
+          <span>Total Amount</span>
+          <span id="gen-total">₹0</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost btn-sm" onclick="closeGenerateModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="submitGenerate()"><svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>Generate Invoices</button>
+    </div>
+  </div>
+</div>
+
+<!-- INVOICE DETAIL PANEL -->
+<div class="inv-detail-panel" id="detail-panel" onclick="closeDetail()">
+  <div class="inv-panel" onclick="event.stopPropagation()">
+    <div class="inv-panel-header">
+      <div class="inv-header-row">
+        <div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Invoice</div>
+          <div class="inv-num-large" id="d-num"></div>
+        </div>
+        <div style="text-align:right">
+          <span class="inv-status-badge" id="d-status-badge"></span>
+          <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:8px" id="d-lock-status"></div>
+        </div>
+      </div>
+      <div class="inv-amount-hero" id="d-amount"></div>
+      <div class="inv-amount-label">Total Amount Due</div>
+    </div>
+    <div class="inv-panel-body">
+
+      <!-- LOCK NOTICE -->
+      <div id="lock-notice-area"></div>
+
+      <!-- INFO GRID -->
+      <div class="inv-info-grid">
+        <div>
+          <div class="info-item-label">Student</div>
+          <div class="info-item-val" id="d-student"></div>
+        </div>
+        <div>
+          <div class="info-item-label">Invoice Period</div>
+          <div class="info-item-val" id="d-period"></div>
+        </div>
+        <div>
+          <div class="info-item-label">Generated Date</div>
+          <div class="info-item-val" id="d-gen-date"></div>
+        </div>
+        <div>
+          <div class="info-item-label">Payment Status</div>
+          <div class="info-item-val" id="d-pay-status"></div>
+        </div>
+      </div>
+
+      <!-- LINE ITEMS TABLE -->
+      <div style="margin-bottom:18px">
+        <div class="field-label" style="margin-bottom:10px">Line Items</div>
+        <div style="overflow-x:auto">
+          <table class="line-items-table">
+            <thead>
+              <tr>
+                <th>Course</th>
+                <th>Mentor</th>
+                <th>Description</th>
+                <th>Classes</th>
+                <th>Amount</th>
+                <th>Commission %</th>
+                <th>Payout</th>
+              </tr>
+            </thead>
+            <tbody id="d-line-items"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FINANCIAL SUMMARY -->
+      <div class="summary-box" style="margin-bottom:0">
+        <div class="summary-row">
+          <span class="summary-label">Subtotal</span>
+          <span class="summary-val" id="d-subtotal">₹0</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Wallet Deduction</span>
+          <span class="summary-val" id="d-wallet">₹0</span>
+        </div>
+        <div class="summary-row">
+          <span>Total Amount</span>
+          <span id="d-final-total">₹0</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="inv-panel-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeDetail()">Close</button>
+      <button class="lock-btn" id="d-lock-btn" onclick="toggleLock()"></button>
+      <button class="btn btn-primary btn-sm"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10V8a1 1 0 011-1h6a1 1 0 011 1v2M4 7V4a1 1 0 011-1h2a1 1 0 011 1v3"/></svg>Download PDF</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const students=['Priya Sharma','Arjun Mehta','Kavya Nair','Rohan Das','Aarav Joshi','Diya Patel','Sneha Kapoor','Kiran Verma'];
+const courses=['Mathematics','Physics','Chemistry','Biology','English','Social Science'];
+const mentors=['Anand Kumar','Sneha Rao','Ravi Pillai','Kiran Bose','Nisha Kothari','Pradeep Joshi'];
+
+const studentEnrollments={
+  'Priya Sharma':[{course:'Mathematics',mentor:'Anand Kumar',classes:12,amount:3500},{course:'Physics',mentor:'Sneha Rao',classes:10,amount:3800}],
+  'Arjun Mehta':[{course:'Chemistry',mentor:'Ravi Pillai',classes:10,amount:4200},{course:'Physics',mentor:'Sneha Rao',classes:8,amount:3000}],
+  'Kavya Nair':[{course:'Chemistry',mentor:'Ravi Pillai',classes:10,amount:4200}],
+  'Rohan Das':[{course:'Mathematics',mentor:'Anand Kumar',classes:8,amount:2800},{course:'Social Science',mentor:'Nisha Kothari',classes:6,amount:2400}],
+  'Aarav Joshi':[{course:'Mathematics',mentor:'Anand Kumar',classes:10,amount:3500},{course:'Biology',mentor:'Pradeep Joshi',classes:9,amount:3200}],
+  'Diya Patel':[{course:'English',mentor:'Nisha Kothari',classes:8,amount:2800},{course:'Chemistry',mentor:'Ravi Pillai',classes:10,amount:4200}],
+  'Sneha Kapoor':[{course:'Biology',mentor:'Pradeep Joshi',classes:12,amount:3200}],
+  'Kiran Verma':[{course:'Mathematics',mentor:'Anand Kumar',classes:10,amount:3500},{course:'Physics',mentor:'Sneha Rao',classes:9,amount:3400}]
+};
+
+let invoices=[
+  {num:'INV-0241',student:'Priya Sharma',periodStart:'04-01-2026',periodEnd:'04-30-2026',genDate:'2026-05-01',amount:5200,status:'paid',locked:true,wallet:0,items:[{course:'Mathematics',mentor:'Anand Kumar',desc:'Mathematics · April 2026',classes:12,amount:5200,commission:28,payout:1456}]},
+  {num:'INV-0240',student:'Arjun Mehta',periodStart:'04-01-2026',periodEnd:'04-30-2026',genDate:'2026-05-01',amount:4200,status:'pending',locked:false,wallet:0,items:[{course:'Chemistry',mentor:'Ravi Pillai',desc:'Chemistry · April 2026',classes:10,amount:4200,commission:32,payout:1344}]},
+  {num:'INV-0239',student:'Kavya Nair',periodStart:'03-01-2026',periodEnd:'03-31-2026',genDate:'2026-04-01',amount:4200,status:'failed',locked:true,wallet:500,items:[{course:'Chemistry',mentor:'Ravi Pillai',desc:'Chemistry · March 2026',classes:10,amount:4200,commission:32,payout:1344}]},
+  {num:'INV-0238',student:'Priya Sharma',periodStart:'03-01-2026',periodEnd:'03-31-2026',genDate:'2026-04-01',amount:3800,status:'pending',locked:false,wallet:0,items:[{course:'Physics',mentor:'Sneha Rao',desc:'Physics · March 2026',classes:10,amount:3800,commission:30,payout:1140}]},
+  {num:'INV-0237',student:'Aarav Joshi',periodStart:'04-01-2026',periodEnd:'04-30-2026',genDate:'2026-05-01',amount:3500,status:'paid',locked:true,wallet:0,items:[{course:'Mathematics',mentor:'Anand Kumar',desc:'Mathematics · April 2026',classes:10,amount:3500,commission:28,payout:980}]},
+];
+
+let lineItemsData=[];
+let selectedStudents=new Set(students);
+let currentInvNum=null;
+
+function renderTable(data){
+  const tbody=document.getElementById('invoice-tbody');
+  document.getElementById('inv-count').textContent=data.length+' invoice'+(data.length!==1?'s':'');
+  tbody.innerHTML=data.map(inv=>`
+    <tr onclick="openDetail('${inv.num}')">
+      <td class="td-num">${inv.num}</td>
+      <td><div class="td-main">${inv.student}</div></td>
+      <td style="font-size:12px;color:var(--muted)">${inv.periodStart} — ${inv.periodEnd}</td>
+      <td style="font-weight:700;font-family:'Sora',sans-serif">₹${inv.amount.toLocaleString()}</td>
+      <td><span class="pill ${inv.status}">${inv.status.charAt(0).toUpperCase()+inv.status.slice(1)}</span></td>
+      <td onclick="event.stopPropagation()"><button class="lock-btn ${inv.locked?'locked':''}" onclick="toggleLock('${inv.num}')" title="${inv.locked?'Unlock':'Lock'}">${inv.locked?'🔒':'🔓'}</button></td>
+      <td onclick="event.stopPropagation()"><div class="act-group"><button class="action-btn" onclick="openDetail('${inv.num}')" title="View"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg></button></div></td>
+    </tr>
+  `).join('');
+}
+
+function filterInvoices(){
+  const status=document.getElementById('status-filter').value;
+  const student=document.getElementById('student-filter').value;
+  const filtered=invoices.filter(inv=>{
+    if(status && inv.status!==status) return false;
+    if(student && inv.student!==student) return false;
+    return true;
+  });
+  renderTable(filtered);
+}
+
+function openGenerateModal(){
+  selectedStudents=new Set(students);
+  lineItemsData=[];
+  document.getElementById('gen-start-date').value='';
+  document.getElementById('gen-end-date').value='';
+  document.getElementById('gen-wallet-ded').value='0';
+
+  const studentList=document.getElementById('student-list');
+  studentList.innerHTML=students.map(s=>`
+    <label class="student-check" style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:6px;cursor:pointer;user-select:none">
+      <input type="checkbox" value="${s}" checked onchange="autoGenLineItems()" style="width:16px;height:16px;cursor:pointer">
+      <span><strong>${s}</strong></span>
+    </label>
+  `).join('');
+
+  autoGenLineItems();
+  document.getElementById('generate-modal').classList.add('open');
+}
+
+function closeGenerateModal(){
+  document.getElementById('generate-modal').classList.remove('open');
+}
+
+function autoGenLineItems(){
+  selectedStudents.clear();
+  document.querySelectorAll('#student-list input:checked').forEach(c=>selectedStudents.add(c.value));
+
+  lineItemsData=[];
+  const courseSet=new Map();
+
+  selectedStudents.forEach(student=>{
+    const enrollments=studentEnrollments[student]||[];
+    enrollments.forEach(enr=>{
+      const key=enr.course+'|'+enr.mentor;
+      if(!courseSet.has(key)){
+        courseSet.set(key,{course:enr.course,mentor:enr.mentor,classes:enr.classes,amount:enr.amount});
+      }
+    });
+  });
+
+  courseSet.forEach(data=>{
+    const id='li-'+Date.now()+Math.random();
+    lineItemsData.push({id,course:data.course,mentor:data.mentor,desc:data.course,classes:data.classes,amount:data.amount,commission:30});
+  });
+
+  renderLineItems();
+  calculateTotals();
+}
+
+function selectAllStudents(){
+  document.querySelectorAll('#student-list input').forEach(c=>c.checked=true);
+  autoGenLineItems();
+}
+
+function clearAllStudents(){
+  document.querySelectorAll('#student-list input').forEach(c=>c.checked=false);
+  autoGenLineItems();
+}
+
+function removeLineItem(id){
+  lineItemsData=lineItemsData.filter(li=>li.id!==id);
+  renderLineItems();
+  calculateTotals();
+}
+
+function updateLineItem(id,field,value){
+  const item=lineItemsData.find(li=>li.id===id);
+  if(item){
+    if(field==='classes' || field==='amount' || field==='commission') item[field]=Math.max(0,Number.parseFloat(value)||0);
+    else item[field]=value;
+    if(field==='commission' && item.commission>100) item.commission=100;
+    calculateTotals();
+  }
+}
+
+function renderLineItems(){
+  const container=document.getElementById('line-items-container');
+  if(!lineItemsData.length){
+    container.innerHTML='<div style="text-align:center;color:var(--muted);padding:20px;font-size:12px">Auto-generated when students selected</div>';
+    return;
+  }
+  container.innerHTML=lineItemsData.map(li=>`
+    <div class="line-item">
+      <div><div class="li-label">Course</div><div style="height:32px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 9px;display:flex;align-items:center;font-size:13px;background:var(--bg);color:var(--text)">${li.course||'—'}</div></div>
+      <div><div class="li-label">Mentor</div><div style="height:32px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 9px;display:flex;align-items:center;font-size:13px;background:var(--bg);color:var(--text)">${li.mentor||'—'}</div></div>
+      <div><div class="li-label">Classes</div><input type="number" class="li-input" value="${li.classes}" onchange="updateLineItem('${li.id}','classes',this.value)" min="0"></div>
+      <div><div class="li-label">Amount (₹)</div><input type="number" class="li-input" value="${li.amount}" onchange="updateLineItem('${li.id}','amount',this.value)" min="0"></div>
+      <button class="li-remove" onclick="removeLineItem('${li.id}')"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l10 10M11 1L1 11"/></svg></button>
+    </div>
+  `).join('')+`
+    <div style="background:var(--accent-light);border:1.5px solid rgba(109,40,217,0.2);border-radius:var(--radius-sm);padding:12px;margin-top:12px;font-size:11.5px;color:var(--accent)">
+      💡 <strong>Auto-generated</strong> from student enrollments. Edit amounts/classes as needed. Commission % defaults to 30%.
+    </div>
+  `;
+}
+
+function validateDates(){
+  const start=document.getElementById('gen-start-date').value;
+  const end=document.getElementById('gen-end-date').value;
+  const err=document.getElementById('gen-date-err');
+  if(start && end && new Date(end)<new Date(start)){
+    err.classList.add('show');
+    return false;
+  }
+  err.classList.remove('show');
+  return true;
+}
+
+function calculateTotals(){
+  const subtotal=lineItemsData.reduce((s,li)=>s+li.amount,0);
+  const wallet=Number.parseFloat(document.getElementById('gen-wallet-ded').value)||0;
+  const total=Math.max(0,subtotal-wallet);
+  document.getElementById('gen-subtotal').textContent='₹'+subtotal.toLocaleString();
+  document.getElementById('gen-total').textContent='₹'+total.toLocaleString();
+}
+
+function submitGenerate(){
+  if(!validateDates()) return alert('End date must be ≥ start date');
+  if(!selectedStudents.size) return alert('Select ≥1 student');
+  if(!lineItemsData.length) return alert('Add ≥1 line item');
+  if(lineItemsData.some(li=>!li.course||!li.mentor||li.classes<=0||li.amount<0||li.commission<0||li.commission>100)) return alert('Fill all fields validly');
+
+  const start=document.getElementById('gen-start-date').value;
+  const end=document.getElementById('gen-end-date').value;
+  const wallet=Number.parseFloat(document.getElementById('gen-wallet-ded').value)||0;
+
+  selectedStudents.forEach(student=>{
+    const num='INV-'+(2000+Math.random()*1000|0);
+
+    const studentCourses=new Set((studentEnrollments[student]||[]).map(e=>e.course+'|'+e.mentor));
+    const studentItems=lineItemsData.filter(li=>studentCourses.has(li.course+'|'+li.mentor));
+    const items=studentItems.map(li=>({course:li.course,mentor:li.mentor,desc:li.course+' · '+start,classes:li.classes,amount:li.amount,commission:li.commission,payout:Math.round(li.amount*li.commission/100)}));
+
+    const subtotal=items.reduce((s,i)=>s+i.amount,0);
+    invoices.unshift({num,student,periodStart:start,periodEnd:end,genDate:new Date().toISOString().split('T')[0],amount:subtotal,status:'pending',locked:false,wallet,items});
+  });
+
+  closeGenerateModal();
+  filterInvoices();
+  alert(selectedStudents.size+' invoice(s) generated!');
+}
+
+function openDetail(num){
+  const inv=invoices.find(i=>i.num===num);
+  if(!inv) return;
+  currentInvNum=num;
+
+  document.getElementById('d-num').textContent=inv.num;
+  document.getElementById('d-amount').textContent='₹'+inv.amount.toLocaleString();
+  document.getElementById('d-student').textContent=inv.student;
+  document.getElementById('d-period').textContent=inv.periodStart+' — '+inv.periodEnd;
+  document.getElementById('d-gen-date').textContent=inv.genDate;
+  document.getElementById('d-pay-status').innerHTML='<span class="pill '+inv.status+'">'+inv.status.charAt(0).toUpperCase()+inv.status.slice(1)+'</span>';
+
+  document.getElementById('d-status-badge').className='inv-status-badge '+inv.status;
+  document.getElementById('d-status-badge').textContent=inv.status.charAt(0).toUpperCase()+inv.status.slice(1);
+
+  document.getElementById('d-lock-status').textContent=inv.locked?'🔒 Locked':'🔓 Unlocked';
+
+  const notice=document.getElementById('lock-notice-area');
+  notice.innerHTML=inv.locked?'<div class="lock-notice"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="10" height="7" rx="1"/><path d="M5 7V5a3 3 0 016 0v2"/></svg><div class="lock-notice-text">Invoice locked. Read-only.</div></div>':'';
+
+  const subtotal=inv.items.reduce((s,i)=>s+i.amount,0);
+  const total=subtotal-inv.wallet;
+
+  document.getElementById('d-subtotal').textContent='₹'+subtotal.toLocaleString();
+  document.getElementById('d-wallet').textContent='₹'+inv.wallet.toLocaleString();
+  document.getElementById('d-final-total').textContent='₹'+Math.max(0,total).toLocaleString();
+
+  document.getElementById('d-line-items').innerHTML=inv.items.map(li=>'<tr><td>'+li.course+'</td><td>'+li.mentor+'</td><td style="font-size:11px;color:var(--muted)">'+li.desc+'</td><td style="font-weight:600">'+li.classes+'</td><td style="font-weight:600;font-family:\'Sora\',sans-serif">₹'+li.amount.toLocaleString()+'</td><td style="font-weight:600">'+li.commission+'%</td><td style="font-weight:600;font-family:\'Sora\',sans-serif;color:var(--green)">₹'+li.payout.toLocaleString()+'</td></tr>').join('');
+
+  const btn=document.getElementById('d-lock-btn');
+  btn.textContent=inv.locked?'🔓 Unlock':'🔒 Lock';
+  btn.className=inv.locked?'lock-btn locked':'lock-btn';
+
+  document.getElementById('detail-panel').classList.add('open');
+}
+
+function closeDetail(){
+  document.getElementById('detail-panel').classList.remove('open');
+}
+
+function toggleLock(num){
+  const inv=invoices.find(i=>i.num===num);
+  if(inv){
+    inv.locked=!inv.locked;
+    if(currentInvNum===num) openDetail(num);
+    renderTable(invoices);
+  }
+}
+
+renderTable(invoices);
+</script>
+</body>
+</html>

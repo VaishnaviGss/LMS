@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>LMS Portal — Levels</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f2f8;--surface:#ffffff;
+  --sidebar-bg:#16012e;
+  --sidebar-hover:rgba(255,255,255,0.06);
+  --text:#0f172a;--muted:#64748b;
+  --border:#e8eaf0;
+  --accent:#6d28d9;--accent-light:#ede9fe;
+  --green:#059669;--green-bg:#ecfdf5;
+  --red:#dc2626;--red-bg:#fff1f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --blue:#2563eb;--blue-bg:#eff6ff;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow:0 4px 12px rgba(0,0,0,0.06),0 1px 3px rgba(0,0,0,0.04);
+  --shadow-lg:0 20px 48px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.08);
+  --radius:14px;--radius-sm:9px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow:hidden}
+.layout{display:flex;height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:248px;flex-shrink:0;background:var(--sidebar-bg);display:flex;flex-direction:column;height:100vh;position:relative;overflow:hidden}
+.sidebar::before{content:'';position:absolute;top:-80px;left:-60px;width:260px;height:260px;background:radial-gradient(circle,rgba(109,40,217,0.4) 0%,transparent 65%);pointer-events:none}
+.sidebar::after{content:'';position:absolute;bottom:40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(167,139,250,0.15) 0%,transparent 70%);pointer-events:none}
+.sidebar-logo{padding:24px 20px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.logo-icon{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 16px rgba(109,40,217,0.45)}
+.logo-icon svg{width:18px;height:18px;fill:#fff}
+.logo-name{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.logo-sub{font-size:9px;color:rgba(167,139,250,0.6);letter-spacing:0.1em;text-transform:uppercase;font-weight:500;margin-top:1px}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:10px 12px}
+.sidebar-scroll::-webkit-scrollbar{width:0}
+.nav-section{font-size:9px;font-weight:700;color:rgba(255,255,255,0.2);letter-spacing:0.12em;text-transform:uppercase;padding:14px 10px 5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;cursor:pointer;color:rgba(255,255,255,0.45);font-size:13px;font-weight:500;margin:1px 0;transition:all 0.14s;border:1px solid transparent;text-decoration:none}
+.nav-item:hover{background:var(--sidebar-hover);color:rgba(255,255,255,0.8)}
+.nav-item.active{background:rgba(109,40,217,0.22);color:#fff;border-color:rgba(167,139,250,0.2);box-shadow:0 2px 8px rgba(109,40,217,0.15)}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:0.8}
+.nav-item.active svg{opacity:1}
+.nav-badge{margin-left:auto;background:rgba(109,40,217,0.6);color:#ddd6fe;font-size:10px;font-weight:700;padding:1px 8px;border-radius:20px}
+.nav-badge.red{background:rgba(220,38,38,0.55);color:#fecaca}
+.sidebar-footer{padding:14px 12px 16px;border-top:1px solid rgba(255,255,255,0.05)}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:10px;cursor:pointer;transition:background 0.14s}
+.user-card:hover{background:var(--sidebar-hover)}
+.user-avatar{width:33px;height:33px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;color:#fff}
+.user-role{font-size:10px;color:rgba(255,255,255,0.35);margin-top:1px}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:62px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 28px;flex-shrink:0;box-shadow:var(--shadow-sm)}
+.topbar-left{display:flex;flex-direction:column}
+.topbar-title{font-size:16px;font-weight:700;letter-spacing:-0.025em;font-family:'Sora',sans-serif;color:var(--text)}
+.topbar-breadcrumb{font-size:11px;color:var(--muted);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.icon-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all 0.14s;position:relative}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.notif-dot{position:absolute;top:2px;right:2px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff}
+.topbar-user{display:flex;align-items:center;gap:9px;cursor:pointer;padding:6px 12px;border-radius:22px;transition:background 0.14s;border:1.5px solid transparent}
+.topbar-user:hover{background:var(--bg);border-color:var(--border)}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.topbar-uname{font-size:13px;font-weight:600;color:var(--text)}
+.topbar-urole{font-size:10.5px;color:var(--muted)}
+
+/* TOOLBAR */
+.list-toolbar{padding:14px 28px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.filter-select{height:33px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 11px;font-size:12px;font-family:inherit;background:var(--bg);color:var(--text);outline:none;cursor:pointer;transition:border 0.13s}
+.filter-select:focus{border-color:var(--accent)}
+.count-tag{background:var(--accent-light);border:1.5px solid rgba(109,40,217,0.15);border-radius:20px;padding:3px 12px;font-size:11.5px;font-weight:600;color:var(--accent)}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:24px 28px}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px}
+
+/* CARD */
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13.5px;font-weight:700;letter-spacing:-0.015em;color:var(--text)}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+th{font-size:10.5px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.07em;padding:10px 18px;text-align:left;border-bottom:1.5px solid var(--border);white-space:nowrap;background:#f8f9fc}
+td{padding:14px 18px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:middle;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr.clickable:hover td{background:#faf8ff;cursor:pointer}
+.td-main{font-weight:600;font-size:13px}
+.tag{background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:2px 9px;font-size:11px;font-weight:600;color:var(--muted)}
+
+/* PROGRESS BAR */
+.prog-bar{height:7px;border-radius:5px;background:#e8eaf0;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+
+/* LEVEL BADGE */
+.level-badge{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;flex-shrink:0}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:0 18px;height:36px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s}
+.btn-primary{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;box-shadow:0 4px 14px rgba(109,40,217,0.3)}
+.btn-primary:hover{background:linear-gradient(135deg,#6d28d9,#5b21b6);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border);border-radius:20px}
+.btn-ghost:hover{background:var(--bg)}
+.btn-sm{height:30px;padding:0 14px;font-size:12px}
+.action-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;color:var(--muted);transition:all 0.13s}
+.action-btn:hover{background:var(--accent-light);color:var(--accent);border-color:rgba(109,40,217,0.25)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--surface);border-radius:18px;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto}
+.modal-box::-webkit-scrollbar{width:0}
+.modal-hd{padding:22px 26px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
+.modal-close{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all 0.14s}
+.modal-close:hover{background:var(--red-bg);color:var(--red);border-color:rgba(220,38,38,0.25)}
+.modal-bd{padding:22px 26px}
+.modal-ft{padding:14px 26px 22px;display:flex;justify-content:flex-end;gap:9px;border-top:1px solid var(--border)}
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.field-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;height:38px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface);color:var(--text);transition:border 0.13s}
+.field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(109,40,217,0.08)}
+.field-row.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* TOPICS LIST */
+.topic-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.topic-item:last-child{border-bottom:none}
+.topic-num{width:26px;height:26px;border-radius:7px;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.topic-name{font-size:13px;font-weight:500;color:var(--text)}
+.topic-status{margin-left:auto;display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.topic-status.done{background:#dcfce7;color:#16a34a}
+.topic-status.wip{background:#fef3c7;color:#b45309}
+.topic-status.todo{background:#f1f5f9;color:#64748b}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h14V7L10 2zm0 2.5l5 3.5v8H5V8l5-3.5z"/><rect x="7.5" y="11" width="5" height="5" rx="0.5"/></svg></div>
+    <div><div class="logo-name">LMS Portal</div><div class="logo-sub">Sudarshini Inst.</div></div>
+  </div>
+  <div class="sidebar-scroll">
+    <div class="nav-section">Main</div>
+    <a href="dashboard.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      Dashboard
+    </a>
+    <a href="courses_page.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12a1 1 0 011 1v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1zm1 3v7h10V5H3z"/><path d="M5 7h6v1.5H5z"/></svg>
+      Courses <span class="nav-badge">12</span>
+    </a>
+    <a href="student_management.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H3z"/></svg>
+      Students <span class="nav-badge">247</span>
+    </a>
+    <a href="mentor_management.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm2 3h6v1H5V5zm0 2.5h6v1H5v-1zm0 2.5h4v1H5V10z"/></svg>
+      Mentors <span class="nav-badge">6</span>
+    </a>
+    <a href="class_sessions.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V4zm0 5a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-1 1H2a1 1 0 01-1-1V9z"/></svg>
+      Class Sessions
+    </a>
+    <a href="attendance.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 3H2a1 1 0 00-1 1v8a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1zM5 9H3V7h2v2zm4 0H7V7h2v2zm4 0h-2V7h2v2z"/></svg>
+      Attendance
+    </a>
+    <div class="nav-section">Finance</div>
+    <a href="invoices.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2-1v9h8V3H4zm1 2h6v1H5V5zm0 2h6v1H5V7zm0 2h4v1H5V9z"/></svg>
+      Invoices <span class="nav-badge red">3</span>
+    </a>
+    <a href="payouts.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 5v3l2 1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      Payouts
+    </a>
+    <a href="levels.html" class="nav-item active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h12v2H2zm0-4h9v2H2zm0-4h6v2H2z"/></svg>
+      Levels
+    </a>
+    <div class="nav-section">System</div>
+    <a href="settings.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1.5V3M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/></svg>
+      Settings
+    </a>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">AT</div>
+      <div><div class="user-name">Alex Thompson</div><div class="user-role">Org Admin</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">Levels</div>
+      <div class="topbar-breadcrumb">Sudarshini Institute · Course Levels</div>
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a6 6 0 00-6 6v3.5L1 12h14l-1-1.5V7a6 6 0 00-6-6zm0 14a2 2 0 002-2H6a2 2 0 002 2z"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="topbar-user">
+        <div class="topbar-avatar">AT</div>
+        <div><div class="topbar-uname">Alex Thompson</div><div class="topbar-urole">Org Admin</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="list-toolbar">
+    <select class="filter-select">
+      <option>All Courses</option>
+      <option>Mathematics</option>
+      <option>Physics</option>
+      <option>Chemistry</option>
+      <option>Biology</option>
+      <option>English</option>
+    </select>
+    <span class="count-tag">8 levels</span>
+    <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="openAddLevelModal()">
+      <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>
+      Add Level
+    </button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title">Course Levels</div>
+        <span style="font-size:11.5px;color:var(--muted)">Click a level to view topics</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Level</th>
+              <th>Course</th>
+              <th>Description</th>
+              <th>Topics</th>
+              <th>Students</th>
+              <th>Completion</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="clickable" onclick="openTopicsModal('beginner')">
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="level-badge" style="background:#7c3aed">L1</div>
+                  <div class="td-main">Beginner</div>
+                </div>
+              </td>
+              <td><span class="tag">Mathematics</span></td>
+              <td style="color:var(--muted);font-size:12px">Algebra fundamentals</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">4</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">28</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="prog-bar" style="width:80px"><div class="prog-fill" style="width:85%"></div></div>
+                  <span style="font-size:12px;font-weight:700;color:var(--text)">85%</span>
+                </div>
+              </td>
+              <td onclick="event.stopPropagation()">
+                <button class="action-btn">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg>
+                </button>
+              </td>
+            </tr>
+            <tr class="clickable" onclick="openTopicsModal('intermediate')">
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="level-badge" style="background:#0369a1">L2</div>
+                  <div class="td-main">Intermediate</div>
+                </div>
+              </td>
+              <td><span class="tag">Mathematics</span></td>
+              <td style="color:var(--muted);font-size:12px">Geometry &amp; Trigonometry</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">5</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">22</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="prog-bar" style="width:80px"><div class="prog-fill" style="width:62%;background:#0369a1"></div></div>
+                  <span style="font-size:12px;font-weight:700;color:var(--text)">62%</span>
+                </div>
+              </td>
+              <td onclick="event.stopPropagation()">
+                <button class="action-btn">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg>
+                </button>
+              </td>
+            </tr>
+            <tr class="clickable" onclick="openTopicsModal('advanced')">
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="level-badge" style="background:#be123c">L3</div>
+                  <div class="td-main">Advanced</div>
+                </div>
+              </td>
+              <td><span class="tag">Mathematics</span></td>
+              <td style="color:var(--muted);font-size:12px">Calculus &amp; Statistics</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">6</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">11</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="prog-bar" style="width:80px"><div class="prog-fill" style="width:38%;background:#be123c"></div></div>
+                  <span style="font-size:12px;font-weight:700;color:var(--text)">38%</span>
+                </div>
+              </td>
+              <td onclick="event.stopPropagation()">
+                <button class="action-btn">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg>
+                </button>
+              </td>
+            </tr>
+            <tr class="clickable" onclick="openTopicsModal('foundation')">
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="level-badge" style="background:#059669">L1</div>
+                  <div class="td-main">Foundation</div>
+                </div>
+              </td>
+              <td><span class="tag">Physics</span></td>
+              <td style="color:var(--muted);font-size:12px">Mechanics &amp; Motion</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">3</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">34</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="prog-bar" style="width:80px"><div class="prog-fill" style="width:78%;background:#059669"></div></div>
+                  <span style="font-size:12px;font-weight:700;color:var(--text)">78%</span>
+                </div>
+              </td>
+              <td onclick="event.stopPropagation()">
+                <button class="action-btn">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg>
+                </button>
+              </td>
+            </tr>
+            <tr class="clickable" onclick="openTopicsModal('electro')">
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="level-badge" style="background:#0891b2">L2</div>
+                  <div class="td-main">Electromagnetism</div>
+                </div>
+              </td>
+              <td><span class="tag">Physics</span></td>
+              <td style="color:var(--muted);font-size:12px">Electricity &amp; Magnetism</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">4</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">19</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="prog-bar" style="width:80px"><div class="prog-fill" style="width:55%;background:#0891b2"></div></div>
+                  <span style="font-size:12px;font-weight:700;color:var(--text)">55%</span>
+                </div>
+              </td>
+              <td onclick="event.stopPropagation()">
+                <button class="action-btn">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ADD LEVEL MODAL -->
+<div class="modal-overlay" id="add-level-modal" onclick="closeAddLevelModal()">
+  <div class="modal-box" style="width:480px" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <div>
+        <div class="modal-title">Add Level</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Create a new course level</div>
+      </div>
+      <button class="modal-close" onclick="closeAddLevelModal()">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l10 10M11 1L1 11"/></svg>
+      </button>
+    </div>
+    <div class="modal-bd">
+      <div class="field-row two" style="margin-bottom:16px">
+        <div class="field">
+          <div class="field-label">Level Name</div>
+          <input type="text" placeholder="e.g. Beginner">
+        </div>
+        <div class="field">
+          <div class="field-label">Level Code</div>
+          <input type="text" placeholder="e.g. L1">
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:16px">
+        <div class="field-label">Course</div>
+        <select>
+          <option value="">Select course…</option>
+          <option>Mathematics</option>
+          <option>Physics</option>
+          <option>Chemistry</option>
+          <option>Biology</option>
+          <option>English</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:16px">
+        <div class="field-label">Description</div>
+        <input type="text" placeholder="Brief description of this level…">
+      </div>
+      <div class="field">
+        <div class="field-label">Topics (comma separated)</div>
+        <input type="text" placeholder="e.g. Algebra Basics, Linear Equations, Quadratic">
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost btn-sm" onclick="closeAddLevelModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="closeAddLevelModal()">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>
+        Add Level
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- LEVEL TOPICS MODAL -->
+<div class="modal-overlay" id="topics-modal" onclick="closeTopicsModal()">
+  <div class="modal-box" style="width:460px" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="topics-badge" class="level-badge"></div>
+        <div>
+          <div id="topics-title" class="modal-title"></div>
+          <div id="topics-course" style="font-size:11px;color:var(--muted);margin-top:2px"></div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeTopicsModal()">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l10 10M11 1L1 11"/></svg>
+      </button>
+    </div>
+    <div class="modal-bd" id="topics-body"></div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost btn-sm" onclick="closeTopicsModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const levelData={
+  beginner:{code:'L1',color:'#7c3aed',title:'Beginner',course:'Mathematics',desc:'Algebra fundamentals',topics:[
+    {name:'Introduction to Algebra',status:'done'},
+    {name:'Linear Equations',status:'done'},
+    {name:'Quadratic Equations',status:'wip'},
+    {name:'Polynomials',status:'todo'},
+  ]},
+  intermediate:{code:'L2',color:'#0369a1',title:'Intermediate',course:'Mathematics',desc:'Geometry & Trigonometry',topics:[
+    {name:'Triangles & Congruence',status:'done'},
+    {name:'Circles & Theorems',status:'done'},
+    {name:'Trigonometric Ratios',status:'wip'},
+    {name:'Heights & Distances',status:'todo'},
+    {name:'Coordinate Geometry',status:'todo'},
+  ]},
+  advanced:{code:'L3',color:'#be123c',title:'Advanced',course:'Mathematics',desc:'Calculus & Statistics',topics:[
+    {name:'Limits & Continuity',status:'done'},
+    {name:'Differentiation',status:'wip'},
+    {name:'Integration',status:'todo'},
+    {name:'Probability',status:'todo'},
+    {name:'Statistics & Distributions',status:'todo'},
+    {name:'Vectors & 3D Geometry',status:'todo'},
+  ]},
+  foundation:{code:'L1',color:'#059669',title:'Foundation',course:'Physics',desc:'Mechanics & Motion',topics:[
+    {name:'Units & Measurements',status:'done'},
+    {name:'Motion in a Straight Line',status:'done'},
+    {name:'Laws of Motion (Newton)',status:'wip'},
+  ]},
+  electro:{code:'L2',color:'#0891b2',title:'Electromagnetism',course:'Physics',desc:'Electricity & Magnetism',topics:[
+    {name:'Electric Charges & Fields',status:'done'},
+    {name:'Gauss\'s Law',status:'wip'},
+    {name:'Capacitance',status:'todo'},
+    {name:'Magnetic Effects of Current',status:'todo'},
+  ]},
+};
+
+function openAddLevelModal(){
+  document.getElementById('add-level-modal').classList.add('open');
+}
+function closeAddLevelModal(){
+  document.getElementById('add-level-modal').classList.remove('open');
+}
+
+function openTopicsModal(key){
+  const d=levelData[key];
+  if(!d)return;
+  const badge=document.getElementById('topics-badge');
+  badge.textContent=d.code;
+  badge.style.background=d.color;
+  document.getElementById('topics-title').textContent=d.title+' Level';
+  document.getElementById('topics-course').textContent=d.course+' · '+d.desc;
+  const body=document.getElementById('topics-body');
+  body.innerHTML=d.topics.map((t,i)=>`
+    <div class="topic-item">
+      <div class="topic-num">${i+1}</div>
+      <div class="topic-name">${t.name}</div>
+      <span class="topic-status ${t.status}">${t.status==='done'?'✓ Done':t.status==='wip'?'In Progress':'To Do'}</span>
+    </div>
+  `).join('');
+  document.getElementById('topics-modal').classList.add('open');
+}
+function closeTopicsModal(){
+  document.getElementById('topics-modal').classList.remove('open');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>LMS Portal — Payouts</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f2f8;--surface:#ffffff;
+  --sidebar-bg:#16012e;
+  --sidebar-hover:rgba(255,255,255,0.06);
+  --text:#0f172a;--muted:#64748b;
+  --border:#e8eaf0;
+  --accent:#6d28d9;--accent-light:#ede9fe;
+  --green:#059669;--green-bg:#ecfdf5;
+  --red:#dc2626;--red-bg:#fff1f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --blue:#2563eb;--blue-bg:#eff6ff;
+  --teal:#0891b2;--teal-bg:#ecfeff;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow:0 4px 12px rgba(0,0,0,0.06),0 1px 3px rgba(0,0,0,0.04);
+  --shadow-lg:0 20px 48px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.08);
+  --radius:14px;--radius-sm:9px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow:hidden}
+.layout{display:flex;height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:248px;flex-shrink:0;background:var(--sidebar-bg);display:flex;flex-direction:column;height:100vh;position:relative;overflow:hidden}
+.sidebar::before{content:'';position:absolute;top:-80px;left:-60px;width:260px;height:260px;background:radial-gradient(circle,rgba(109,40,217,0.4) 0%,transparent 65%);pointer-events:none}
+.sidebar::after{content:'';position:absolute;bottom:40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(167,139,250,0.15) 0%,transparent 70%);pointer-events:none}
+.sidebar-logo{padding:24px 20px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.logo-icon{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 16px rgba(109,40,217,0.45)}
+.logo-icon svg{width:18px;height:18px;fill:#fff}
+.logo-name{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.logo-sub{font-size:9px;color:rgba(167,139,250,0.6);letter-spacing:0.1em;text-transform:uppercase;font-weight:500;margin-top:1px}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:10px 12px}
+.sidebar-scroll::-webkit-scrollbar{width:0}
+.nav-section{font-size:9px;font-weight:700;color:rgba(255,255,255,0.2);letter-spacing:0.12em;text-transform:uppercase;padding:14px 10px 5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;cursor:pointer;color:rgba(255,255,255,0.45);font-size:13px;font-weight:500;margin:1px 0;transition:all 0.14s;border:1px solid transparent;text-decoration:none}
+.nav-item:hover{background:var(--sidebar-hover);color:rgba(255,255,255,0.8)}
+.nav-item.active{background:rgba(109,40,217,0.22);color:#fff;border-color:rgba(167,139,250,0.2);box-shadow:0 2px 8px rgba(109,40,217,0.15)}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:0.8}
+.nav-item.active svg{opacity:1}
+.nav-badge{margin-left:auto;background:rgba(109,40,217,0.6);color:#ddd6fe;font-size:10px;font-weight:700;padding:1px 8px;border-radius:20px}
+.nav-badge.red{background:rgba(220,38,38,0.55);color:#fecaca}
+.sidebar-footer{padding:14px 12px 16px;border-top:1px solid rgba(255,255,255,0.05)}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:10px;cursor:pointer;transition:background 0.14s}
+.user-card:hover{background:var(--sidebar-hover)}
+.user-avatar{width:33px;height:33px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;color:#fff}
+.user-role{font-size:10px;color:rgba(255,255,255,0.35);margin-top:1px}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:62px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 28px;flex-shrink:0;box-shadow:var(--shadow-sm)}
+.topbar-left{display:flex;flex-direction:column}
+.topbar-title{font-size:16px;font-weight:700;letter-spacing:-0.025em;font-family:'Sora',sans-serif;color:var(--text)}
+.topbar-breadcrumb{font-size:11px;color:var(--muted);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.icon-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all 0.14s;position:relative}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.notif-dot{position:absolute;top:2px;right:2px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff}
+.topbar-user{display:flex;align-items:center;gap:9px;cursor:pointer;padding:6px 12px;border-radius:22px;transition:background 0.14s;border:1.5px solid transparent}
+.topbar-user:hover{background:var(--bg);border-color:var(--border)}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.topbar-uname{font-size:13px;font-weight:600;color:var(--text)}
+.topbar-urole{font-size:10.5px;color:var(--muted)}
+
+/* TOOLBAR */
+.list-toolbar{padding:14px 28px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.filter-select{height:33px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 11px;font-size:12px;font-family:inherit;background:var(--bg);color:var(--text);outline:none;cursor:pointer;transition:border 0.13s}
+.filter-select:focus{border-color:var(--accent)}
+.count-tag{background:var(--accent-light);border:1.5px solid rgba(109,40,217,0.15);border-radius:20px;padding:3px 12px;font-size:11.5px;font-weight:600;color:var(--accent)}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:24px 28px}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px}
+
+/* CARDS */
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13.5px;font-weight:700;letter-spacing:-0.015em;color:var(--text)}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+th{font-size:10.5px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.07em;padding:10px 18px;text-align:left;border-bottom:1.5px solid var(--border);white-space:nowrap;background:#f8f9fc}
+td{padding:13px 18px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:middle;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#faf8ff}
+.td-main{font-weight:600;font-size:13px}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.pill.paid{background:#dcfce7;color:#16a34a}
+.pill.pending{background:#fef3c7;color:#b45309}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:0 18px;height:36px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s}
+.btn-primary{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;box-shadow:0 4px 14px rgba(109,40,217,0.3)}
+.btn-primary:hover{background:linear-gradient(135deg,#6d28d9,#5b21b6);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border);border-radius:20px}
+.btn-ghost:hover{background:var(--bg)}
+.btn-sm{height:30px;padding:0 14px;font-size:12px}
+
+/* ACTION BUTTON */
+.action-btn{display:inline-flex;align-items:center;justify-content:center;padding:0 10px;height:28px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;color:var(--muted);font-size:11.5px;font-weight:600;transition:all 0.13s;font-family:inherit}
+.action-btn:hover{background:var(--accent-light);color:var(--accent);border-color:rgba(109,40,217,0.25)}
+.action-btn.pay{background:var(--green-bg);color:var(--green);border-color:#bbf7d0}
+.action-btn.pay:hover{background:#bbf7d0}
+.action-btn.view:hover{background:var(--blue-bg);color:var(--blue);border-color:rgba(37,99,235,0.2)}
+.act-group{display:flex;gap:5px}
+
+/* STAT CARDS */
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:20px 22px;position:relative;overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0}
+.sc-icon{position:absolute;right:16px;top:16px;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.sc-icon svg{width:17px;height:17px}
+.sc-label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
+.sc-val{font-family:'Sora',sans-serif;font-size:28px;font-weight:700;letter-spacing:-0.04em;line-height:1}
+.sc-note{font-size:11px;color:var(--muted);margin-top:6px}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+
+/* COMM TAG */
+.comm-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:7px;font-size:11px;font-weight:600}
+.comm-tag.custom{background:var(--accent-light);color:var(--accent);border:1px solid rgba(109,40,217,0.2)}
+.comm-tag.default{background:var(--bg);color:var(--muted);border:1px solid var(--border)}
+
+/* MENTOR AVATAR */
+.m-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--surface);border-radius:18px;width:500px;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto}
+.modal-box::-webkit-scrollbar{width:0}
+.modal-hd{padding:22px 26px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
+.modal-close{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all 0.14s}
+.modal-close:hover{background:var(--red-bg);color:var(--red);border-color:rgba(220,38,38,0.25)}
+.modal-bd{padding:22px 26px}
+.modal-ft{padding:14px 26px 22px;display:flex;justify-content:flex-end;gap:9px;border-top:1px solid var(--border)}
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.field-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;height:38px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface);color:var(--text);transition:border 0.13s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(109,40,217,0.08)}
+.field textarea{height:80px;padding:10px 12px;resize:none}
+.field-row{display:grid;gap:14px}
+.field-row.two{grid-template-columns:1fr 1fr}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h14V7L10 2zm0 2.5l5 3.5v8H5V8l5-3.5z"/><rect x="7.5" y="11" width="5" height="5" rx="0.5"/></svg></div>
+    <div><div class="logo-name">LMS Portal</div><div class="logo-sub">Sudarshini Inst.</div></div>
+  </div>
+  <div class="sidebar-scroll">
+    <div class="nav-section">Main</div>
+    <a href="dashboard.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      Dashboard
+    </a>
+    <a href="courses_page.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12a1 1 0 011 1v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1zm1 3v7h10V5H3z"/><path d="M5 7h6v1.5H5z"/></svg>
+      Courses <span class="nav-badge">12</span>
+    </a>
+    <a href="student_management.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H3z"/></svg>
+      Students <span class="nav-badge">247</span>
+    </a>
+    <a href="mentor_management.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm2 3h6v1H5V5zm0 2.5h6v1H5v-1zm0 2.5h4v1H5V10z"/></svg>
+      Mentors <span class="nav-badge">6</span>
+    </a>
+    <a href="class_sessions.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V4zm0 5a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-1 1H2a1 1 0 01-1-1V9z"/></svg>
+      Class Sessions
+    </a>
+    <a href="attendance.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 3H2a1 1 0 00-1 1v8a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1zM5 9H3V7h2v2zm4 0H7V7h2v2zm4 0h-2V7h2v2z"/></svg>
+      Attendance
+    </a>
+    <div class="nav-section">Finance</div>
+    <a href="invoices.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2-1v9h8V3H4zm1 2h6v1H5V5zm0 2h6v1H5V7zm0 2h4v1H5V9z"/></svg>
+      Invoices <span class="nav-badge red">3</span>
+    </a>
+    <a href="payouts.html" class="nav-item active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 5v3l2 1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      Payouts
+    </a>
+    <a href="levels.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h12v2H2zm0-4h9v2H2zm0-4h6v2H2z"/></svg>
+      Levels
+    </a>
+    <div class="nav-section">System</div>
+    <a href="settings.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1.5V3M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/></svg>
+      Settings
+    </a>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">AT</div>
+      <div><div class="user-name">Alex Thompson</div><div class="user-role">Org Admin</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">Payouts</div>
+      <div class="topbar-breadcrumb">Sudarshini Institute · Finance</div>
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a6 6 0 00-6 6v3.5L1 12h14l-1-1.5V7a6 6 0 00-6-6zm0 14a2 2 0 002-2H6a2 2 0 002 2z"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="topbar-user">
+        <div class="topbar-avatar">AT</div>
+        <div><div class="topbar-uname">Alex Thompson</div><div class="topbar-urole">Org Admin</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="list-toolbar">
+    <select class="filter-select">
+      <option>All Status</option>
+      <option>Pending</option>
+      <option>Paid</option>
+    </select>
+    <select class="filter-select">
+      <option>All Mentors</option>
+      <option>Anand Kumar</option>
+      <option>Sneha Rao</option>
+      <option>Ravi Pillai</option>
+      <option>Pradeep Joshi</option>
+    </select>
+    <select class="filter-select">
+      <option>April 2026</option>
+      <option>March 2026</option>
+      <option>February 2026</option>
+    </select>
+    <span class="count-tag">6 payouts</span>
+    <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="openPayoutModal()">
+      <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>
+      Process Payout
+    </button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- STAT CARDS -->
+    <div class="three-col">
+      <div class="stat-card">
+        <div class="sc-bar" style="background:linear-gradient(90deg,#d97706,#fbbf24)"></div>
+        <div class="sc-icon" style="background:var(--amber-bg)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="var(--amber)" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+        </div>
+        <div class="sc-label">Pending Payouts</div>
+        <div class="sc-val" style="color:var(--amber)">₹54.2K</div>
+        <div class="sc-note">4 mentors awaiting payment</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-bar" style="background:linear-gradient(90deg,#059669,#34d399)"></div>
+        <div class="sc-icon" style="background:var(--green-bg)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M2 6l3 3 8-7"/></svg>
+        </div>
+        <div class="sc-label">Paid This Month</div>
+        <div class="sc-val" style="color:var(--green)">₹24.4K</div>
+        <div class="sc-note">2 mentors · Apr 2026</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-bar" style="background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div>
+        <div class="sc-icon" style="background:var(--accent-light)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M1 12l3-3 3 3 4-5 4 2"/></svg>
+        </div>
+        <div class="sc-label">Total Paid (All Time)</div>
+        <div class="sc-val">₹8.6L</div>
+        <div class="sc-note">Since inception</div>
+      </div>
+    </div>
+
+    <!-- PAYOUT TABLE -->
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-title">Payout History</div>
+        <span style="font-size:11px;color:var(--muted)">April 2026</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Mentor</th>
+              <th>Period</th>
+              <th>Classes</th>
+              <th>Amount</th>
+              <th>Commission</th>
+              <th>Payment Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="m-av" style="background:#7c3aed">AK</div>
+                  <div><div class="td-main">Anand Kumar</div><div style="font-size:11px;color:var(--muted)">Mathematics</div></div>
+                </div>
+              </td>
+              <td style="color:var(--muted);font-size:12px">Apr 2026</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">68</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif;font-size:14px">₹18,400</td>
+              <td><span class="comm-tag custom">28% custom</span></td>
+              <td style="color:var(--muted);font-size:12px">—</td>
+              <td><span class="pill pending">Pending</span></td>
+              <td>
+                <div class="act-group">
+                  <button class="action-btn pay" onclick="openPayoutModal('Anand Kumar')">Pay Now</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="m-av" style="background:#0369a1">SR</div>
+                  <div><div class="td-main">Sneha Rao</div><div style="font-size:11px;color:var(--muted)">Physics</div></div>
+                </div>
+              </td>
+              <td style="color:var(--muted);font-size:12px">Apr 2026</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">54</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif;font-size:14px">₹14,600</td>
+              <td><span class="comm-tag default">30% default</span></td>
+              <td style="color:var(--muted);font-size:12px">—</td>
+              <td><span class="pill pending">Pending</span></td>
+              <td>
+                <div class="act-group">
+                  <button class="action-btn pay" onclick="openPayoutModal('Sneha Rao')">Pay Now</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="m-av" style="background:#b45309">PJ</div>
+                  <div><div class="td-main">Pradeep Joshi</div><div style="font-size:11px;color:var(--muted)">Biology</div></div>
+                </div>
+              </td>
+              <td style="color:var(--muted);font-size:12px">Apr 2026</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">39</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif;font-size:14px">₹10,500</td>
+              <td><span class="comm-tag custom">25% custom</span></td>
+              <td style="color:var(--muted);font-size:12px">—</td>
+              <td><span class="pill pending">Pending</span></td>
+              <td>
+                <div class="act-group">
+                  <button class="action-btn pay" onclick="openPayoutModal('Pradeep Joshi')">Pay Now</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="m-av" style="background:#059669">RP</div>
+                  <div><div class="td-main">Ravi Pillai</div><div style="font-size:11px;color:var(--muted)">Chemistry</div></div>
+                </div>
+              </td>
+              <td style="color:var(--muted);font-size:12px">Apr 2026</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">47</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif;font-size:14px">₹12,800</td>
+              <td><span class="comm-tag custom">32% custom</span></td>
+              <td style="color:var(--muted);font-size:12px">Apr 5, 2026</td>
+              <td><span class="pill paid">Paid</span></td>
+              <td>
+                <div class="act-group">
+                  <button class="action-btn view">
+                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg>
+                    View
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="m-av" style="background:#be123c">NK</div>
+                  <div><div class="td-main">Nisha Kothari</div><div style="font-size:11px;color:var(--muted)">English</div></div>
+                </div>
+              </td>
+              <td style="color:var(--muted);font-size:12px">Mar 2026</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif">31</td>
+              <td style="font-weight:700;font-family:'Sora',sans-serif;font-size:14px">₹7,750</td>
+              <td><span class="comm-tag default">30% default</span></td>
+              <td style="color:var(--muted);font-size:12px">Mar 31, 2026</td>
+              <td><span class="pill paid">Paid</span></td>
+              <td>
+                <div class="act-group">
+                  <button class="action-btn view">
+                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg>
+                    View
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+</div><!-- end main -->
+</div><!-- end layout -->
+
+<!-- PROCESS PAYOUT MODAL -->
+<div class="modal-overlay" id="payout-modal" onclick="closePayoutModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <div>
+        <div class="modal-title">Process Payout</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Transfer earnings to mentor</div>
+      </div>
+      <button class="modal-close" onclick="closePayoutModal()">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l10 10M11 1L1 11"/></svg>
+      </button>
+    </div>
+    <div class="modal-bd">
+      <div class="field-row two" style="margin-bottom:16px">
+        <div class="field">
+          <div class="field-label">Mentor</div>
+          <select id="payout-mentor">
+            <option value="">Select mentor…</option>
+            <option>Anand Kumar</option>
+            <option>Sneha Rao</option>
+            <option>Ravi Pillai</option>
+            <option>Pradeep Joshi</option>
+            <option>Nisha Kothari</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label">Period</div>
+          <select>
+            <option>April 2026</option>
+            <option>March 2026</option>
+            <option>February 2026</option>
+            <option>January 2026</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row two" style="margin-bottom:16px">
+        <div class="field">
+          <div class="field-label">Amount (₹)</div>
+          <input type="number" placeholder="e.g. 18400">
+        </div>
+        <div class="field">
+          <div class="field-label">Commission %</div>
+          <input type="number" placeholder="e.g. 30">
+        </div>
+      </div>
+      <div class="field-row two" style="margin-bottom:16px">
+        <div class="field">
+          <div class="field-label">Payment Method</div>
+          <select>
+            <option value="">Select…</option>
+            <option>Bank Transfer</option>
+            <option>UPI</option>
+            <option>Cash</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label">Payment Date</div>
+          <input type="date" value="2026-04-27">
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">Notes (Optional)</div>
+        <textarea placeholder="Any remarks about this payout…"></textarea>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost btn-sm" onclick="closePayoutModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="closePayoutModal()">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M2 6l3 3 5-5"/></svg>
+        Confirm Payout
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openPayoutModal(mentorName){
+  const modal=document.getElementById('payout-modal');
+  modal.classList.add('open');
+  if(mentorName){
+    const sel=document.getElementById('payout-mentor');
+    for(let i=0;i<sel.options.length;i++){
+      if(sel.options[i].text===mentorName){sel.selectedIndex=i;break}
+    }
+  }
+}
+function closePayoutModal(){
+  document.getElementById('payout-modal').classList.remove('open');
+}
+</script>
+</body>
+</html>

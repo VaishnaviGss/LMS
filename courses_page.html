@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>LMS Portal — Courses</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f3f0;--surface:#fff;
+  --sidebar-bg:#1a0533;
+  --sidebar-hover:rgba(255,255,255,0.07);
+  --sidebar-active:rgba(167,139,250,0.18);
+  --sidebar-active-border:#a78bfa;
+  --text:#1a1a2e;--muted:#6b7280;--faint:#ede9fe;
+  --border:rgba(0,0,0,0.07);--border-med:rgba(0,0,0,0.12);
+  --accent:#7c3aed;--accent-light:#ede9fe;
+  --blue:#2563eb;--blue-bg:#eff6ff;--blue-hover:#1d4ed8;
+  --green:#059669;--green-bg:#ecfdf5;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow:hidden}
+.layout{display:flex;height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:240px;flex-shrink:0;background:var(--sidebar-bg);display:flex;flex-direction:column;height:100vh;position:relative;overflow:hidden}
+.sidebar::before{content:'';position:absolute;top:-60px;left:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(124,58,237,0.35) 0%,transparent 70%);pointer-events:none}
+.sidebar::after{content:'';position:absolute;bottom:60px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(167,139,250,0.2) 0%,transparent 70%);pointer-events:none}
+.sb-logo{padding:22px 20px 18px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.logo-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(124,58,237,0.4)}
+.logo-icon svg{width:17px;height:17px;fill:#fff}
+.logo-name{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.logo-sub{font-size:9px;color:rgba(167,139,250,0.7);letter-spacing:0.08em;text-transform:uppercase;font-weight:500}
+.sb-scroll{flex:1;overflow-y:auto;padding:10px 10px}
+.sb-scroll::-webkit-scrollbar{width:0}
+.nav-sec{font-size:9.5px;font-weight:600;color:rgba(255,255,255,0.25);letter-spacing:0.1em;text-transform:uppercase;padding:12px 8px 5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;color:rgba(255,255,255,0.5);font-size:13px;font-weight:500;margin:1px 0;transition:all 0.15s;border-left:2px solid transparent}
+.nav-item:hover{background:var(--sidebar-hover);color:rgba(255,255,255,0.85);border-left-color:rgba(167,139,250,0.3)}
+.nav-item.active{background:var(--sidebar-active);color:#fff;border-left-color:var(--sidebar-active-border)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:rgba(124,58,237,0.7);color:#e9d5ff;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px}
+.nav-badge.red{background:rgba(220,38,38,0.7);color:#fecaca}
+.sb-footer{padding:14px 12px;border-top:1px solid rgba(255,255,255,0.06)}
+.user-card{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background 0.15s}
+.user-card:hover{background:var(--sidebar-hover)}
+.u-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.u-name{font-size:12px;font-weight:600;color:#fff}
+.u-role{font-size:10px;color:rgba(255,255,255,0.4)}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:58px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 28px;flex-shrink:0}
+.tb-left{display:flex;flex-direction:column}
+.tb-title{font-size:15px;font-weight:700;letter-spacing:-0.02em;font-family:'Sora',sans-serif}
+.tb-crumb{font-size:11px;color:var(--muted)}
+.search-wrap{flex:1;max-width:340px;position:relative;margin-left:20px}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search-input{width:100%;height:34px;border:1.5px solid var(--border);border-radius:20px;background:var(--bg);padding:0 14px 0 34px;font-size:13px;color:var(--text);outline:none;font-family:inherit;transition:all 0.15s}
+.search-input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+.search-input::placeholder{color:var(--muted)}
+.tb-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.icon-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all 0.15s;position:relative}
+.icon-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.notif-dot{position:absolute;top:3px;right:3px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff}
+.tb-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 10px;border-radius:20px;transition:background 0.15s}
+.tb-user:hover{background:var(--bg)}
+.tb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.tb-uname{font-size:13px;font-weight:600}
+.tb-urole{font-size:11px;color:var(--muted)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:0 14px;height:32px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s;white-space:nowrap}
+.btn-blue{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,0.25)}
+.btn-blue:hover{background:var(--blue-hover);transform:translateY(-1px)}
+.btn-blue-sm{background:var(--blue);color:#fff;border-radius:var(--radius-xs);height:28px;padding:0 11px;font-size:11.5px;font-weight:600}
+.btn-blue-sm:hover{background:var(--blue-hover)}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--bg)}
+.btn-ghost-sm{background:transparent;color:var(--muted);border:1.5px solid var(--border);height:28px;padding:0 10px;font-size:11.5px}
+.btn-ghost-sm:hover{color:var(--text);background:var(--bg)}
+.btn-back{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;height:30px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s;background:var(--blue-bg);color:var(--blue);border:1.5px solid rgba(37,99,235,0.2)}
+.btn-back:hover{background:var(--blue);color:#fff}
+
+/* ── SHARED ── */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);margin-bottom:14px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13px;font-weight:700;letter-spacing:-0.01em;display:flex;align-items:center;gap:8px}
+.card-bd{padding:16px 20px}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.pill.active{background:var(--green-bg);color:#059669}
+.pill.inactive{background:var(--red-bg);color:#dc2626}
+.pill.pending{background:var(--amber-bg);color:#92400e}
+.pill.paid{background:var(--green-bg);color:#059669}
+.pill.completed{background:var(--blue-bg);color:#1d4ed8}
+.pill.paused{background:#f3f4f6;color:#6b7280}
+.pill.cancelled{background:var(--red-bg);color:#dc2626}
+.pill.overdue{background:var(--red-bg);color:#dc2626}
+.tag{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-xs);padding:2px 8px;font-size:11px;font-weight:500;color:var(--muted)}
+table{width:100%;border-collapse:collapse}
+th{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;padding:9px 16px;text-align:left;border-bottom:1.5px solid var(--border);white-space:nowrap;background:var(--bg)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr.clickable:hover td{background:#f0f7ff;cursor:pointer}
+.td-main{font-weight:600;color:var(--text)}
+.td-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.act-btn{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;border-radius:var(--radius-xs);border:1.5px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);transition:all 0.12s}
+.act-btn:hover{background:var(--blue-bg);color:var(--blue);border-color:rgba(37,99,235,0.25)}
+.act-btn.danger:hover{background:var(--red-bg);color:var(--red);border-color:rgba(220,38,38,0.2)}
+.act-grp{display:flex;gap:4px}
+
+/* ── SCREENS ── */
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+.screen.vis{display:flex}
+
+/* ── LIST TOOLBAR ── */
+.list-toolbar{padding:13px 28px 11px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.fsel{height:31px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 10px;font-size:12px;font-family:inherit;background:var(--bg);color:var(--text);outline:none;cursor:pointer}
+.fsel:focus{border-color:var(--blue)}
+.cnt-tag{background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11.5px;font-weight:500;color:var(--muted)}
+.tc{flex:1;overflow-y:auto}
+.tc::-webkit-scrollbar{width:4px}
+.tc::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px}
+
+/* ── COURSE GRID ── */
+.course-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.c-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all 0.18s;position:relative}
+.c-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,0.10);border-color:var(--border-med)}
+.c-thumb{height:88px;position:relative;display:flex;align-items:center;justify-content:center}
+.c-thumb-icon{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.c-thumb-icon svg{width:21px;height:21px;color:#fff}
+.c-thumb-pat{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,0.035) 10px,rgba(255,255,255,0.035) 11px)}
+.c-status-badge{position:absolute;top:9px;right:9px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;backdrop-filter:blur(4px)}
+.c-status-badge.active{background:rgba(5,150,105,0.85);color:#fff}
+.c-status-badge.inactive{background:rgba(220,38,38,0.8);color:#fff}
+.c-body{padding:13px 15px 14px}
+.c-name{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;margin-bottom:4px;letter-spacing:-0.01em;line-height:1.3}
+.c-desc{font-size:11.5px;color:var(--muted);line-height:1.45;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:32px}
+.c-meta{display:flex;gap:10px;margin-bottom:10px}
+.c-meta-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);font-weight:500}
+.c-meta-item svg{width:11px;height:11px}
+.c-footer{display:flex;align-items:flex-end;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border)}
+.c-price{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--blue)}
+.c-model{font-size:9.5px;color:var(--muted);margin-top:1px}
+.c-actions{display:flex;gap:5px;opacity:0;transform:translateY(3px);transition:all 0.15s}
+.c-card:hover .c-actions{opacity:1;transform:translateY(0)}
+
+/* ── DETAIL SCREEN ── */
+.det-scroll{flex:1;overflow-y:auto;padding:22px 28px}
+.det-scroll::-webkit-scrollbar{width:4px}
+.det-scroll::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px}
+.det-header{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.dh-av{width:52px;height:52px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff;flex-shrink:0}
+.dh-name{font-family:'Sora',sans-serif;font-size:17px;font-weight:800;letter-spacing:-0.02em;margin-bottom:5px}
+.dh-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.dh-m-item{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.dh-m-item svg{width:11px;height:11px}
+.dh-stats{margin-left:auto;display:flex;gap:20px;flex-shrink:0}
+.dh-stat{text-align:center}
+.dh-v{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:var(--text)}
+.dh-l{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ── TABS ── */
+.tab-nav{display:flex;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);padding:4px;margin-bottom:16px;gap:2px}
+.tab-btn{padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;border:none;background:none;font-family:inherit;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.on{background:var(--blue);color:#fff}
+.tp{display:none}
+.tp.vis{display:block}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat-grid.three{grid-template-columns:repeat(3,1fr)}
+.stat-grid.two{grid-template-columns:repeat(2,1fr)}
+.sc{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:15px 17px;position:relative;overflow:hidden}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
+.sc-lbl{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:5px}
+.sc-val{font-family:'Sora',sans-serif;font-size:24px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.sc-note{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ── ITEM ROWS ── */
+.item-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.item-row:last-child{border-bottom:none}
+.item-dot{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:#fff;flex-shrink:0}
+.item-info{flex:1;min-width:0}
+.item-name{font-size:13px;font-weight:600;color:var(--text)}
+.item-meta{font-size:11px;color:var(--muted);margin-top:1px}
+.item-right{text-align:right;flex-shrink:0}
+.item-val{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--text);display:block}
+.item-lbl{font-size:10px;color:var(--muted)}
+.prog-bar{height:5px;border-radius:3px;background:var(--bg);overflow:hidden;margin-top:4px}
+.prog-f{height:100%;border-radius:3px}
+
+/* ── LEVEL LIST ── */
+.level-row{display:flex;align-items:center;gap:0;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s}
+.level-row:last-child{border-bottom:none}
+.level-row:hover{background:var(--bg);margin:0 -20px;padding:11px 20px}
+.level-num{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;margin-right:12px;font-family:'Sora',sans-serif}
+.level-info{flex:1;min-width:0}
+.level-name{font-size:13px;font-weight:600}
+.level-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.level-topics-count{font-size:12px;font-weight:600;color:var(--muted);margin-right:12px;white-space:nowrap}
+.level-chevron{width:16px;height:16px;color:var(--muted);transition:transform 0.2s;flex-shrink:0}
+.level-row.open .level-chevron{transform:rotate(90deg)}
+.level-topics{background:var(--bg);border-radius:var(--radius-sm);padding:0;margin:8px 0 4px;overflow:hidden;max-height:0;transition:max-height 0.3s ease,padding 0.2s}
+.level-topics.open{max-height:500px;padding:8px 0}
+.topic-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-xs);margin:2px 8px}
+.topic-row:hover{background:rgba(0,0,0,0.03)}
+.topic-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.topic-name{flex:1;font-size:12.5px;font-weight:500}
+.topic-meta{font-size:11px;color:var(--muted)}
+
+/* ── MENTOR CARD ── */
+.mentor-card{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg);border-radius:9px;border:1.5px solid var(--border);margin-bottom:9px;transition:border-color 0.15s}
+.mentor-card:hover{border-color:rgba(37,99,235,0.25)}
+.mc-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.mc-name{font-size:13px;font-weight:600}
+.mc-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.mc-badge{margin-left:auto;background:var(--green-bg);color:var(--green);border:1px solid #bbf7d0;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:600;flex-shrink:0}
+
+/* ── MODAL ── */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,0.42);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.mo.open{display:flex}
+.mo-box{background:var(--surface);border-radius:16px;width:500px;max-width:calc(100vw - 40px);box-shadow:0 24px 60px rgba(0,0,0,0.18);animation:moPop 0.22s ease}
+@keyframes moPop{from{opacity:0;transform:translateY(10px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.mo-hd{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mo-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.01em}
+.mo-close{width:28px;height:28px;border-radius:7px;border:1.5px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all 0.12s}
+.mo-close:hover{background:var(--bg);color:var(--text)}
+.mo-body{padding:20px 24px}
+.mo-ft{padding:12px 24px 20px;display:flex;justify-content:flex-end;gap:8px}
+.form-row{margin-bottom:14px}
+.form-label{display:block;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:5px}
+.form-input{width:100%;height:35px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 11px;font-size:13px;color:var(--text);font-family:inherit;outline:none;transition:border 0.14s;background:var(--surface)}
+.form-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+.form-select{width:100%;height:35px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 11px;font-size:13px;color:var(--text);font-family:inherit;outline:none;background:var(--surface);cursor:pointer}
+.form-select:focus{border-color:var(--blue)}
+.form-textarea{width:100%;height:72px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;font-size:13px;color:var(--text);font-family:inherit;outline:none;resize:none;transition:border 0.14s}
+.form-textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;background:var(--bg);border-radius:var(--radius-sm);border:1.5px solid var(--border)}
+.toggle-lbl{font-size:12.5px;font-weight:600}
+.toggle-sub{font-size:11px;color:var(--muted)}
+.toggle-sw{width:36px;height:20px;border-radius:10px;background:#d1d5db;border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
+.toggle-sw::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.toggle-sw.on{background:var(--blue)}
+.toggle-sw.on::after{transform:translateX(16px)}
+
+/* ── SEARCHABLE DROPDOWN ── */
+.dd-wrap{position:relative;width:100%}
+.dd-trigger{width:100%;height:35px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 11px;font-size:13px;color:var(--muted);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:border 0.14s;user-select:none}
+.dd-trigger.has-val{color:var(--text)}
+.dd-trigger:hover,.dd-trigger.open{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.08)}
+.dd-panel{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1.5px solid var(--border-med);border-radius:var(--radius-sm);box-shadow:0 8px 24px rgba(0,0,0,0.13);z-index:300;display:none;overflow:hidden}
+.dd-panel.open{display:block}
+.dd-srch{padding:8px;border-bottom:1px solid var(--border);position:relative}
+.dd-srch-icon{position:absolute;left:20px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.dd-srch input{width:100%;height:30px;border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:0 10px 0 30px;font-size:12px;color:var(--text);font-family:inherit;outline:none;background:var(--bg)}
+.dd-srch input:focus{border-color:var(--blue)}
+.dd-list{max-height:160px;overflow-y:auto}
+.dd-list::-webkit-scrollbar{width:4px}
+.dd-list::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px}
+.dd-opt{display:flex;align-items:center;gap:9px;padding:8px 12px;font-size:12.5px;cursor:pointer;color:var(--text);transition:background 0.1s}
+.dd-opt:hover{background:var(--bg)}
+.dd-opt.sel{color:var(--blue);font-weight:600;background:var(--blue-bg)}
+.dd-mini-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.dd-empty{padding:14px;text-align:center;font-size:12px;color:var(--muted)}
+
+/* ── STATUS CHANGE DROPDOWN ── */
+.st-dd{position:relative;display:inline-block}
+.st-menu{position:absolute;right:0;top:calc(100% + 4px);background:var(--surface);border:1.5px solid var(--border-med);border-radius:var(--radius-sm);box-shadow:0 8px 20px rgba(0,0,0,0.13);z-index:250;display:none;overflow:hidden;min-width:126px}
+.st-menu.open{display:block}
+.st-opt{display:flex;align-items:center;padding:6px 11px;cursor:pointer;transition:background 0.1s}
+.st-opt:hover{background:var(--bg)}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-icon"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h14V7L10 2zm0 2.5l5 3.5v8H5V8l5-3.5z"/><rect x="7.5" y="11" width="5" height="5" rx="0.5"/></svg></div>
+    <div><div class="logo-name">LMS Portal</div><div class="logo-sub">Sudarshini Inst.</div></div>
+  </div>
+  <div class="sb-scroll">
+    <div class="nav-sec">Main</div>
+    <div class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>Dashboard</div>
+    <div class="nav-item active"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12a1 1 0 011 1v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1zm1 3v7h10V5H3z"/><path d="M5 7h6v1.5H5z"/></svg>Courses<span class="nav-badge">12</span></div>
+    <div class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H3z"/></svg>Students<span class="nav-badge">247</span></div>
+    <div class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm2 3h6v1H5V5zm0 2.5h6v1H5v-1zm0 2.5h4v1H5V10z"/></svg>Mentors<span class="nav-badge">6</span></div>
+    <div class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V4zm0 5a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-1 1H2a1 1 0 01-1-1V9z"/></svg>Class Sessions</div>
+    <div class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 3H2a1 1 0 00-1 1v8a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1zM5 9H3V7h2v2zm4 0H7V7h2v2zm4 0h-2V7h2v2z"/></svg>Attendance</div>
+    <div class="nav-sec">Files</div>
+    <div class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2-1v9h8V3H4zm1 2h6v1H5V5zm0 2h6v1H5V7zm0 2h4v1H5V9z"/></svg>Invoices<span class="nav-badge red">3</span></div>
+    <div class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v1a4 4 0 000 8V1zm2 9.93A4 4 0 008 11v3a7 7 0 002-.07z"/><path d="M13 4a5 5 0 00-3-4.58V10a5 5 0 003-6z"/></svg>Payouts</div>
+    <div class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.9 5.8H16l-5 3.6 1.9 5.8L8 12.6l-4.9 3.6 1.9-5.8-5-3.6h6.1z"/></svg>Levels</div>
+    <div class="nav-sec">System</div>
+    <div class="nav-item"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2"/></svg>Settings</div>
+  </div>
+  <div class="sb-footer">
+    <div class="user-card"><div class="u-av">AT</div><div><div class="u-name">Alex Thompson</div><div class="u-role">Org Admin</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-title" id="tb-title">Courses</div>
+      <div class="tb-crumb" id="tb-crumb">Sudarshini Institute · 6 courses</div>
+    </div>
+    <div class="search-wrap" id="srch-area">
+      <svg class="search-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6.5" cy="6.5" r="5.5"/><path d="M11 11L15 15"/></svg>
+      <input class="search-input" id="srch" placeholder="Search courses by name, topic…" oninput="filterCourses()">
+    </div>
+    <div class="tb-right">
+      <div class="icon-btn"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a6 6 0 00-6 6v3.5L1 12h14l-1-1.5V7a6 6 0 00-6-6zm0 14a2 2 0 002-2H6a2 2 0 002 2z"/></svg><div class="notif-dot"></div></div>
+      <div class="tb-user"><div class="tb-avatar">AT</div><div><div class="tb-uname">Alex Thompson</div><div class="tb-urole">Org Admin</div></div></div>
+    </div>
+  </div>
+
+  <!-- LIST SCREEN -->
+  <div class="screen vis" id="scr-list">
+    <div class="list-toolbar">
+      <select class="fsel" id="sf-status" onchange="filterCourses()"><option value="">All Status</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
+      <select class="fsel" id="sf-pricing" onchange="filterCourses()"><option value="">All Pricing</option><option value="Per Month">Per Month</option><option value="Per Class">Per Class</option><option value="Per 10 Classes">Per 10 Classes</option></select>
+      <span class="cnt-tag" id="crs-count">6 courses</span>
+      <button class="btn btn-blue" style="margin-left:auto" onclick="openMo('mo-new-course')">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>
+        New Course
+      </button>
+    </div>
+    <div class="tc" style="padding:22px 28px">
+      <div class="course-grid" id="course-grid"></div>
+    </div>
+  </div>
+
+  <!-- DETAIL SCREEN -->
+  <div class="screen" id="scr-detail">
+    <div class="det-scroll" id="det-content"></div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ MODALS ══════════ -->
+
+<!-- NEW COURSE -->
+<div class="mo" id="mo-new-course" onclick="moOut(event,'mo-new-course')">
+  <div class="mo-box">
+    <div class="mo-hd"><div class="mo-title">Create New Course</div><button class="mo-close" onclick="closeMo('mo-new-course')"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l10 10M11 1L1 11"/></svg></button></div>
+    <div class="mo-body">
+      <div class="form-row"><label class="form-label">Course Name *</label><input class="form-input" placeholder="e.g. Mathematics — Grade 10"></div>
+      <div class="form-row"><label class="form-label">Description</label><textarea class="form-textarea" placeholder="Brief overview of what this course covers…"></textarea></div>
+      <div class="form-grid">
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">Pricing Model *</label><select class="form-select" id="pricing-model" onchange="toggleN()"><option>Per Month</option><option>Per Class</option><option>Per 10 Classes</option></select></div>
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">Price Amount (₹) *</label><input class="form-input" type="number" placeholder="e.g. 3500"></div>
+      </div>
+      <div id="n-classes-row" style="display:none;margin-top:14px"><label class="form-label">Number of Classes *</label><input class="form-input" type="number" placeholder="e.g. 10"></div>
+      <div style="margin-top:14px" class="form-toggle">
+        <div><div class="toggle-lbl">Set as Active</div><div class="toggle-sub">Course will be immediately available</div></div>
+        <button class="toggle-sw on" onclick="this.classList.toggle('on')"></button>
+      </div>
+    </div>
+    <div class="mo-ft"><button class="btn btn-ghost" onclick="closeMo('mo-new-course')">Cancel</button><button class="btn btn-blue">Create Course</button></div>
+  </div>
+</div>
+
+<!-- ADD STUDENT (Course Page) -->
+<div class="mo" id="mo-add-student" onclick="moOut(event,'mo-add-student')">
+  <div class="mo-box">
+    <div class="mo-hd"><div class="mo-title">Add Student to Course</div><button class="mo-close" onclick="closeMo('mo-add-student')"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l10 10M11 1L1 11"/></svg></button></div>
+    <div class="mo-body">
+      <div class="form-row">
+        <label class="form-label">Student Name *</label>
+        <div class="dd-wrap" id="dd-student">
+          <div class="dd-trigger" onclick="ddToggle('dd-student')">
+            <span>Select a student…</span>
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l4 4 4-4"/></svg>
+          </div>
+          <div class="dd-panel">
+            <div class="dd-srch">
+              <svg class="dd-srch-icon" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6.5" cy="6.5" r="5.5"/><path d="M11 11L15 15"/></svg>
+              <input placeholder="Search by name…" oninput="ddFilter('dd-student')">
+            </div>
+            <div class="dd-list"></div>
+          </div>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">Status</label><div style="height:35px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 11px;display:flex;align-items:center;background:var(--bg)"><span class="pill active">Active</span></div></div>
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">Billing Type</label><select class="form-select"><option>Prepaid</option><option>Postpaid</option></select></div>
+      </div>
+      <div style="height:14px"></div>
+      <div class="form-row"><label class="form-label">Enrollment Date *</label><input class="form-input" type="date" value="2026-04-24"></div>
+    </div>
+    <div class="mo-ft"><button class="btn btn-ghost" onclick="closeMo('mo-add-student')">Cancel</button><button class="btn btn-blue">Enroll Student</button></div>
+  </div>
+</div>
+
+<!-- ADD LEVEL -->
+<div class="mo" id="mo-add-level" onclick="moOut(event,'mo-add-level')">
+  <div class="mo-box">
+    <div class="mo-hd"><div class="mo-title">Add Level</div><button class="mo-close" onclick="closeMo('mo-add-level')"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l10 10M11 1L1 11"/></svg></button></div>
+    <div class="mo-body">
+      <div class="form-row"><label class="form-label">Level Name *</label><input class="form-input" placeholder="e.g. Beginner, Intermediate, Advanced"></div>
+      <div class="form-row"><label class="form-label">Description</label><textarea class="form-textarea" placeholder="What students will learn at this level…"></textarea></div>
+      <div class="form-grid">
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">Sequence Order *</label><input class="form-input" type="number" placeholder="1"></div>
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">Duration (weeks)</label><input class="form-input" type="number" placeholder="4"></div>
+      </div>
+    </div>
+    <div class="mo-ft"><button class="btn btn-ghost" onclick="closeMo('mo-add-level')">Cancel</button><button class="btn btn-blue">Add Level</button></div>
+  </div>
+</div>
+
+<!-- ADD TOPIC -->
+<div class="mo" id="mo-add-topic" onclick="moOut(event,'mo-add-topic')">
+  <div class="mo-box">
+    <div class="mo-hd"><div class="mo-title">Add Topic</div><button class="mo-close" onclick="closeMo('mo-add-topic')"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l10 10M11 1L1 11"/></svg></button></div>
+    <div class="mo-body">
+      <div class="form-row"><label class="form-label">Topic Name *</label><input class="form-input" placeholder="e.g. Quadratic Equations"></div>
+      <div class="form-row"><label class="form-label">Description</label><textarea class="form-textarea" placeholder="Brief description of this topic…"></textarea></div>
+      <div class="form-grid">
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">Asset Type</label><select class="form-select"><option>Video</option><option>Audio</option><option>File / PDF</option></select></div>
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">Access Level</label><select class="form-select"><option>View Only</option><option>Download Allowed</option><option>Restricted</option></select></div>
+      </div>
+    </div>
+    <div class="mo-ft"><button class="btn btn-ghost" onclick="closeMo('mo-add-topic')">Cancel</button><button class="btn btn-blue">Add Topic</button></div>
+  </div>
+</div>
+
+<!-- ADD MENTOR TO COURSE -->
+<div class="mo" id="mo-add-mentor" onclick="moOut(event,'mo-add-mentor')">
+  <div class="mo-box">
+    <div class="mo-hd"><div class="mo-title">Add New Mentor</div><button class="mo-close" onclick="closeMo('mo-add-mentor')"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l10 10M11 1L1 11"/></svg></button></div>
+    <div class="mo-body">
+      <div class="form-row">
+        <label class="form-label">Mentor Name *</label>
+        <div class="dd-wrap" id="dd-mentor">
+          <div class="dd-trigger" onclick="ddToggle('dd-mentor')">
+            <span>Select a mentor…</span>
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l4 4 4-4"/></svg>
+          </div>
+          <div class="dd-panel">
+            <div class="dd-srch">
+              <svg class="dd-srch-icon" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6.5" cy="6.5" r="5.5"/><path d="M11 11L15 15"/></svg>
+              <input placeholder="Search by name…" oninput="ddFilter('dd-mentor')">
+            </div>
+            <div class="dd-list"></div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row"><label class="form-label">Commission %</label><input class="form-input" type="number" placeholder="30"></div>
+      <div class="form-row"><label class="form-label">Assign From Date *</label><input class="form-input" type="date" value="2026-04-24"></div>
+    </div>
+    <div class="mo-ft"><button class="btn btn-ghost" onclick="closeMo('mo-add-mentor')">Cancel</button><button class="btn btn-blue">Add Mentor</button></div>
+  </div>
+</div>
+
+<script>
+/* ─── DATA ─── */
+const COLORS=['#7c3aed','#2563eb','#059669','#b45309','#be123c','#0891b2'];
+function ini(n){return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)}
+
+const ALL_STUDENTS=[
+  {name:'Priya Sharma',color:'#7c3aed'},{name:'Aarav Joshi',color:'#2563eb'},
+  {name:'Rohan Das',color:'#059669'},{name:'Diya Patel',color:'#b45309'},
+  {name:'Arjun Mehta',color:'#be123c'},{name:'Kiran Verma',color:'#0891b2'},
+  {name:'Kavya Nair',color:'#7c3aed'},{name:'Sneha Kapoor',color:'#2563eb'},
+];
+const ALL_MENTORS=[
+  {name:'Anand Kumar',color:'#7c3aed'},{name:'Sneha Rao',color:'#0369a1'},
+  {name:'Ravi Pillai',color:'#059669'},{name:'Kiran Bose',color:'#2563eb'},
+  {name:'Nisha Kothari',color:'#be123c'},{name:'Pradeep Joshi',color:'#b45309'},
+];
+
+function ddToggle(id){
+  const wrap=document.getElementById(id);
+  const panel=wrap.querySelector('.dd-panel');
+  const trigger=wrap.querySelector('.dd-trigger');
+  const isOpen=panel.classList.contains('open');
+  document.querySelectorAll('.dd-panel.open').forEach(p=>p.classList.remove('open'));
+  document.querySelectorAll('.dd-trigger.open').forEach(t=>t.classList.remove('open'));
+  if(!isOpen){
+    panel.classList.add('open');trigger.classList.add('open');
+    const inp=wrap.querySelector('.dd-srch input');inp.value='';inp.focus();
+    ddFilter(id);
+  }
+}
+function ddFilter(id){
+  const wrap=document.getElementById(id);
+  const q=(wrap.querySelector('.dd-srch input').value||'').toLowerCase();
+  const items=wrap._ddItems||[];
+  const sel=wrap._ddSelected||'';
+  const filtered=items.filter(i=>i.name.toLowerCase().includes(q));
+  const list=wrap.querySelector('.dd-list');
+  if(!filtered.length){list.innerHTML='<div class="dd-empty">No results found</div>';return;}
+  list.innerHTML=filtered.map(i=>`
+    <div class="dd-opt${sel===i.name?' sel':''}" onclick="ddSelect('${id}','${i.name}','${i.color}')">
+      <div class="dd-mini-av" style="background:${i.color}">${ini(i.name)}</div>${i.name}
+    </div>`).join('');
+}
+function ddSelect(id,name,color){
+  const wrap=document.getElementById(id);
+  wrap._ddSelected=name;
+  const trigger=wrap.querySelector('.dd-trigger');
+  trigger.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><div class="dd-mini-av" style="background:${color}">${ini(name)}</div>${name}</div><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l4 4 4-4"/></svg>`;
+  trigger.classList.add('has-val');
+  wrap.querySelector('.dd-panel').classList.remove('open');
+  trigger.classList.remove('open');
+}
+function ddInit(id,items){
+  const wrap=document.getElementById(id);
+  wrap._ddItems=items;wrap._ddSelected='';ddFilter(id);
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.dd-wrap')){
+    document.querySelectorAll('.dd-panel.open').forEach(p=>p.classList.remove('open'));
+    document.querySelectorAll('.dd-trigger.open').forEach(t=>t.classList.remove('open'));
+  }
+});
+
+const courses=[
+  {
+    id:'CRS001',name:'Mathematics — Grade 10',color:'#7c3aed',status:'active',
+    desc:'Algebra, geometry, trigonometry and calculus fundamentals for Grade 10.',
+    pricing:'₹3,500/mo',model:'Per Month',revenue:'₹2.1L',totalClasses:248,
+    students:[
+      {name:'Priya Sharma',phone:'98765 43210',subStatus:'active',classes:24,att:87},
+      {name:'Aarav Joshi',phone:'43210 98765',subStatus:'active',classes:14,att:91},
+      {name:'Rohan Das',phone:'65432 10987',subStatus:'active',classes:2,att:67},
+      {name:'Diya Patel',phone:'32109 87654',subStatus:'paused',classes:8,att:74},
+    ],
+    levels:[
+      {name:'Beginner',color:'#2563eb',topics:[{name:'Number Systems',assets:4},{name:'Algebra Basics',assets:6},{name:'Linear Equations',assets:5}]},
+      {name:'Intermediate',color:'#7c3aed',topics:[{name:'Quadratic Equations',assets:7},{name:'Geometry',assets:5},{name:'Trigonometry',assets:8}]},
+      {name:'Advanced',color:'#059669',topics:[{name:'Calculus',assets:6},{name:'Statistics',assets:4},{name:'Probability',assets:3}]},
+    ],
+    mentors:[{name:'Anand Kumar',av:'AK',color:'#7c3aed',commission:'28% custom',courses:'Mathematics'},{name:'Kiran Bose',av:'KB',color:'#2563eb',commission:'30% default',courses:'Mathematics — Backup'}],
+    pricing_history:[{model:'Per Month',amount:'₹3,500',from:'01 Jan 2026',to:null,current:true},{model:'Per Month',amount:'₹3,000',from:'01 Jun 2025',to:'31 Dec 2025',current:false}]
+  },
+  {
+    id:'CRS002',name:'Physics Fundamentals',color:'#2563eb',status:'active',
+    desc:'Mechanics, optics, electromagnetism and thermodynamics. Competitive exam prep.',
+    pricing:'₹450/class',model:'Per Class',revenue:'₹1.6L',totalClasses:196,
+    students:[
+      {name:'Arjun Mehta',phone:'87654 32109',subStatus:'active',classes:17,att:78},
+      {name:'Kiran Verma',phone:'21098 76543',subStatus:'cancelled',classes:15,att:55},
+    ],
+    levels:[
+      {name:'Foundation',color:'#2563eb',topics:[{name:'Mechanics & Motion',assets:5},{name:'Newton\'s Laws',assets:4}]},
+      {name:'Core Physics',color:'#0891b2',topics:[{name:'Optics',assets:6},{name:'Thermodynamics',assets:5},{name:'Electromagnetism',assets:7}]},
+    ],
+    mentors:[{name:'Sneha Rao',av:'SR',color:'#0369a1',commission:'30% default',courses:'Physics & Chemistry'}],
+    pricing_history:[{model:'Per Class',amount:'₹450',from:'15 Feb 2026',to:null,current:true}]
+  },
+  {
+    id:'CRS003',name:'Chemistry — Organic & Inorganic',color:'#059669',status:'active',
+    desc:'Organic reactions, periodic table, bonding, acids-bases and industrial applications.',
+    pricing:'₹4,200/10 cls',model:'Per 10 Classes',revenue:'₹1.2L',totalClasses:172,
+    students:[
+      {name:'Arjun Mehta',phone:'87654 32109',subStatus:'active',classes:12,att:83},
+      {name:'Kavya Nair',phone:'76543 21098',subStatus:'paused',classes:31,att:68},
+      {name:'Diya Patel',phone:'32109 87654',subStatus:'active',classes:19,att:90},
+    ],
+    levels:[
+      {name:'Basic Chemistry',color:'#059669',topics:[{name:'Periodic Table',assets:4},{name:'Chemical Bonding',assets:5}]},
+      {name:'Organic Chemistry',color:'#b45309',topics:[{name:'Hydrocarbons',assets:6},{name:'Functional Groups',assets:7},{name:'Reaction Mechanisms',assets:5}]},
+    ],
+    mentors:[{name:'Ravi Pillai',av:'RP',color:'#059669',commission:'32% custom',courses:'Chemistry'}],
+    pricing_history:[{model:'Per 10 Classes',amount:'₹4,200',from:'01 Jan 2026',to:null,current:true}]
+  },
+  {
+    id:'CRS004',name:'Biology — Life Sciences',color:'#b45309',status:'active',
+    desc:'Cell biology, genetics, ecology and human anatomy for board exams.',
+    pricing:'₹3,200/mo',model:'Per Month',revenue:'₹0.9L',totalClasses:148,
+    students:[
+      {name:'Sneha Kapoor',phone:'54321 09876',subStatus:'completed',classes:48,att:92},
+      {name:'Aarav Joshi',phone:'43210 98765',subStatus:'active',classes:11,att:88},
+    ],
+    levels:[
+      {name:'Cell Biology',color:'#b45309',topics:[{name:'Cell Structure',assets:5},{name:'Cell Division',assets:4}]},
+      {name:'Genetics & Ecology',color:'#059669',topics:[{name:'Heredity',assets:6},{name:'DNA & RNA',assets:7},{name:'Ecosystems',assets:5}]},
+    ],
+    mentors:[{name:'Pradeep Joshi',av:'PJ',color:'#b45309',commission:'30% default',courses:'Biology'}],
+    pricing_history:[{model:'Per Month',amount:'₹3,200',from:'01 Mar 2025',to:null,current:true}]
+  },
+  {
+    id:'CRS005',name:'English Language & Grammar',color:'#be123c',status:'inactive',
+    desc:'Reading comprehension, grammar rules, essay writing and communication skills.',
+    pricing:'₹2,800/mo',model:'Per Month',revenue:'₹0.7L',totalClasses:120,
+    students:[
+      {name:'Sneha Kapoor',phone:'54321 09876',subStatus:'completed',classes:36,att:85},
+      {name:'Diya Patel',phone:'32109 87654',subStatus:'active',classes:28,att:91},
+    ],
+    levels:[
+      {name:'Grammar Foundations',color:'#be123c',topics:[{name:'Parts of Speech',assets:4},{name:'Tenses',assets:5},{name:'Sentence Structure',assets:4}]},
+      {name:'Advanced Writing',color:'#7c3aed',topics:[{name:'Essay Writing',assets:6},{name:'Comprehension',assets:5}]},
+    ],
+    mentors:[{name:'Nisha Kothari',av:'NK',color:'#be123c',commission:'30% default',courses:'English & SST'}],
+    pricing_history:[{model:'Per Month',amount:'₹2,800',from:'10 Aug 2025',to:null,current:true}]
+  },
+  {
+    id:'CRS006',name:'Social Science',color:'#0891b2',status:'active',
+    desc:'History, geography, civics and economics for holistic social studies preparation.',
+    pricing:'₹400/class',model:'Per Class',revenue:'₹0.5L',totalClasses:96,
+    students:[
+      {name:'Rohan Das',phone:'65432 10987',subStatus:'active',classes:6,att:82},
+    ],
+    levels:[
+      {name:'History & Geography',color:'#0891b2',topics:[{name:'Ancient India',assets:5},{name:'World Geography',assets:4}]},
+      {name:'Civics & Economics',color:'#7c3aed',topics:[{name:'Government',assets:4},{name:'Economics Basics',assets:5}]},
+    ],
+    mentors:[{name:'Nisha Kothari',av:'NK',color:'#be123c',commission:'30% default',courses:'English & SST'}],
+    pricing_history:[{model:'Per Class',amount:'₹400',from:'10 Aug 2025',to:null,current:true}]
+  },
+];
+
+let filteredCourses=[...courses];
+let openLevels={};
+
+/* ─── FILTERS ─── */
+function filterCourses(){
+  const q=(document.getElementById('srch').value||'').toLowerCase();
+  const sf=document.getElementById('sf-status').value;
+  const pf=document.getElementById('sf-pricing').value;
+  filteredCourses=courses.filter(c=>{
+    const mq=!q||c.name.toLowerCase().includes(q)||c.desc.toLowerCase().includes(q);
+    const ms=!sf||c.status===sf;
+    const mp=!pf||c.model===pf;
+    return mq&&ms&&mp;
+  });
+  renderGrid();
+}
+
+/* ─── GRID ─── */
+function renderGrid(){
+  document.getElementById('crs-count').textContent=filteredCourses.length+' course'+(filteredCourses.length!==1?'s':'');
+  document.getElementById('course-grid').innerHTML=filteredCourses.map((c,i)=>`
+    <div class="c-card" onclick="openDetail('${c.id}')">
+      <div class="c-thumb" style="background:linear-gradient(135deg,${c.color}bb,${c.color})">
+        <div class="c-thumb-pat"></div>
+        <div class="c-thumb-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="c-status-badge ${c.status}">${c.status.charAt(0).toUpperCase()+c.status.slice(1)}</div>
+      </div>
+      <div class="c-body">
+        <div class="c-name">${c.name}</div>
+        <div class="c-desc">${c.desc}</div>
+        <div class="c-meta">
+          <div class="c-meta-item"><svg viewBox="0 0 12 12" fill="currentColor"><path d="M6 6a2.5 2.5 0 100-5 2.5 2.5 0 000 5zm-3.5 5a3.5 3.5 0 017 0H2.5z"/></svg>${c.students.length} students</div>
+          <div class="c-meta-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 2h10v9H1z"/><path d="M4 2V1M8 2V1M1 5h10"/></svg>${c.levels.length} levels</div>
+          <div class="c-meta-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="6" r="5"/><path d="M6 3.5V6l2 1"/></svg>${c.totalClasses} classes</div>
+        </div>
+        <div class="c-footer">
+          <div><div class="c-price">${c.pricing}</div><div class="c-model">${c.model}</div></div>
+          <div class="c-actions">
+            <button class="act-btn" onclick="event.stopPropagation();openDetail('${c.id}')" title="View"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg></button>
+            <button class="act-btn" onclick="event.stopPropagation()" title="Edit"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button>
+            <button class="act-btn danger" onclick="event.stopPropagation()" title="Deactivate"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/><path d="M4 4l4 4M8 4l-4 4"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ─── DETAIL ─── */
+function openDetail(id){
+  const c=courses.find(x=>x.id===id);if(!c)return;
+  openLevels={};
+  document.getElementById('scr-list').classList.remove('vis');
+  document.getElementById('scr-detail').classList.add('vis');
+  document.getElementById('srch-area').style.display='none';
+  document.getElementById('tb-title').textContent=c.name;
+  document.getElementById('tb-crumb').textContent='Courses → Course Detail · '+c.id;
+
+  const spill=(st)=>{const m={active:'active',inactive:'inactive',paused:'paused',completed:'completed',cancelled:'cancelled',pending:'pending',paid:'paid',overdue:'overdue',ended:'ended'};return`<span class="pill ${m[st]||'ended'}">${st.charAt(0).toUpperCase()+st.slice(1)}</span>`;};
+
+  const totalTopics=c.levels.reduce((a,l)=>a+l.topics.length,0);
+
+  document.getElementById('det-content').innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+      <button class="btn-back" onclick="goBack()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 1L3 6l5 5"/></svg>
+        Back to Courses
+      </button>
+    </div>
+
+    <!-- DETAIL HEADER -->
+    <div class="det-header">
+      <div class="dh-av" style="background:${c.color}">${c.name.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1;min-width:0">
+        <div class="dh-name">${c.name}</div>
+        <div class="dh-meta">
+          ${spill(c.status)}
+          <span class="dh-m-item"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="10" height="8" rx="1"/><path d="M1 5h10"/></svg>${c.model} · ${c.pricing}</span>
+          <span class="dh-m-item">${c.id}</span>
+        </div>
+      </div>
+      <div class="dh-stats">
+        <div class="dh-stat"><div class="dh-v">${c.students.length}</div><div class="dh-l">Students</div></div>
+        <div class="dh-stat"><div class="dh-v">${c.levels.length}</div><div class="dh-l">Levels</div></div>
+        <div class="dh-stat"><div class="dh-v">${totalTopics}</div><div class="dh-l">Topics</div></div>
+        <div class="dh-stat"><div class="dh-v" style="color:var(--green)">${c.revenue}</div><div class="dh-l">Revenue</div></div>
+      </div>
+    </div>
+
+    <!-- TAB NAV -->
+    <div class="tab-nav">
+      <button class="tab-btn on" onclick="swTab(this,'tp-students')">Enrolled Students</button>
+      <button class="tab-btn" onclick="swTab(this,'tp-levels')">Levels & Topics</button>
+      <button class="tab-btn" onclick="swTab(this,'tp-mentors')">Assigned Mentors</button>
+      <button class="tab-btn" onclick="swTab(this,'tp-pricing')">Pricing History</button>
+    </div>
+
+    <!-- ── ENROLLED STUDENTS TAB ── -->
+    <div class="tp vis" id="tp-students">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H3z"/></svg>
+            Enrolled Students
+            <span class="tag">${c.students.length} students</span>
+          </div>
+          <button class="btn btn-blue-sm" onclick="openMo('mo-add-student')">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>
+            Add Enrolled Student
+          </button>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Student</th><th>Phone</th><th>Subscription Status</th><th>Classes Taken</th><th>Attendance</th><th>Actions</th></tr></thead>
+            <tbody>
+              ${c.students.map((s,si)=>`
+                <tr class="clickable">
+                  <td>
+                    <div style="display:flex;align-items:center;gap:9px">
+                      <div style="width:30px;height:30px;border-radius:50%;background:${COLORS[si%COLORS.length]};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${ini(s.name)}</div>
+                      <div class="td-main">${s.name}</div>
+                    </div>
+                  </td>
+                  <td style="font-size:12px;color:var(--muted)">${s.phone}</td>
+                  <td id="st-cell-${si}">${spill(s.subStatus)}</td>
+                  <td style="font-weight:700;font-family:'Sora',sans-serif;font-size:15px">${s.classes}</td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <div class="prog-bar" style="width:72px;display:inline-block"><div class="prog-f" style="width:${s.att}%;background:${s.att>=80?'var(--green)':'var(--amber)'}"></div></div>
+                      <span style="font-size:12px;font-weight:600;color:${s.att>=80?'var(--green)':'var(--amber)'}">${s.att}%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="act-grp">
+                      <div class="st-dd" id="st-dd-${si}">
+                        <button class="act-btn" title="Change Status" onclick="event.stopPropagation();toggleStMenu(${si})"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button>
+                        <div class="st-menu" id="st-menu-${si}">
+                          <div class="st-opt" onclick="changeStatus(${si},'active')"><span class="pill active">Active</span></div>
+                          <div class="st-opt" onclick="changeStatus(${si},'paused')"><span class="pill paused">Paused</span></div>
+                          <div class="st-opt" onclick="changeStatus(${si},'completed')"><span class="pill completed">Completed</span></div>
+                          <div class="st-opt" onclick="changeStatus(${si},'cancelled')"><span class="pill cancelled">Cancelled</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LEVELS & TOPICS TAB ── -->
+    <div class="tp" id="tp-levels">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2h14v3H1V2zm0 5h14v3H1V7zm0 5h10v3H1v-3z"/></svg>
+            Levels
+            <span class="tag">${c.levels.length} levels · ${totalTopics} topics</span>
+          </div>
+        </div>
+        <div class="card-bd">
+          ${c.levels.map((lv,li)=>`
+            <div class="level-row" id="lvrow-${c.id}-${li}" onclick="toggleLevel('${c.id}',${li})">
+              <div class="level-num" style="background:${lv.color}">${li+1}</div>
+              <div class="level-info">
+                <div class="level-name">${lv.name}</div>
+                <div class="level-meta">${lv.topics.length} topics · Click to expand</div>
+              </div>
+              <span class="level-topics-count">${lv.topics.length} topics</span>
+              <div class="act-grp" onclick="event.stopPropagation()" style="margin-right:10px">
+                <button class="act-btn" onclick="openMo('mo-add-topic')" title="Add Topic" style="border-color:rgba(37,99,235,0.25);color:var(--blue)">
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>
+                </button>
+                <button class="act-btn" title="Edit Level"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button>
+              </div>
+              <svg class="level-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+            </div>
+            <div class="level-topics" id="lvtopics-${c.id}-${li}">
+              ${lv.topics.map((t,ti)=>`
+                <div class="topic-row">
+                  <div class="topic-dot" style="background:${lv.color}"></div>
+                  <span class="topic-name">${t.name}</span>
+                  <span class="topic-meta">${t.assets} assets</span>
+                  <div class="act-grp" style="margin-left:10px">
+                    <button class="act-btn" title="View"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z"/><circle cx="6" cy="6" r="1.5"/></svg></button>
+                    <button class="act-btn" title="Edit"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ASSIGNED MENTORS TAB ── -->
+    <div class="tp" id="tp-mentors">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm2 3h6v1H5V5zm0 2.5h6v1H5v-1zm0 2.5h4v1H5V10z"/></svg>
+            Assigned Mentors
+            <span class="tag">${c.mentors.length} mentors</span>
+          </div>
+          <button class="btn btn-blue-sm" onclick="openMo('mo-add-mentor')">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>
+            Add New Mentor
+          </button>
+        </div>
+        <div class="card-bd">
+          ${c.mentors.slice(0,1).map(m=>`
+            <div class="mentor-card">
+              <div class="mc-av" style="background:${m.color}">${m.av}</div>
+              <div style="flex:1;min-width:0">
+                <div class="mc-name">${m.name}</div>
+                <div class="mc-sub">${m.courses} · ${m.commission}</div>
+              </div>
+              <span class="mc-badge">Active</span>
+              <div class="act-grp" style="margin-left:10px">
+                <button class="act-btn" title="Edit"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l2 2-6 6H2V8l6-6z"/></svg></button>
+                <button class="act-btn danger" title="Remove"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/><path d="M4 4l4 4M8 4l-4 4"/></svg></button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PRICING HISTORY TAB ── -->
+    <div class="tp" id="tp-pricing">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Pricing History</div>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Model</th><th>Amount</th><th>Effective From</th><th>Effective To</th><th>Status</th></tr></thead>
+            <tbody>
+              ${c.pricing_history.map(p=>`
+                <tr>
+                  <td><span class="tag">${p.model}</span></td>
+                  <td style="font-family:'Sora',sans-serif;font-weight:700;font-size:14px">${p.amount}</td>
+                  <td style="color:var(--muted);font-size:12px">${p.from}</td>
+                  <td style="color:var(--muted);font-size:12px">${p.to||'—'}</td>
+                  <td>${p.current?`<span class="pill active">Current</span>`:`<span class="pill ended">Expired</span>`}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function goBack(){
+  document.getElementById('scr-detail').classList.remove('vis');
+  document.getElementById('scr-list').classList.add('vis');
+  document.getElementById('srch-area').style.display='';
+  document.getElementById('tb-title').textContent='Courses';
+  document.getElementById('tb-crumb').textContent='Sudarshini Institute · '+courses.length+' courses';
+}
+
+/* ─── TAB SWITCH ─── */
+function swTab(btn,panelId){
+  const scope=btn.closest('.det-scroll');
+  scope.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  scope.querySelectorAll('.tp').forEach(p=>p.classList.remove('vis'));
+  document.getElementById(panelId).classList.add('vis');
+}
+
+/* ─── LEVEL TOGGLE ─── */
+function toggleLevel(courseId,li){
+  const key=courseId+'-'+li;
+  const row=document.getElementById('lvrow-'+key);
+  const topics=document.getElementById('lvtopics-'+key);
+  openLevels[key]=!openLevels[key];
+  if(openLevels[key]){
+    row.classList.add('open');
+    topics.classList.add('open');
+  }else{
+    row.classList.remove('open');
+    topics.classList.remove('open');
+  }
+}
+
+/* ─── MODALS ─── */
+function openMo(id){document.getElementById(id).classList.add('open')}
+function closeMo(id){document.getElementById(id).classList.remove('open')}
+function moOut(e,id){if(e.target===e.currentTarget)closeMo(id)}
+function toggleN(){const v=document.getElementById('pricing-model').value;document.getElementById('n-classes-row').style.display=v==='Per 10 Classes'?'block':'none'}
+
+/* ─── STATUS DROPDOWN ─── */
+function toggleStMenu(si){
+  const menu=document.getElementById('st-menu-'+si);
+  const isOpen=menu.classList.contains('open');
+  document.querySelectorAll('.st-menu.open').forEach(m=>m.classList.remove('open'));
+  if(!isOpen)menu.classList.add('open');
+}
+function changeStatus(si,status){
+  const cell=document.getElementById('st-cell-'+si);
+  const label=status.charAt(0).toUpperCase()+status.slice(1);
+  cell.innerHTML=`<span class="pill ${status}">${label}</span>`;
+  document.getElementById('st-menu-'+si).classList.remove('open');
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.st-dd'))
+    document.querySelectorAll('.st-menu.open').forEach(m=>m.classList.remove('open'));
+});
+
+/* ─── INIT ─── */
+renderGrid();
+ddInit('dd-student',ALL_STUDENTS);
+ddInit('dd-mentor',ALL_MENTORS);
+</script>
+</body>
+</html>

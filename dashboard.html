@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>LMS Portal — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f2f8;--surface:#ffffff;
+  --sidebar-bg:#16012e;
+  --sidebar-hover:rgba(255,255,255,0.06);
+  --text:#0f172a;--muted:#64748b;
+  --border:#e8eaf0;
+  --accent:#6d28d9;--accent-light:#ede9fe;
+  --green:#059669;--green-bg:#ecfdf5;
+  --red:#dc2626;--red-bg:#fff1f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --blue:#2563eb;--blue-bg:#eff6ff;
+  --teal:#0891b2;--teal-bg:#ecfeff;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow:0 4px 12px rgba(0,0,0,0.06),0 1px 3px rgba(0,0,0,0.04);
+  --radius:14px;--radius-sm:9px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow:hidden}
+.layout{display:flex;height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:248px;flex-shrink:0;background:var(--sidebar-bg);display:flex;flex-direction:column;height:100vh;position:relative;overflow:hidden}
+.sidebar::before{content:'';position:absolute;top:-80px;left:-60px;width:260px;height:260px;background:radial-gradient(circle,rgba(109,40,217,0.4) 0%,transparent 65%);pointer-events:none}
+.sidebar::after{content:'';position:absolute;bottom:40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(167,139,250,0.15) 0%,transparent 70%);pointer-events:none}
+.sidebar-logo{padding:24px 20px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.logo-icon{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 16px rgba(109,40,217,0.45)}
+.logo-icon svg{width:18px;height:18px;fill:#fff}
+.logo-name{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.logo-sub{font-size:9px;color:rgba(167,139,250,0.6);letter-spacing:0.1em;text-transform:uppercase;font-weight:500;margin-top:1px}
+.sidebar-scroll{flex:1;overflow-y:auto;padding:10px 12px}
+.sidebar-scroll::-webkit-scrollbar{width:0}
+.nav-section{font-size:9px;font-weight:700;color:rgba(255,255,255,0.2);letter-spacing:0.12em;text-transform:uppercase;padding:14px 10px 5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;cursor:pointer;color:rgba(255,255,255,0.45);font-size:13px;font-weight:500;margin:1px 0;transition:all 0.14s;border:1px solid transparent;text-decoration:none}
+.nav-item:hover{background:var(--sidebar-hover);color:rgba(255,255,255,0.8)}
+.nav-item.active{background:rgba(109,40,217,0.22);color:#fff;border-color:rgba(167,139,250,0.2);box-shadow:0 2px 8px rgba(109,40,217,0.15)}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:0.8}
+.nav-item.active svg{opacity:1}
+.nav-badge{margin-left:auto;background:rgba(109,40,217,0.6);color:#ddd6fe;font-size:10px;font-weight:700;padding:1px 8px;border-radius:20px}
+.nav-badge.red{background:rgba(220,38,38,0.55);color:#fecaca}
+.sidebar-footer{padding:14px 12px 16px;border-top:1px solid rgba(255,255,255,0.05)}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:10px;cursor:pointer;transition:background 0.14s}
+.user-card:hover{background:var(--sidebar-hover)}
+.user-avatar{width:33px;height:33px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;color:#fff}
+.user-role{font-size:10px;color:rgba(255,255,255,0.35);margin-top:1px}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:62px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 28px;flex-shrink:0;box-shadow:var(--shadow-sm)}
+.topbar-left{display:flex;flex-direction:column}
+.topbar-title{font-size:16px;font-weight:700;letter-spacing:-0.025em;font-family:'Sora',sans-serif;color:var(--text)}
+.topbar-breadcrumb{font-size:11px;color:var(--muted);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.icon-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all 0.14s;position:relative}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.notif-dot{position:absolute;top:2px;right:2px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #fff}
+.topbar-user{display:flex;align-items:center;gap:9px;cursor:pointer;padding:6px 12px;border-radius:22px;transition:background 0.14s;border:1.5px solid transparent}
+.topbar-user:hover{background:var(--bg);border-color:var(--border)}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.topbar-uname{font-size:13px;font-weight:600;color:var(--text)}
+.topbar-urole{font-size:10.5px;color:var(--muted)}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:26px 28px}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px}
+
+/* CARDS */
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13.5px;font-weight:700;letter-spacing:-0.015em;color:var(--text)}
+.card-bd{padding:18px 20px}
+
+/* PILLS / TAGS */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.pill.completed{background:#dbeafe;color:#1d4ed8}
+.pill.scheduled{background:#dbeafe;color:#1d4ed8}
+.pill.cancelled{background:#fee2e2;color:#dc2626}
+.tag{background:var(--bg);border:1.5px solid var(--border);border-radius:7px;padding:2px 9px;font-size:11px;font-weight:600;color:var(--muted)}
+.tag-live{background:var(--green-bg);border:1.5px solid #bbf7d0;border-radius:7px;padding:2px 10px;font-size:11px;font-weight:700;color:var(--green)}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+th{font-size:10.5px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.07em;padding:10px 18px;text-align:left;border-bottom:1.5px solid var(--border);white-space:nowrap;background:#f8f9fc}
+td{padding:12px 18px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:middle;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#faf8ff}
+.td-main{font-weight:600;font-size:13px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:0 18px;height:36px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s}
+.btn-primary{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;box-shadow:0 4px 14px rgba(109,40,217,0.3)}
+.btn-primary:hover{background:linear-gradient(135deg,#6d28d9,#5b21b6);transform:translateY(-1px)}
+
+/* STAT CARDS */
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:20px 22px;position:relative;overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0}
+.sc-icon{position:absolute;right:16px;top:16px;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.sc-icon svg{width:17px;height:17px}
+.sc-label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
+.sc-val{font-family:'Sora',sans-serif;font-size:30px;font-weight:700;letter-spacing:-0.04em;line-height:1}
+.sc-note{font-size:11px;color:var(--muted);margin-top:5px}
+.sc-delta{font-size:11.5px;font-weight:600;margin-top:6px}
+.sc-delta.up{color:var(--green)}
+.sc-delta.down{color:var(--red)}
+
+/* GRIDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.dash-row{display:grid;grid-template-columns:1fr 1.65fr;gap:16px;margin-bottom:16px}
+
+/* HERO BANNER */
+.hero-banner{border-radius:16px;background:linear-gradient(120deg,#2d1065 0%,#4c1d95 40%,#5b21b6 70%,#7c3aed 100%);padding:28px 32px;margin-bottom:22px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;box-shadow:0 8px 28px rgba(109,40,217,0.28)}
+.hero-banner::before{content:'';position:absolute;top:-60px;right:60px;width:300px;height:300px;background:radial-gradient(circle,rgba(167,139,250,0.2) 0%,transparent 65%);pointer-events:none}
+.hero-banner::after{content:'';position:absolute;bottom:-60px;left:260px;width:220px;height:220px;background:radial-gradient(circle,rgba(109,40,217,0.25) 0%,transparent 70%);pointer-events:none}
+.hero-lines{position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent,transparent 40px,rgba(255,255,255,0.012) 40px,rgba(255,255,255,0.012) 41px);pointer-events:none}
+.hero-title{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.02em;margin-bottom:4px}
+.hero-sub{font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:20px}
+.hero-stats{display:flex;gap:30px;align-items:center}
+.hero-stat-val{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:#fff}
+.hero-stat-label{font-size:10.5px;color:rgba(255,255,255,0.55);margin-top:2px;text-transform:uppercase;letter-spacing:0.04em}
+.hero-divider{width:1px;height:36px;background:rgba(255,255,255,0.15)}
+.hero-actions{display:flex;gap:10px;z-index:1;flex-direction:column;align-items:flex-end}
+.hero-btn{display:flex;align-items:center;gap:7px;padding:9px 20px;border-radius:22px;font-size:12.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s;white-space:nowrap}
+.hero-btn-ghost{background:rgba(255,255,255,0.14);color:#fff;border:1.5px solid rgba(255,255,255,0.22)}
+.hero-btn-ghost:hover{background:rgba(255,255,255,0.22)}
+.hero-btn-white{background:#fff;color:var(--accent)}
+.hero-btn-white:hover{background:#f5f3ff}
+
+/* ACTIVITY */
+.act-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.act-item:last-child{border-bottom:none}
+.act-dot{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.act-dot svg{width:14px;height:14px}
+.act-text{font-size:12.5px;line-height:1.45;color:var(--text)}
+.act-text strong{font-weight:600}
+.act-time{font-size:10.5px;color:var(--muted);margin-top:2px}
+
+/* ATT BADGE */
+.att-badge{padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700}
+.att-badge.present{background:#dcfce7;color:#16a34a}
+.att-badge.absent{background:#fee2e2;color:#dc2626}
+.att-badge.late{background:#fef3c7;color:#b45309}
+
+/* QUICK STATS ROW */
+.quick-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.quick-card{background:var(--surface);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04)}
+.qc-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.qc-icon svg{width:18px;height:18px}
+.qc-val{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:var(--text);line-height:1}
+.qc-label{font-size:11px;color:var(--muted);margin-top:2px;font-weight:500}
+.qc-delta{font-size:10.5px;font-weight:600;margin-top:4px}
+.qc-delta.up{color:var(--green)}
+.qc-delta.down{color:var(--red)}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h14V7L10 2zm0 2.5l5 3.5v8H5V8l5-3.5z"/><rect x="7.5" y="11" width="5" height="5" rx="0.5"/></svg></div>
+    <div><div class="logo-name">LMS Portal</div><div class="logo-sub">Sudarshini Inst.</div></div>
+  </div>
+  <div class="sidebar-scroll">
+    <div class="nav-section">Main</div>
+    <a href="dashboard.html" class="nav-item active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      Dashboard
+    </a>
+    <a href="courses_page.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12a1 1 0 011 1v10a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1zm1 3v7h10V5H3z"/><path d="M5 7h6v1.5H5z"/></svg>
+      Courses <span class="nav-badge">12</span>
+    </a>
+    <a href="student_management.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H3z"/></svg>
+      Students <span class="nav-badge">247</span>
+    </a>
+    <a href="mentor_management.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3zm2 3h6v1H5V5zm0 2.5h6v1H5v-1zm0 2.5h4v1H5V10z"/></svg>
+      Mentors <span class="nav-badge">6</span>
+    </a>
+    <a href="class_sessions.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V4zm0 5a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-1 1H2a1 1 0 01-1-1V9z"/></svg>
+      Class Sessions
+    </a>
+    <a href="attendance.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 3H2a1 1 0 00-1 1v8a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1zM5 9H3V7h2v2zm4 0H7V7h2v2zm4 0h-2V7h2v2z"/></svg>
+      Attendance
+    </a>
+    <div class="nav-section">Finance</div>
+    <a href="invoices.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2-1v9h8V3H4zm1 2h6v1H5V5zm0 2h6v1H5V7zm0 2h4v1H5V9z"/></svg>
+      Invoices <span class="nav-badge red">3</span>
+    </a>
+    <a href="payouts.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 5v3l2 1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      Payouts
+    </a>
+    <a href="levels.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 12h12v2H2zm0-4h9v2H2zm0-4h6v2H2z"/></svg>
+      Levels
+    </a>
+    <div class="nav-section">System</div>
+    <a href="settings.html" class="nav-item">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1.5V3M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/></svg>
+      Settings
+    </a>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">AT</div>
+      <div><div class="user-name">Alex Thompson</div><div class="user-role">Org Admin</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">Dashboard</div>
+      <div class="topbar-breadcrumb">Sudarshini Institute · Overview</div>
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a6 6 0 00-6 6v3.5L1 12h14l-1-1.5V7a6 6 0 00-6-6zm0 14a2 2 0 002-2H6a2 2 0 002 2z"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="topbar-user">
+        <div class="topbar-avatar">AT</div>
+        <div><div class="topbar-uname">Alex Thompson</div><div class="topbar-urole">Org Admin</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- HERO BANNER -->
+    <div class="hero-banner">
+      <div class="hero-lines"></div>
+      <div style="z-index:1">
+        <div class="hero-title">Welcome back, Alex! 👋</div>
+        <div class="hero-sub">Sudarshini Institute · April 2026 Overview</div>
+        <div class="hero-stats">
+          <div><div class="hero-stat-val">12</div><div class="hero-stat-label">Active Courses</div></div>
+          <div class="hero-divider"></div>
+          <div><div class="hero-stat-val">247</div><div class="hero-stat-label">Total Students</div></div>
+          <div class="hero-divider"></div>
+          <div><div class="hero-stat-val">6</div><div class="hero-stat-label">Mentors</div></div>
+          <div class="hero-divider"></div>
+          <div><div class="hero-stat-val">94%</div><div class="hero-stat-label">Attendance</div></div>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <a href="student_management.html"><button class="hero-btn hero-btn-ghost">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0H3z"/></svg>
+          Enroll Student
+        </button></a>
+        <button class="hero-btn hero-btn-white">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4z"/></svg>
+          Generate Invoice
+        </button>
+      </div>
+    </div>
+
+    <!-- KPI GRID -->
+    <div class="kpi-grid">
+      <div class="stat-card">
+        <div class="sc-bar" style="background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div>
+        <div class="sc-icon" style="background:var(--accent-light)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0"/></svg>
+        </div>
+        <div class="sc-label">Total Students</div>
+        <div class="sc-val">247</div>
+        <div class="sc-delta up">↑ +12 this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-bar" style="background:linear-gradient(90deg,#059669,#34d399)"></div>
+        <div class="sc-icon" style="background:var(--green-bg)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M4 8h8M4 11h5"/></svg>
+        </div>
+        <div class="sc-label">Active Courses</div>
+        <div class="sc-val">12</div>
+        <div class="sc-delta up">↑ +2 this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-bar" style="background:linear-gradient(90deg,#2563eb,#60a5fa)"></div>
+        <div class="sc-icon" style="background:var(--blue-bg)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="var(--blue)" stroke-width="1.5"><path d="M1 12l3-3 3 3 4-5 4 2"/></svg>
+        </div>
+        <div class="sc-label">Revenue (Apr)</div>
+        <div class="sc-val">₹2.4L</div>
+        <div class="sc-delta up">↑ +8.2%</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-bar" style="background:linear-gradient(90deg,#d97706,#fbbf24)"></div>
+        <div class="sc-icon" style="background:var(--amber-bg)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="var(--amber)" stroke-width="1.5"><rect x="1" y="3" width="14" height="9" rx="1"/><path d="M1 7h14"/></svg>
+        </div>
+        <div class="sc-label">Pending Invoices</div>
+        <div class="sc-val">3</div>
+        <div class="sc-note" style="color:var(--red)">₹18,400 outstanding</div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD ROW: RECENT ACTIVITY + TODAY'S SESSIONS -->
+    <div class="dash-row">
+      <!-- Recent Activity -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Recent Activity</div>
+          <div class="tag-live">● Live</div>
+        </div>
+        <div class="card-bd" style="padding-top:6px;padding-bottom:6px">
+          <div class="act-item">
+            <div class="act-dot" style="background:#ede9fe">
+              <svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0"/></svg>
+            </div>
+            <div>
+              <div class="act-text"><strong>Priya Sharma</strong> enrolled in Physics</div>
+              <div class="act-time">8 min ago</div>
+            </div>
+          </div>
+          <div class="act-item">
+            <div class="act-dot" style="background:var(--green-bg)">
+              <svg viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.5"><rect x="1" y="3" width="14" height="9" rx="1"/><path d="M1 7h14"/></svg>
+            </div>
+            <div>
+              <div class="act-text"><strong>Invoice #INV-0241</strong> paid ₹6,400</div>
+              <div class="act-time">22 min ago</div>
+            </div>
+          </div>
+          <div class="act-item">
+            <div class="act-dot" style="background:var(--teal-bg)">
+              <svg viewBox="0 0 16 16" fill="none" stroke="var(--teal)" stroke-width="1.5"><path d="M3 2a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1H3z"/></svg>
+            </div>
+            <div>
+              <div class="act-text"><strong>Anand Kumar</strong> marked 5 attendance records</div>
+              <div class="act-time">1 hr ago</div>
+            </div>
+          </div>
+          <div class="act-item">
+            <div class="act-dot" style="background:var(--amber-bg)">
+              <svg viewBox="0 0 16 16" fill="none" stroke="var(--amber)" stroke-width="1.5"><path d="M8 2l6 11H2L8 2z"/><path d="M8 7v3M8 11.5v.5"/></svg>
+            </div>
+            <div>
+              <div class="act-text"><strong>Kavya Nair</strong> subscription paused</div>
+              <div class="act-time">3 hrs ago</div>
+            </div>
+          </div>
+          <div class="act-item">
+            <div class="act-dot" style="background:#ede9fe">
+              <svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6a5 5 0 0110 0"/></svg>
+            </div>
+            <div>
+              <div class="act-text"><strong>Rohan Das</strong> added as new student</div>
+              <div class="act-time">5 hrs ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Sessions -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">Today's Class Sessions</div>
+          <div class="tag-live" style="background:var(--blue-bg);border-color:rgba(37,99,235,0.2);color:var(--blue)">8 scheduled</div>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Mentor</th>
+                <th>Status</th>
+                <th>Attendance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:700;color:var(--accent);font-size:12px">09:00–10:00</td>
+                <td><div class="td-main">Priya Sharma</div></td>
+                <td><span class="tag">Mathematics</span></td>
+                <td style="color:var(--muted);font-size:12px">Anand Kumar</td>
+                <td><span class="pill completed">Completed</span></td>
+                <td><span class="att-badge present">Present</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:700;color:var(--accent);font-size:12px">10:30–11:30</td>
+                <td><div class="td-main">Arjun Mehta</div></td>
+                <td><span class="tag">Physics</span></td>
+                <td style="color:var(--muted);font-size:12px">Sneha Rao</td>
+                <td><span class="pill completed">Completed</span></td>
+                <td><span class="att-badge present">Present</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:700;color:var(--blue);font-size:12px">02:00–03:00</td>
+                <td><div class="td-main">Rohan Das</div></td>
+                <td><span class="tag">Mathematics</span></td>
+                <td style="color:var(--muted);font-size:12px">Anand Kumar</td>
+                <td><span class="pill scheduled">Scheduled</span></td>
+                <td style="color:var(--muted)">—</td>
+              </tr>
+              <tr>
+                <td style="font-weight:700;color:var(--blue);font-size:12px">04:00–05:00</td>
+                <td><div class="td-main">Aarav Joshi</div></td>
+                <td><span class="tag">Biology</span></td>
+                <td style="color:var(--muted);font-size:12px">Pradeep Joshi</td>
+                <td><span class="pill scheduled">Scheduled</span></td>
+                <td style="color:var(--muted)">—</td>
+              </tr>
+              <tr>
+                <td style="font-weight:700;color:var(--blue);font-size:12px">05:30–06:30</td>
+                <td><div class="td-main">Diya Patel</div></td>
+                <td><span class="tag">English</span></td>
+                <td style="color:var(--muted);font-size:12px">Nisha Kothari</td>
+                <td><span class="pill scheduled">Scheduled</span></td>
+                <td style="color:var(--muted)">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW: QUICK LINKS -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px">
+      <a href="payouts.html" style="text-decoration:none">
+        <div class="stat-card" style="cursor:pointer;transition:transform 0.15s,box-shadow 0.15s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#d97706,#fbbf24)"></div>
+          <div class="sc-icon" style="background:var(--amber-bg)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="var(--amber)" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+          </div>
+          <div class="sc-label">Pending Payouts</div>
+          <div class="sc-val" style="color:var(--amber)">₹54.2K</div>
+          <div class="sc-note">4 mentors awaiting</div>
+        </div>
+      </a>
+      <a href="attendance.html" style="text-decoration:none">
+        <div class="stat-card" style="cursor:pointer;transition:transform 0.15s,box-shadow 0.15s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#059669,#34d399)"></div>
+          <div class="sc-icon" style="background:var(--green-bg)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M2 6l3 3 8-7"/></svg>
+          </div>
+          <div class="sc-label">Present Today</div>
+          <div class="sc-val" style="color:var(--green)">38</div>
+          <div class="sc-note">79% attendance rate</div>
+        </div>
+      </a>
+      <a href="levels.html" style="text-decoration:none">
+        <div class="stat-card" style="cursor:pointer;transition:transform 0.15s,box-shadow 0.15s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div>
+          <div class="sc-icon" style="background:var(--accent-light)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M2 12h12M2 8h9M2 4h6"/></svg>
+          </div>
+          <div class="sc-label">Course Levels</div>
+          <div class="sc-val">8</div>
+          <div class="sc-note">Across all courses</div>
+        </div>
+      </a>
+      <a href="class_sessions.html" style="text-decoration:none">
+        <div class="stat-card" style="cursor:pointer;transition:transform 0.15s,box-shadow 0.15s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+          <div class="sc-bar" style="background:linear-gradient(90deg,#2563eb,#60a5fa)"></div>
+          <div class="sc-icon" style="background:var(--blue-bg)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="var(--blue)" stroke-width="1.5"><rect x="1" y="2" width="14" height="12" rx="1.5"/><path d="M1 6h14M5 1v2M11 1v2"/></svg>
+          </div>
+          <div class="sc-label">Sessions Today</div>
+          <div class="sc-val" style="color:var(--blue)">15</div>
+          <div class="sc-note">8 scheduled remaining</div>
+        </div>
+      </a>
+    </div>
+
+  </div><!-- end content -->
+</div><!-- end main -->
+</div><!-- end layout -->
+</body>
+</html>
