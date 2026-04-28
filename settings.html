@@ -124,10 +124,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-size:14px;line
 /* AVATAR */
 .admin-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 4px 14px rgba(109,40,217,0.3)}
 
-/* DANGER ZONE */
-.danger-card{background:#fff5f5;border:1.5px solid rgba(220,38,38,0.15);border-radius:var(--radius);padding:20px 22px}
-.danger-title{font-size:13px;font-weight:700;color:var(--red);margin-bottom:4px}
-.danger-desc{font-size:12px;color:var(--muted);margin-bottom:14px}
+
 </style>
 </head>
 <body>
@@ -410,37 +407,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-size:14px;line
         </div>
       </div>
     </div>
-
-    <!-- ROW 3: DANGER ZONE -->
-    <div class="full-col">
-      <div class="card">
-        <div class="card-hd">
-          <div>
-            <div class="card-title" style="color:var(--red)">Danger Zone</div>
-            <div class="card-sub">Irreversible actions — proceed with caution</div>
-          </div>
-          <div style="width:36px;height:36px;border-radius:10px;background:var(--red-bg);display:flex;align-items:center;justify-content:center">
-            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M8 2l6 11H2L8 2z"/><path d="M8 7v3M8 11.5v.5"/></svg>
-          </div>
-        </div>
-        <div class="card-bd" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
-          <div style="padding:18px;background:#fff5f5;border-radius:12px;border:1.5px solid rgba(220,38,38,0.1)">
-            <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:6px">Reset All Data</div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5">Remove all students, sessions, and financial records. Cannot be undone.</div>
-            <button class="btn btn-danger btn-sm">Reset Data</button>
-          </div>
-          <div style="padding:18px;background:#fff5f5;border-radius:12px;border:1.5px solid rgba(220,38,38,0.1)">
-            <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:6px">Export &amp; Delete</div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5">Export all data as CSV/JSON, then permanently delete from servers.</div>
-            <button class="btn btn-danger btn-sm">Export &amp; Delete</button>
-          </div>
-          <div style="padding:18px;background:#fff5f5;border-radius:12px;border:1.5px solid rgba(220,38,38,0.1)">
-            <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:6px">Delete Organization</div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5">Permanently delete this organization and all associated data.</div>
-            <button class="btn btn-danger btn-sm">Delete Org</button>
-          </div>
-        </div>
-      </div>
+ 
+    
     </div>
 
   </div><!-- end content -->
