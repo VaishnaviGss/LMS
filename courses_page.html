@@ -243,6 +243,34 @@ tr.clickable:hover td{background:#f0f7ff;cursor:pointer}
 .form-textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .form-toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;background:var(--bg);border-radius:var(--radius-sm);border:1.5px solid var(--border)}
+.ts-section-lbl{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:8px}
+.ts-slot-row{display:flex;align-items:center;gap:7px;margin-bottom:7px;animation:moPop 0.15s ease}
+.ts-slot-day{height:36px;flex:0 0 118px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 9px;font-size:12.5px;color:var(--text);font-family:inherit;background:var(--surface);outline:none;cursor:pointer;appearance:auto}
+.ts-slot-day:focus{border-color:var(--blue)}
+.ts-slot-time{flex:1;height:36px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 9px;font-size:12.5px;color:var(--text);font-family:inherit;background:var(--surface);outline:none;min-width:0}
+.ts-slot-time:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+.ts-slot-sep{font-size:12px;color:var(--muted);flex-shrink:0}
+.ts-slot-rm{width:30px;height:30px;flex-shrink:0;border:1.5px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;line-height:1;transition:all 0.15s}
+.ts-slot-rm:hover{border-color:#dc2626;color:#dc2626;background:#fef2f2}
+.ts-add-slot-btn{width:100%;height:36px;border:1.5px dashed var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--muted);font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;margin-top:2px}
+.ts-add-slot-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.sp-wrap{margin-top:8px;display:none}
+.sp-panel{display:inline-block;border:1.5px solid rgba(37,99,235,0.3);border-radius:10px;background:#fff;box-shadow:0 4px 16px rgba(37,99,235,0.1);overflow:hidden;min-width:230px;animation:moPop 0.15s ease}
+.sp-head{padding:7px 12px 6px;background:var(--blue-bg);border-bottom:1px solid rgba(37,99,235,0.15);font-size:10.5px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.05em}
+.sp-item{display:flex;align-items:center;gap:9px;padding:7px 12px;cursor:pointer;transition:background 0.1s;border-bottom:1px solid rgba(0,0,0,0.04)}
+.sp-item:last-of-type{border-bottom:none}
+.sp-item:hover{background:var(--blue-bg)}
+.sp-chk{width:14px;height:14px;accent-color:var(--blue);cursor:pointer;margin:0;flex-shrink:0}
+.sp-day{font-size:10.5px;font-weight:700;color:var(--muted);width:26px;flex-shrink:0;text-transform:uppercase;letter-spacing:0.03em}
+.sp-time{font-size:12.5px;font-weight:600;color:var(--text)}
+.sp-item:has(.sp-chk:checked) .sp-time{color:var(--blue)}
+.sp-item:has(.sp-chk:checked){background:var(--blue-bg)}
+.sp-foot{padding:7px 12px;background:#fafafa;border-top:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.sp-apply{height:26px;padding:0 14px;background:var(--blue);color:#fff;border:none;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit}
+.sp-apply:hover{background:#1d4ed8}
+.sp-skip{height:26px;padding:0 10px;background:transparent;color:var(--muted);border:1.5px solid var(--border);border-radius:6px;font-size:11.5px;cursor:pointer;font-family:inherit}
+.sp-skip:hover{color:var(--text)}
+.nc-scroll{max-height:60vh;overflow-y:auto;padding-right:2px}
 .toggle-lbl{font-size:12.5px;font-weight:600}
 .toggle-sub{font-size:11px;color:var(--muted)}
 .toggle-sw{width:36px;height:20px;border-radius:10px;background:#d1d5db;border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
@@ -328,9 +356,9 @@ tr.clickable:hover td{background:#f0f7ff;cursor:pointer}
   <div class="screen vis" id="scr-list">
     <div class="list-toolbar">
       <select class="fsel" id="sf-status" onchange="filterCourses()"><option value="">All Status</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
-      <select class="fsel" id="sf-pricing" onchange="filterCourses()"><option value="">All Pricing</option><option value="Per Month">Per Month</option><option value="Per Class">Per Class</option><option value="Per 10 Classes">Per 10 Classes</option></select>
+      <select class="fsel" id="sf-pricing" onchange="filterCourses()"><option value="">All Pricing</option><option value="Per Month">Per Month</option><option value="Per Class">Per Class</option><option value="Per N Classes">Per N Classes</option></select>
       <span class="cnt-tag" id="crs-count">6 courses</span>
-      <button class="btn btn-blue" style="margin-left:auto" onclick="openMo('mo-new-course')">
+      <button class="btn btn-blue" style="margin-left:auto" onclick="openMo('mo-new-course');initTimeslots()">
         <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M5 1v4H1v2h4v4h2V7h4V5H7V1z"/></svg>
         New Course
       </button>
@@ -353,17 +381,50 @@ tr.clickable:hover td{background:#f0f7ff;cursor:pointer}
 <div class="mo" id="mo-new-course" onclick="moOut(event,'mo-new-course')">
   <div class="mo-box">
     <div class="mo-hd"><div class="mo-title">Create New Course</div><button class="mo-close" onclick="closeMo('mo-new-course')"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l10 10M11 1L1 11"/></svg></button></div>
-    <div class="mo-body">
+    <div class="mo-body nc-scroll">
       <div class="form-row"><label class="form-label">Course Name *</label><input class="form-input" placeholder="e.g. Mathematics — Grade 10"></div>
       <div class="form-row"><label class="form-label">Description</label><textarea class="form-textarea" placeholder="Brief overview of what this course covers…"></textarea></div>
       <div class="form-grid">
-        <div class="form-row" style="margin-bottom:0"><label class="form-label">Pricing Model *</label><select class="form-select" id="pricing-model" onchange="toggleN()"><option>Per Month</option><option>Per Class</option><option>Per 10 Classes</option></select></div>
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">Pricing Model *</label><select class="form-select" id="pricing-model" onchange="toggleN()"><option>Per Month</option><option>Per Class</option><option>Per N Classes</option></select></div>
         <div class="form-row" style="margin-bottom:0"><label class="form-label">Price Amount (₹) *</label><input class="form-input" type="number" placeholder="e.g. 3500"></div>
       </div>
       <div id="n-classes-row" style="display:none;margin-top:14px"><label class="form-label">Number of Classes *</label><input class="form-input" type="number" placeholder="e.g. 10"></div>
-      <div style="margin-top:14px" class="form-toggle">
-        <div><div class="toggle-lbl">Set as Active</div><div class="toggle-sub">Course will be immediately available</div></div>
-        <button class="toggle-sw on" onclick="this.classList.toggle('on')"></button>
+     
+      <!-- Mentor -->
+      <div class="form-row" style="margin-top:14px;margin-bottom:0">
+        <label class="form-label">Assign Mentor</label>
+        <div class="dd-wrap" id="dd-nc-mentor">
+          <div class="dd-trigger" onclick="ddToggle('dd-nc-mentor')">
+            <span>Select a mentor…</span>
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l4 4 4-4"/></svg>
+          </div>
+          <div class="dd-panel">
+            <div class="dd-srch">
+              <svg class="dd-srch-icon" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6.5" cy="6.5" r="5.5"/><path d="M11 11L15 15"/></svg>
+              <input placeholder="Search by name…" oninput="ddFilter('dd-nc-mentor')">
+            </div>
+            
+            <div class="dd-list"></div>
+            
+          </div>
+        </div>
+      </div>
+      <!-- Mentor slot picker -->
+      <div class="sp-wrap" id="nc-sp-wrap">
+        <div class="sp-panel">
+          <div class="sp-head">Available slots for this mentor</div>
+          <div id="nc-sp-list"></div>
+          <div class="sp-foot">
+            <button class="sp-skip" type="button" onclick="dismissPicker()">Skip</button>
+            <button class="sp-apply" type="button" onclick="applyMentorSlots()">Add Selected</button>
+          </div>
+        </div>
+      </div>
+      <!-- Timeslots -->
+      <div style="margin-top:14px">
+        <span class="ts-section-lbl">Available Slots</span>
+        <div id="nc-ts-list"></div>
+        <button class="ts-add-slot-btn" type="button" onclick="addSlotRow()">+ Add Slot</button>
       </div>
     </div>
     <div class="mo-ft"><button class="btn btn-ghost" onclick="closeMo('mo-new-course')">Cancel</button><button class="btn btn-blue">Create Course</button></div>
@@ -513,6 +574,7 @@ function ddSelect(id,name,color){
   trigger.classList.add('has-val');
   wrap.querySelector('.dd-panel').classList.remove('open');
   trigger.classList.remove('open');
+  if(id==='dd-nc-mentor') loadMentorSlots(name);
 }
 function ddInit(id,items){
   const wrap=document.getElementById(id);
@@ -562,7 +624,7 @@ const courses=[
   {
     id:'CRS003',name:'Chemistry — Organic & Inorganic',color:'#059669',status:'active',
     desc:'Organic reactions, periodic table, bonding, acids-bases and industrial applications.',
-    pricing:'₹4,200/10 cls',model:'Per 10 Classes',revenue:'₹1.2L',totalClasses:172,
+    pricing:'₹4,200/10 cls',model:'Per N Classes',revenue:'₹1.2L',totalClasses:172,
     students:[
       {name:'Arjun Mehta',phone:'87654 32109',subStatus:'active',classes:12,att:83},
       {name:'Kavya Nair',phone:'76543 21098',subStatus:'paused',classes:31,att:68},
@@ -573,7 +635,7 @@ const courses=[
       {name:'Organic Chemistry',color:'#b45309',topics:[{name:'Hydrocarbons',assets:6},{name:'Functional Groups',assets:7},{name:'Reaction Mechanisms',assets:5}]},
     ],
     mentors:[{name:'Ravi Pillai',av:'RP',color:'#059669',commission:'32% custom',courses:'Chemistry'}],
-    pricing_history:[{model:'Per 10 Classes',amount:'₹4,200',from:'01 Jan 2026',to:null,current:true}]
+    pricing_history:[{model:'Per N Classes',amount:'₹4,200',from:'01 Jan 2026',to:null,current:true}]
   },
   {
     id:'CRS004',name:'Biology — Life Sciences',color:'#b45309',status:'active',
@@ -917,7 +979,7 @@ function toggleLevel(courseId,li){
 function openMo(id){document.getElementById(id).classList.add('open')}
 function closeMo(id){document.getElementById(id).classList.remove('open')}
 function moOut(e,id){if(e.target===e.currentTarget)closeMo(id)}
-function toggleN(){const v=document.getElementById('pricing-model').value;document.getElementById('n-classes-row').style.display=v==='Per 10 Classes'?'block':'none'}
+function toggleN(){const v=document.getElementById('pricing-model').value;document.getElementById('n-classes-row').style.display=v==='Per N Classes'?'block':'none'}
 
 /* ─── STATUS DROPDOWN ─── */
 function toggleStMenu(si){
@@ -937,10 +999,81 @@ document.addEventListener('click',e=>{
     document.querySelectorAll('.st-menu.open').forEach(m=>m.classList.remove('open'));
 });
 
+/* ─── TIMESLOTS ─── */
+function fmtTime(t){
+  if(!t)return '';
+  const[h,m]=t.split(':').map(Number);
+  const ap=h<12?'AM':'PM';
+  const hr=h%12||12;
+  return `${hr}:${String(m).padStart(2,'0')} ${ap}`;
+}
+const TS_DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const TS_DEFAULTS=[
+  {day:'Monday',   start:'09:10', end:'10:10'},
+  {day:'Wednesday',start:'11:00', end:'12:00'},
+  {day:'Friday',   start:'16:00', end:'17:00'}
+];
+const MENTOR_SLOTS={
+  'Anand Kumar':  [{day:'Monday',start:'09:00',end:'10:00'},{day:'Wednesday',start:'14:00',end:'15:00'}],
+  'Sneha Rao':    [{day:'Tuesday',start:'10:00',end:'11:00'},{day:'Thursday',start:'16:00',end:'17:00'}],
+  'Ravi Pillai':  [{day:'Monday',start:'08:00',end:'09:00'},{day:'Friday',start:'15:00',end:'16:00'}],
+  'Kiran Bose':   [{day:'Tuesday',start:'11:00',end:'12:00'},{day:'Saturday',start:'17:00',end:'18:00'}],
+  'Meera Nair':   [{day:'Wednesday',start:'09:30',end:'10:30'},{day:'Friday',start:'13:00',end:'14:00'}],
+  'Vijay Thomas': [{day:'Thursday',start:'18:00',end:'19:00'},{day:'Monday',start:'10:00',end:'11:00'}]
+};
+function makeDayOpts(sel){
+  return TS_DAYS.map(d=>`<option${d===sel?' selected':''}>${d}</option>`).join('');
+}
+function buildTsRow(day,start,end){
+  const row=document.createElement('div');
+  row.className='ts-slot-row';
+  row.innerHTML=`<select class="ts-slot-day">${makeDayOpts(day)}</select><input type="time" class="ts-slot-time" value="${start}"><span class="ts-slot-sep">–</span><input type="time" class="ts-slot-time" value="${end}"><button class="ts-slot-rm" type="button" onclick="rmSlotRow(this)">&#x2715;</button>`;
+  return row;
+}
+function rmSlotRow(btn){
+  const list=document.getElementById('nc-ts-list');
+  if(list.children.length>1) btn.closest('.ts-slot-row').remove();
+}
+function addSlotRow(){
+  document.getElementById('nc-ts-list').appendChild(buildTsRow('Monday','',''));
+}
+function renderTsSlots(slots){
+  const list=document.getElementById('nc-ts-list');
+  list.innerHTML='';
+  slots.forEach(({day,start,end})=>list.appendChild(buildTsRow(day,start,end)));
+}
+function initTimeslots(){
+  renderTsSlots(TS_DEFAULTS);
+  dismissPicker();
+}
+function loadMentorSlots(name){
+  const slots=MENTOR_SLOTS[name];
+  if(!slots) return;
+  const list=document.getElementById('nc-sp-list');
+  list.innerHTML=slots.map(s=>`
+    <label class="sp-item">
+      <input type="checkbox" class="sp-chk" checked data-day="${s.day}" data-start="${s.start}" data-end="${s.end}">
+      <span class="sp-day">${s.day.slice(0,3)}</span>
+      <span class="sp-time">${s.start} – ${s.end}</span>
+    </label>`).join('');
+  document.getElementById('nc-sp-wrap').style.display='block';
+}
+function applyMentorSlots(){
+  const checked=document.querySelectorAll('#nc-sp-list .sp-chk:checked');
+  if(checked.length){
+    const list=document.getElementById('nc-ts-list');
+    list.innerHTML='';
+    checked.forEach(c=>list.appendChild(buildTsRow(c.dataset.day,c.dataset.start,c.dataset.end)));
+  }
+  dismissPicker();
+}
+function dismissPicker(){document.getElementById('nc-sp-wrap').style.display='none';}
+
 /* ─── INIT ─── */
 renderGrid();
 ddInit('dd-student',ALL_STUDENTS);
 ddInit('dd-mentor',ALL_MENTORS);
+ddInit('dd-nc-mentor',ALL_MENTORS);
 </script>
 </body>
 </html>
